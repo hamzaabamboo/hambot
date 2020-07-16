@@ -1,11 +1,18 @@
-interface BaseMessage {
+import { Channel } from 'discord.js';
+
+export interface BaseMessage {
   channel: string;
+  senderId: string;
   message: string;
 }
-export interface LineMessage {
+export interface LineMessage extends BaseMessage {
   channel: 'line';
-  message: string;
-  replyToken: string;
+  replyToken?: string;
 }
 
-export type Message = LineMessage;
+export interface DiscordMessage extends BaseMessage {
+  channel: 'discord';
+  messageChannel?: Channel;
+}
+
+export type Message = LineMessage | DiscordMessage;

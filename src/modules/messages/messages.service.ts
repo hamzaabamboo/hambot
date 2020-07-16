@@ -1,8 +1,13 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
-import { Message } from './messages.model';
+import {
+  Message,
+  BaseMessage,
+  LineMessage,
+  DiscordMessage,
+} from './messages.model';
 import { LineService } from '../line/line.service';
-import { ModuleRef } from '@nestjs/core';
 import { CommandsService } from '../commands/commands.service';
+import { DiscordService } from '../discord/discord.service';
 
 @Injectable()
 export class MessagesService {
@@ -10,20 +15,39 @@ export class MessagesService {
     private commandService: CommandsService,
     @Inject(forwardRef(() => LineService))
     private lineService: LineService,
+    @Inject(forwardRef(() => DiscordService))
+    private discordService: DiscordService,
   ) {
     // this.lineService = this.moduleRef.get(LineService);
   }
 
   async handleMessage(message: Message) {
     console.log('Message from', message.channel);
+    let reply: Message;
     if (this.commandService.isCommand(message)) {
-      this.sendMessage(await this.commandService.handleCommand(message));
+      reply = await this.commandService.handleCommand(message);
     } else {
-      this.sendMessage({
+      reply = {
         channel: message.channel,
+        senderId: message.senderId,
         message: 'Idk what to do sry',
-        replyToken: message.replyToken,
-      });
+      };
+    }
+    switch (message.channel) {
+      case 'line':
+        this.sendMessage({
+          channel: 'line',
+          ...reply,
+          replyToken: (message as LineMessage).replyToken,
+        } as LineMessage);
+        break;
+      case 'discord':
+        this.sendMessage({
+          ...reply,
+          channel: 'discord',
+          messageChannel: (message as DiscordMessage).messageChannel,
+        } as DiscordMessage);
+        break;
     }
   }
 
@@ -41,6 +65,11 @@ export class MessagesService {
           .catch(e => {
             console.log(e.data);
           });
+      case 'discord':
+        const m = message as DiscordMessage;
+        return this.discordService.sendMessage(m.messageChannel, {
+          content: m.message,
+        });
     }
   }
 }

@@ -31,6 +31,7 @@ export class LineController {
           case 'message':
             return this.messageService.handleMessage({
               channel: 'line',
+              senderId: evt.source.userId,
               message: (evt.message as TextMessage).text,
               replyToken: evt.replyToken,
             });

@@ -16,11 +16,11 @@ export class TrelloService {
     return await this.client.getBoards('me');
   }
 
-  async getLists(boardid: string) {
-    return await this.client.getListsOnBoard(boardid);
+  async getLists(boardId: string) {
+    return await this.client.getListsOnBoard(boardId);
   }
 
-  async getCards(listid: string): Promise<any[]> {
-    return await this.client.getCardsOnList(listid);
+  async getCards(listId: string): Promise<any[]> {
+    return await this.client.getCardsOnList(listId);
   }
 }

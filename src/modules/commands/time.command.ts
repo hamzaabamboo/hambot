@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BaseCommand } from './base.command';
+import { BaseCommand } from './command.base';
 import { Message } from '../messages/messages.model';
 import * as moment from 'moment';
 
