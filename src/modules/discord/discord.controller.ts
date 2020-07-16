@@ -6,6 +6,7 @@ import { DiscordService } from './discord.service';
 @Controller('discord')
 export class DiscordController {
   private client: Client;
+  public prefix = /^hamB (.*)$/;
   //   private logger: LoggerService
   constructor(
     config: ConfigService,
@@ -25,15 +26,24 @@ export class DiscordController {
       //   logger.debug('Discord connected');
     });
     this.client.on('message', message => {
-      if (message.channel.type === 'dm' || message.channel.type === 'text') {
-        if (message.author.username.includes('hamzaabamboo')) {
-          this.message.handleMessage({
-            channel: 'discord',
-            senderId: message.author.id,
-            message: message.content,
-            messageChannel: message.channel,
-          });
-        }
+      if (message.channel.type === 'dm') {
+        this.message.handleMessage({
+          channel: 'discord',
+          senderId: message.author.id,
+          message: message.content,
+          messageChannel: message.channel,
+        });
+      }
+      if (
+        message.channel.type === 'text' &&
+        this.prefix.test(message.content)
+      ) {
+        this.message.handleMessage({
+          channel: 'discord',
+          senderId: message.author.id,
+          message: this.prefix.exec(message.content)[1],
+          messageChannel: message.channel,
+        });
       }
     });
   }

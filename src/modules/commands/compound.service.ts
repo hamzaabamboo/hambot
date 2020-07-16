@@ -1,6 +1,7 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { Message } from '../messages/messages.model';
 import { BaseCompoundHandler } from './compound.handler.base';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   scope: Scope.DEFAULT,
@@ -9,21 +10,29 @@ export class CompoundService {
   private _compoundingData: Map<string, BaseCompoundHandler>;
   private handlers: typeof BaseCompoundHandler[] = [BaseCompoundHandler];
 
-  constructor() {
+  constructor(private auth: AuthService) {
     this._compoundingData = new Map<string, BaseCompoundHandler>([]);
   }
   canCompound(message: Message): boolean {
     return this.handlers.some(h => h.startCommand.test(message.message));
   }
 
-  startCompound(message: Message): Promise<Message | undefined> {
+  async startCompound(message: Message): Promise<Message | undefined> {
     const handler = this.handlers.find(function(h) {
       return h.startCommand.test(message.message);
     });
-    this._compoundingData = this._compoundingData.set(
-      message.senderId,
-      new handler(),
-    );
+    if (handler.requiresAuth) {
+      if (await this.auth.isAuthenticated(message.senderId, message.channel)) {
+        this._compoundingData.set(message.senderId, new handler());
+        return this.handleCompound(message);
+      } else {
+        return {
+          ...message,
+          message: 'You cannot use this command',
+        };
+      }
+    }
+    this._compoundingData.set(message.senderId, new handler());
     return this.handleCompound(message);
   }
 

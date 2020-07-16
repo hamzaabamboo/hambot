@@ -8,6 +8,8 @@ import { TasksCommand } from './tasks.command';
 import { TrelloService } from '../trello/trello.service';
 import { TrelloModule } from '../trello/trello.module';
 import { CompoundService } from './compound.service';
+import { AuthModule } from '../auth/auth.module';
+import { AuthCommand } from './auth.command';
 
 @Module({
   providers: [
@@ -18,8 +20,9 @@ import { CompoundService } from './compound.service';
     PingCommand,
     TimeCommand,
     TasksCommand,
+    AuthCommand,
   ],
-  imports: [TrelloModule],
+  imports: [TrelloModule, AuthModule],
   exports: [CommandsService],
 })
 export class CommandsModule {}

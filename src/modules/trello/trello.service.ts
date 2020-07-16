@@ -23,4 +23,8 @@ export class TrelloService {
   async getCards(listId: string): Promise<any[]> {
     return await this.client.getCardsOnList(listId);
   }
+
+  async addCard(listId: string, title: string, description?: string) {
+    return await this.client.addCard(title, description, listId);
+  }
 }

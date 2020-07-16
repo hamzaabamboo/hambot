@@ -7,6 +7,7 @@ export interface CompoundResponse {
 }
 export class BaseCompoundHandler {
   public static startCommand = /^(echom)/;
+  public static requiresAuth = true;
   public command = /(.*?)/;
   public endCommand = /^(end)/;
 

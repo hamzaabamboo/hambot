@@ -4,6 +4,7 @@ import { Message } from '../messages/messages.model';
 @Injectable()
 export class BaseCommand {
   public command = /(.*?)/;
+  public requiresAuth = false;
 
   matchInput(input: string): boolean {
     return this.command.test(input);

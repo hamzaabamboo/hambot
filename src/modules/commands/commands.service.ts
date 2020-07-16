@@ -6,6 +6,8 @@ import { PingCommand } from './ping.command';
 import { TimeCommand } from './time.command';
 import { TasksCommand } from './tasks.command';
 import { CompoundService } from './compound.service';
+import { AuthService } from '../auth/auth.service';
+import { AuthCommand } from './auth.command';
 
 @Injectable()
 export class CommandsService {
@@ -13,13 +15,15 @@ export class CommandsService {
 
   constructor(
     private compound: CompoundService,
+    private auth: AuthService,
     hello: HelloCommand,
     base: BaseCommand,
     time: TimeCommand,
     task: TasksCommand,
     ping: PingCommand,
+    authCmd: AuthCommand,
   ) {
-    this.commands = [hello, task, time, ping, base];
+    this.commands = [hello, task, time, ping, authCmd, base];
   }
 
   isCommand(message: Message) {
@@ -29,7 +33,7 @@ export class CommandsService {
     );
   }
 
-  handleCommand(message: Message) {
+  async handleCommand(message: Message) {
     if (this.compound.isCompounding(message.senderId)) {
       return this.compound.handleCompound(message);
     }
@@ -37,10 +41,19 @@ export class CommandsService {
       const res = this.compound.startCompound(message);
       return res;
     }
-    return this.commands
-      .find(function(command) {
-        return command.matchInput(message.message);
-      })
-      .handleInput(message);
+    const handler = this.commands.find(function(command) {
+      return command.matchInput(message.message);
+    });
+    if (handler.requiresAuth) {
+      if (await this.auth.isAuthenticated(message.senderId, message.channel)) {
+        return handler.handleInput(message);
+      } else {
+        return {
+          ...message,
+          message: 'You cannot use this command',
+        };
+      }
+    }
+    return handler.handleInput(message);
   }
 }
