@@ -1,11 +1,15 @@
 name: Deploy
+
 on: [push]
-runs-on: ubuntu-latest
-steps:
-  - name: executing remote ssh commands using password
-    uses: appleboy/ssh-action@master
-    with:
-      host: ${{ secrets.HOST }}
-      username: ${{ secrets.USERNAME }}
-      key: ${{ secrets.PRIVATE_KEY }}
-      script: ./deploy.sh
+
+jobs:
+  name: Deploy
+  runs-on: ubuntu-latest
+  steps:
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.PRIVATE_KEY }}
+        script: ./deploy.sh
