@@ -54,6 +54,16 @@ export class MessagesService {
   sendMessage(message: Message) {
     switch (message.channel) {
       case 'line':
+        if (message.imageURL) {
+          this.lineService.sendReplyMessage(
+            {
+              type: 'image',
+              originalContentUrl: message.imageURL,
+              previewImageUrl: message.imageURL,
+            },
+            message.replyToken,
+          );
+        }
         this.lineService
           .sendReplyMessage(
             {
@@ -65,22 +75,12 @@ export class MessagesService {
           .catch(e => {
             console.log(e.data);
           });
-        if (message.imageURL) {
-          this.lineService.sendReplyMessage(
-            {
-              type: 'image',
-              originalContentUrl: message.imageURL,
-              previewImageUrl: message.imageURL,
-            },
-            message.replyToken,
-          );
-        }
         return;
       case 'discord':
         const m = message as DiscordMessage;
         return this.discordService.sendMessage(m.messageChannel, {
           content: m.message,
-          files: m.imageURL && [],
+          files: [m.imageURL].filter(e => e),
         });
     }
   }
