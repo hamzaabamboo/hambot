@@ -6,8 +6,6 @@ jobs:
   build:
     name: Run remote ssh command
     runs-on: ubuntu-latest
-    env:
-      GIT_SSH_COMMAND: ssh -i ${{ secrets.GH_KEY_LOCATION }}
     steps:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
@@ -15,8 +13,9 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          # envs: GIT_SSH_COMMAND
           script: |
+            eval "$(ssh-agent -s)"
+            ssh-add - <<< {{ secrets.GH_PRIVATE_KEY }}
             cd ./hambot
             git pull origin master
             ./deploy.sh
