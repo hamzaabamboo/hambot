@@ -42,25 +42,32 @@ export class ShakeCommand extends BaseCommand {
       default:
         const userId = matchUser(command);
         const user = await guild.members.fetch(userId);
-        if (!user.voice.channelID)
+        if (!user.voice?.channelID)
           return {
             ...message,
             message: `${command} is not in a voice channel!`,
           };
         const origin = user.voice.channel;
         const I = isNaN(Number(intensity)) ? 2 : Number(intensity);
-        for (let i = 0; i < I; i++) {
-          await user.voice.setChannel(
-            channels[i % channels.length],
-            'you got shaken',
-          );
-          await sleep(2000 / I);
+        try {
+          for (let i = 0; i < I; i++) {
+            await user.voice.setChannel(
+              channels[i % channels.length],
+              'you got shaken',
+            );
+            await sleep(2000 / I);
+          }
+          await user.voice.setChannel(origin, 'you got shaken');
+          return {
+            ...message,
+            message: `Shaked ${command}`,
+          };
+        } catch (error) {
+          return {
+            ...message,
+            message: `I think ${command} escaped or something just went wrong`,
+          };
         }
-        await user.voice.setChannel(origin, 'you got shaken');
-        return {
-          ...message,
-          message: `Shaked ${command}`,
-        };
     }
   }
 }
