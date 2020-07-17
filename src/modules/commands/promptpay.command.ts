@@ -12,16 +12,23 @@ export class PromptpayCommand extends BaseCommand {
     super();
   }
 
-  async handle(message: Message, id: string, amountS: string) {
+  async handle(
+    message: Message,
+    id: string,
+    amountS: string,
+  ): Promise<Message> {
     const amount = parseInt(amountS);
     if (id && !isNaN(amount)) {
       return {
         ...message,
         message: `QRCode for ${id} ${amountS} THB`,
-        imageURL:
-          this.config.get('PUBLIC_URL') +
-          'qrcode/' +
-          generatePayload(id, { amount: amount }),
+        image: {
+          url:
+            this.config.get('PUBLIC_URL') +
+            'qrcode/' +
+            generatePayload(id, { amount: amount }),
+          name: 'qrcode.png',
+        },
       };
     }
     return {
