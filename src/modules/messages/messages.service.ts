@@ -54,7 +54,7 @@ export class MessagesService {
   sendMessage(message: Message) {
     switch (message.channel) {
       case 'line':
-        return this.lineService
+        this.lineService
           .sendReplyMessage(
             {
               type: 'text',
@@ -65,6 +65,17 @@ export class MessagesService {
           .catch(e => {
             console.log(e.data);
           });
+        if (message.imageURL) {
+          this.lineService.sendReplyMessage(
+            {
+              type: 'image',
+              originalContentUrl: message.imageURL,
+              previewImageUrl: message.imageURL,
+            },
+            message.replyToken,
+          );
+        }
+        return;
       case 'discord':
         const m = message as DiscordMessage;
         return this.discordService.sendMessage(m.messageChannel, {
