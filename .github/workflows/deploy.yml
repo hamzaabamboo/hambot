@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   build:
-    name: Deploy
+    name: Run remote ssh command
     runs-on: ubuntu-latest
     env:
       GIT_SSH_COMMAND: ssh -i ${{ secrets.GH_KEY_LOCATION }}
