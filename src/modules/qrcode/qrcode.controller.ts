@@ -6,6 +6,7 @@ import { Response } from 'express';
 export class QrcodeController {
   @Get('/:payload')
   @Header('content-type', 'image/png')
+  @Header('content-disposition', 'attachment; filename=qrcode.png')
   async generateQRCode(
     @Param('payload') payload: string,
     @Res() res: Response,
