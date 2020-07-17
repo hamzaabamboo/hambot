@@ -17,5 +17,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           envs: GIT_SSH_COMMAND
           script: |
+            echo GIT_SSH_COMMAND
             cd ./hambot
+            git pull origin master
             ./deploy.sh
