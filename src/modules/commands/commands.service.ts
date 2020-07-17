@@ -8,6 +8,7 @@ import { TasksCommand } from './tasks.command';
 import { CompoundService } from './compound.service';
 import { AuthService } from '../auth/auth.service';
 import { AuthCommand } from './auth.command';
+import { PromptpayCommand } from './promptpay.command';
 
 @Injectable()
 export class CommandsService {
@@ -21,9 +22,10 @@ export class CommandsService {
     time: TimeCommand,
     task: TasksCommand,
     ping: PingCommand,
+    promptPay: PromptpayCommand,
     authCmd: AuthCommand,
   ) {
-    this.commands = [hello, task, time, ping, authCmd, base];
+    this.commands = [hello, promptPay, task, time, ping, authCmd, base];
   }
 
   isCommand(message: Message) {

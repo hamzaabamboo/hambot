@@ -10,6 +10,8 @@ import { TrelloModule } from '../trello/trello.module';
 import { CompoundService } from './compound.service';
 import { AuthModule } from '../auth/auth.module';
 import { AuthCommand } from './auth.command';
+import { PromptpayCommand } from './promptpay.command';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   providers: [
@@ -21,8 +23,9 @@ import { AuthCommand } from './auth.command';
     TimeCommand,
     TasksCommand,
     AuthCommand,
+    PromptpayCommand,
   ],
-  imports: [TrelloModule, AuthModule],
+  imports: [TrelloModule, AuthModule, ConfigModule],
   exports: [CommandsService],
 })
 export class CommandsModule {}

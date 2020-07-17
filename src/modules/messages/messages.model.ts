@@ -4,6 +4,7 @@ export interface BaseMessage {
   channel: string;
   senderId: string;
   message: string;
+  imageURL?: string;
 }
 export interface LineMessage extends BaseMessage {
   channel: 'line';
