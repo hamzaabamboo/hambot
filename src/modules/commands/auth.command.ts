@@ -12,6 +12,12 @@ export class AuthCommand extends BaseCommand {
   }
 
   async handle(message: Message, command: string, token: string) {
+    if (this.auth.isAuthenticated(message.senderId, message.channel)) {
+      return {
+        ...message,
+        message: 'You are already authenticated',
+      };
+    }
     switch (command) {
       case 'token':
         if (!token)
