@@ -26,6 +26,7 @@ export class DiscordController {
       //   logger.debug('Discord connected');
     });
     this.client.on('message', message => {
+      if (message.author.id === this.client.user.id) return;
       if (message.channel.type === 'dm') {
         this.message.handleMessage({
           channel: 'discord',
