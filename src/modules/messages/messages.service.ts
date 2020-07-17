@@ -80,7 +80,7 @@ export class MessagesService {
         const m = message as DiscordMessage;
         return this.discordService.sendMessage(m.messageChannel, {
           content: m.message,
-          files: [m.imageURL],
+          files: m.imageURL && [],
         });
     }
   }
