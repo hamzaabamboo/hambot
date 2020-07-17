@@ -15,9 +15,9 @@ export class PromptpayCommand extends BaseCommand {
   async handle(
     message: Message,
     id: string,
-    amountS: string,
+    amountS?: string,
   ): Promise<Message> {
-    const amount = parseInt(amountS);
+    const amount = parseInt(amountS ?? '0');
     if (id && !isNaN(amount)) {
       return {
         ...message,

@@ -8,6 +8,7 @@ import {
 import { LineService } from '../line/line.service';
 import { CommandsService } from '../commands/commands.service';
 import { DiscordService } from '../discord/discord.service';
+import { AppLogger } from '../logger/logger';
 
 @Injectable()
 export class MessagesService {
@@ -17,12 +18,14 @@ export class MessagesService {
     private lineService: LineService,
     @Inject(forwardRef(() => DiscordService))
     private discordService: DiscordService,
+    private logger: AppLogger,
   ) {
+    this.logger.setContext('MessageService');
     // this.lineService = this.moduleRef.get(LineService);
   }
 
   async handleMessage(message: Message) {
-    console.log('Message from', message.channel);
+    this.logger.debug(`Message From ${message.channel}`);
     let reply: Message;
     if (this.commandService.isCommand(message)) {
       reply = await this.commandService.handleCommand(message);
@@ -73,7 +76,7 @@ export class MessagesService {
             message.replyToken,
           )
           .catch(e => {
-            console.log(e.data);
+            this.logger.error(e.data);
           });
       case 'discord':
         const m = message as DiscordMessage;

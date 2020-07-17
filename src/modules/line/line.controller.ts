@@ -13,6 +13,8 @@ import { MessagesService } from '../messages/messages.service';
 
 @Controller('line')
 export class LineController {
+  public prefix = /^hamB (.*)$/;
+
   constructor(
     @Inject(forwardRef(() => MessagesService))
     private messageService: MessagesService,
@@ -24,11 +26,20 @@ export class LineController {
     @Headers('x-line-signature') lineSignature: string,
   ) {
     if (this.getBodySignature(message) !== lineSignature) return;
-
-    return Promise.all(
+    Promise.all(
       message.events.map(evt => {
         switch (evt.type) {
           case 'message':
+            const msg = evt.message as TextMessage;
+            if (evt.source.type !== 'user') {
+              if (!this.prefix.test(msg.text)) return;
+              return this.messageService.handleMessage({
+                channel: 'line',
+                senderId: evt.source.userId,
+                message: this.prefix.exec(msg.text)[1],
+                replyToken: evt.replyToken,
+              });
+            }
             return this.messageService.handleMessage({
               channel: 'line',
               senderId: evt.source.userId,
@@ -39,6 +50,9 @@ export class LineController {
         }
       }),
     );
+    return {
+      message: 'Success',
+    };
   }
 
   getBodySignature(body: WebhookRequestBody) {

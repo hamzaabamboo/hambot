@@ -2,13 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { BaseCommand } from './command.base';
 import { Message } from '../messages/messages.model';
 import { AuthService } from '../auth/auth.service';
+import { AppLogger } from '../logger/logger';
 
 @Injectable()
 export class AuthCommand extends BaseCommand {
   public command = /^auth(?: (token|register)(?: (.*))?)?/i;
 
-  constructor(private auth: AuthService) {
+  constructor(private auth: AuthService, private logger: AppLogger) {
     super();
+    this.logger.setContext('AuthCommand');
   }
 
   async handle(message: Message, command: string, token: string) {
@@ -39,11 +41,10 @@ export class AuthCommand extends BaseCommand {
           };
         }
       case 'register':
-        console.log(
-          'Generate token for ',
-          message.senderId,
-          ' : ',
-          this.auth.getToken(message.senderId, message.channel),
+        this.logger.verbose(
+          `Token for ${message.senderId} (${
+            message.channel
+          }) : ${this.auth.getToken(message.senderId, message.channel)}`,
         );
         return {
           ...message,

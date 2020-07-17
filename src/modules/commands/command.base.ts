@@ -5,6 +5,7 @@ import { Message } from '../messages/messages.model';
 export class BaseCommand {
   public command = /(.*?)/;
   public requiresAuth = false;
+  public channels: string[] | undefined;
 
   matchInput(input: string): boolean {
     return this.command.test(input);

@@ -9,6 +9,8 @@ import { CompoundService } from './compound.service';
 import { AuthService } from '../auth/auth.service';
 import { AuthCommand } from './auth.command';
 import { PromptpayCommand } from './promptpay.command';
+import { BaseDiscordCommand } from './discord/base.discord.command';
+import { ShakeCommand } from './discord/shake.command';
 
 @Injectable()
 export class CommandsService {
@@ -23,14 +25,30 @@ export class CommandsService {
     task: TasksCommand,
     ping: PingCommand,
     promptPay: PromptpayCommand,
+    shake: ShakeCommand,
+    discord: BaseDiscordCommand,
     authCmd: AuthCommand,
   ) {
-    this.commands = [hello, promptPay, task, time, ping, authCmd, base];
+    this.commands = [
+      hello,
+      promptPay,
+      task,
+      time,
+      ping,
+      shake,
+      authCmd,
+      discord,
+      base,
+    ];
   }
 
   isCommand(message: Message) {
     return (
-      this.commands.find(c => c.matchInput(message.message)) ||
+      this.commands
+        .filter(
+          e => e.channels === undefined || e.channels.includes(message.channel),
+        )
+        .find(c => c.matchInput(message.message)) ||
       this.compound.isCompounding(message.senderId)
     );
   }
@@ -43,9 +61,13 @@ export class CommandsService {
       const res = this.compound.startCompound(message);
       return res;
     }
-    const handler = this.commands.find(function(command) {
-      return command.matchInput(message.message);
-    });
+    const handler = this.commands
+      .filter(
+        e => e.channels === undefined || e.channels.includes(message.channel),
+      )
+      .find(function(command) {
+        return command.matchInput(message.message);
+      });
     if (handler.requiresAuth) {
       if (await this.auth.isAuthenticated(message.senderId, message.channel)) {
         return handler.handleInput(message);
