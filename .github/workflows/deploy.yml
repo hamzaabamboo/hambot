@@ -7,7 +7,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     env:
-      GIT_SSH_COMMAND: 'ssh -i ~/hambot_keys/github_key'
+      GIT_SSH_COMMAND: ssh -i ${{ secrets.GITHUB_KEY_LOCATION }}
     steps:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
