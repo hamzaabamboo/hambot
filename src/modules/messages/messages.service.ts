@@ -58,6 +58,18 @@ export class MessagesService {
             message.replyToken,
           );
         }
+        if (message.files.length > 0) {
+          return this.lineService.sendReplyMessage(
+            {
+              type: 'text',
+              text:
+                message.message +
+                '\n' +
+                `${message.files[0].name} - ${message.files[0].url}`,
+            },
+            message.replyToken,
+          );
+        }
         return this.lineService
           .sendReplyMessage(
             {
