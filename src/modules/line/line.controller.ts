@@ -7,9 +7,15 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import * as crypto from 'crypto';
-import { TextMessage, WebhookRequestBody } from '@line/bot-sdk';
+import {
+  TextMessage,
+  WebhookRequestBody,
+  FileEventMessage,
+  TextEventMessage,
+} from '@line/bot-sdk';
 import { ConfigService } from '@nestjs/config';
 import { MessagesService } from '../messages/messages.service';
+import { LineService } from './line.service';
 
 @Controller('line')
 export class LineController {
@@ -18,6 +24,7 @@ export class LineController {
   constructor(
     @Inject(forwardRef(() => MessagesService))
     private messageService: MessagesService,
+    private lineService: LineService,
     private config: ConfigService,
   ) {}
   @Post()
@@ -27,25 +34,32 @@ export class LineController {
   ) {
     if (this.getBodySignature(message) !== lineSignature) return;
     Promise.all(
-      message.events.map(evt => {
+      message.events.map(async evt => {
         switch (evt.type) {
           case 'message':
-            const msg = evt.message as TextMessage;
-            if (evt.source.type !== 'user') {
-              if (!this.prefix.test(msg.text)) return;
-              return this.messageService.handleMessage({
-                channel: 'line',
-                senderId: evt.source.userId,
-                message: this.prefix.exec(msg.text)[1],
-                replyToken: evt.replyToken,
-              });
+            const msg = evt.message;
+            switch (evt.message.type) {
+              case 'text':
+                if (evt.source.type !== 'user') {
+                  if (!this.prefix.test((msg as TextEventMessage).text)) return;
+                  return this.messageService.handleMessage({
+                    channel: 'line',
+                    senderId: evt.source.userId,
+                    message: this.prefix.exec(
+                      (msg as TextEventMessage).text,
+                    )[1],
+                    replyToken: evt.replyToken,
+                  });
+                }
+                return this.messageService.handleMessage({
+                  channel: 'line',
+                  senderId: evt.source.userId,
+                  message: (evt.message as TextEventMessage).text,
+                  replyToken: evt.replyToken,
+                });
+              case 'file':
+                const content = await this.lineService.getContent(msg.id);
             }
-            return this.messageService.handleMessage({
-              channel: 'line',
-              senderId: evt.source.userId,
-              message: (evt.message as TextMessage).text,
-              replyToken: evt.replyToken,
-            });
           default:
         }
       }),

@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { HelloCommand } from './hello.command';
 import { BaseCommand } from './command.base';
 import { CommandsService } from './commands.service';
@@ -9,7 +9,7 @@ import { TrelloModule } from '../trello/trello.module';
 import { CompoundService } from './compound.service';
 import { AuthModule } from '../auth/auth.module';
 import { AuthCommand } from './auth.command';
-import { PromptpayCommand } from './promptpay.command';
+import { PromptPayCommand } from './promptpay.command';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from '../logger/logger.module';
 import { BaseDiscordCommand } from './discord/base.discord.command';
@@ -28,7 +28,7 @@ import { DiscordModule } from '../discord/discord.module';
     AuthCommand,
     ShakeCommand,
     BaseDiscordCommand,
-    PromptpayCommand,
+    PromptPayCommand,
   ],
   imports: [
     TrelloModule,

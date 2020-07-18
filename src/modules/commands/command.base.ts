@@ -28,6 +28,7 @@ export class BaseCommand {
     // Do nothing
     return {
       ...message,
+      files: [],
       message: 'Command not found sry :P',
     };
   }

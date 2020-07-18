@@ -1,10 +1,5 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
-import {
-  Message,
-  BaseMessage,
-  LineMessage,
-  DiscordMessage,
-} from './messages.model';
+import { Message, LineMessage, DiscordMessage } from './messages.model';
 import { LineService } from '../line/line.service';
 import { CommandsService } from '../commands/commands.service';
 import { DiscordService } from '../discord/discord.service';
@@ -87,6 +82,10 @@ export class MessagesService {
               attachment: m.image.url,
               name: m.image.name,
             },
+            ...m?.files?.map(m => ({
+              attachment: m.url,
+              name: m.name,
+            })),
           ].filter(e => e),
         });
     }

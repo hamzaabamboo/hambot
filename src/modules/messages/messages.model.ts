@@ -8,6 +8,10 @@ export interface BaseMessage {
     name?: string;
     url: string;
   };
+  files?: {
+    name?: string;
+    url: string;
+  }[];
 }
 export interface LineMessage extends BaseMessage {
   channel: 'line';

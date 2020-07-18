@@ -2,15 +2,21 @@ import { Injectable, Scope } from '@nestjs/common';
 import { Message } from '../messages/messages.model';
 import { BaseCompoundHandler } from './compound.handler.base';
 import { AuthService } from '../auth/auth.service';
+import { FileCommand } from './compound/files.command';
+import { Module } from '@nestjs/core/injector/module';
+import { ModuleRef } from '@nestjs/core';
 
 @Injectable({
   scope: Scope.DEFAULT,
 })
 export class CompoundService {
   private _compoundingData: Map<string, BaseCompoundHandler>;
-  private handlers: typeof BaseCompoundHandler[] = [BaseCompoundHandler];
+  private handlers: typeof BaseCompoundHandler[] = [
+    FileCommand,
+    BaseCompoundHandler,
+  ];
 
-  constructor(private auth: AuthService) {
+  constructor(private auth: AuthService, private moduleRef: ModuleRef) {
     this._compoundingData = new Map<string, BaseCompoundHandler>([]);
   }
   canCompound(message: Message): boolean {
@@ -23,16 +29,20 @@ export class CompoundService {
     });
     if (handler.requiresAuth) {
       if (await this.auth.isAuthenticated(message.senderId, message.channel)) {
-        this._compoundingData.set(message.senderId, new handler());
+        this._compoundingData.set(
+          message.senderId,
+          new handler(this.moduleRef),
+        );
         return this.handleCompound(message);
       } else {
         return {
           ...message,
+          files: [],
           message: 'You cannot use this command',
         };
       }
     }
-    this._compoundingData.set(message.senderId, new handler());
+    this._compoundingData.set(message.senderId, new handler(this.moduleRef));
     return this.handleCompound(message);
   }
 

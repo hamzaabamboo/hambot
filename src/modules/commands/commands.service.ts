@@ -8,7 +8,7 @@ import { TasksCommand } from './tasks.command';
 import { CompoundService } from './compound.service';
 import { AuthService } from '../auth/auth.service';
 import { AuthCommand } from './auth.command';
-import { PromptpayCommand } from './promptpay.command';
+import { PromptPayCommand } from './promptpay.command';
 import { BaseDiscordCommand } from './discord/base.discord.command';
 import { ShakeCommand } from './discord/shake.command';
 
@@ -24,7 +24,7 @@ export class CommandsService {
     time: TimeCommand,
     task: TasksCommand,
     ping: PingCommand,
-    promptPay: PromptpayCommand,
+    promptPay: PromptPayCommand,
     shake: ShakeCommand,
     discord: BaseDiscordCommand,
     authCmd: AuthCommand,
@@ -74,6 +74,7 @@ export class CommandsService {
       } else {
         return {
           ...message,
+          files: [],
           message: 'You cannot use this command',
         };
       }

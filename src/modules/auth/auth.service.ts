@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TrelloService } from '../trello/trello.service';
 import moment = require('moment');
+import { AppLogger } from '../logger/logger';
 
 @Injectable()
 export class AuthService {
@@ -8,7 +9,8 @@ export class AuthService {
   private _userList: any;
   private _authenticating: Map<string, string> = new Map();
 
-  constructor(private trello: TrelloService) {
+  constructor(private trello: TrelloService, private logger: AppLogger) {
+    this.logger.setContext('AuthService');
     this.getAuthenticationData();
   }
 
@@ -32,8 +34,10 @@ export class AuthService {
 
   async isAuthenticated(senderId: string, channel: string): Promise<boolean> {
     if (!this._cache || moment().diff(this._cache.timestamp, 'm') > 2) {
+      this.logger.verbose('Cache empty fetching user data');
       await this.getAuthenticationData();
     }
+    console.log('checkla');
     return this._cache.data.includes(`${channel}: ${senderId}`);
   }
 

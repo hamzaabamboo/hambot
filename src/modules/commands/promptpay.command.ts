@@ -5,7 +5,7 @@ import * as generatePayload from 'promptpay-qr';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class PromptpayCommand extends BaseCommand {
+export class PromptPayCommand extends BaseCommand {
   public command = /(?:pp|promptpay)(?: (\d{9,10})(?: (\d+))?)?/;
 
   constructor(private config: ConfigService) {
@@ -21,7 +21,8 @@ export class PromptpayCommand extends BaseCommand {
     if (id && !isNaN(amount)) {
       return {
         ...message,
-        message: `QRCode for ${id} ${amountS} THB`,
+        files: [],
+        message: `QRCode for ${id} ` + (amountS ? amountS + ' THB' : ''),
         image: {
           url:
             this.config.get('PUBLIC_URL') +
@@ -33,6 +34,7 @@ export class PromptpayCommand extends BaseCommand {
     }
     return {
       ...message,
+      files: [],
       message: 'Usage: <pp|promptpay> <id> <amount>',
     };
   }

@@ -1,5 +1,5 @@
 import { Message } from '../messages/messages.model';
-import { BaseCommand } from './command.base';
+import { ModuleRef } from '@nestjs/core';
 
 export interface CompoundResponse {
   isCompounding: boolean;
@@ -11,7 +11,9 @@ export class BaseCompoundHandler {
   public command = /(.*?)/;
   public endCommand = /^(end)/;
 
-  private messages: Message[] = [];
+  public messages: Message[] = [];
+
+  constructor(moduleRef: ModuleRef) {}
 
   matchStart(input: string): boolean {
     return this.command.test(input);

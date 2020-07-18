@@ -16,4 +16,8 @@ export class LineService {
   ) {
     return this._lineClient.replyMessage(token, message);
   }
+
+  getContent(messageId: string) {
+    return this._lineClient.getMessageContent(messageId);
+  }
 }

@@ -10,6 +10,7 @@ export class BaseDiscordCommand extends BaseCommand {
   async handle(message: Message): Promise<Message> {
     return {
       ...message,
+      files: [],
       message: 'Hello Discord!',
     };
   }

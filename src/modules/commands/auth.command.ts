@@ -14,9 +14,10 @@ export class AuthCommand extends BaseCommand {
   }
 
   async handle(message: Message, command: string, token: string) {
-    if (this.auth.isAuthenticated(message.senderId, message.channel)) {
+    if (await this.auth.isAuthenticated(message.senderId, message.channel)) {
       return {
         ...message,
+        files: [],
         message: 'You are already authenticated',
       };
     }
@@ -25,6 +26,7 @@ export class AuthCommand extends BaseCommand {
         if (!token)
           return {
             ...message,
+            files: [],
             message: 'Please supply token use: auth token <token>',
           };
         if (
@@ -32,11 +34,13 @@ export class AuthCommand extends BaseCommand {
         ) {
           return {
             ...message,
+            files: [],
             message: 'Registration successful',
           };
         } else {
           return {
             ...message,
+            files: [],
             message: 'Invalid Token',
           };
         }
@@ -48,11 +52,13 @@ export class AuthCommand extends BaseCommand {
         );
         return {
           ...message,
+          files: [],
           message: 'Please check token in console and use : auth token <token>',
         };
       default:
         return {
           ...message,
+          files: [],
           message: 'Usage : auth <token/register>',
         };
     }

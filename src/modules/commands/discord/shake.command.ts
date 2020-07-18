@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Message, DiscordMessage } from '../../messages/messages.model';
-import { BaseDiscordCommand } from './base.discord.command';
 import { BaseCommand } from '../command.base';
 import { DiscordService } from 'src/modules/discord/discord.service';
-import { DiscordModule } from 'src/modules/discord/discord.module';
-import { TextChannel, Presence } from 'discord.js';
+import { TextChannel } from 'discord.js';
 import { matchUser } from 'src/modules/discord/discord.utils';
 
-const sleep = duration =>
-  new Promise((resolve, reject) => setTimeout(resolve, duration));
+const sleep = duration => new Promise(resolve => setTimeout(resolve, duration));
 
 @Injectable()
 export class ShakeCommand extends BaseCommand {
@@ -37,6 +34,7 @@ export class ShakeCommand extends BaseCommand {
       case 'list':
         return {
           ...message,
+          files: [],
           message: channels.map(c => `${c.id} - ${c.name}`).join('\n'),
         };
       default:
@@ -44,6 +42,7 @@ export class ShakeCommand extends BaseCommand {
         if (!userId) {
           return {
             ...message,
+            files: [],
             message: `User not found`,
           };
         }
@@ -51,6 +50,7 @@ export class ShakeCommand extends BaseCommand {
         if (!user.voice?.channelID)
           return {
             ...message,
+            files: [],
             message: `${command} is not in a voice channel!`,
           };
         const origin = user.voice.channel;
@@ -66,11 +66,13 @@ export class ShakeCommand extends BaseCommand {
           await user.voice.setChannel(origin, 'you got shaken');
           return {
             ...message,
+            files: [],
             message: `<@!${message.senderId}> shook ${command}`,
           };
         } catch (error) {
           return {
             ...message,
+            files: [],
             message: `I think ${command} escaped or something just went wrong`,
           };
         }

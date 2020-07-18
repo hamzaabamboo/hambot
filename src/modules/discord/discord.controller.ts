@@ -55,17 +55,25 @@ export class DiscordController {
           senderId: message.author.id,
           message: message.content,
           messageChannel: message.channel,
+          files: message.attachments.array().map(m => ({
+            name: m.name,
+            url: m.url,
+          })),
         });
       }
       if (
         message.channel.type === 'text' &&
-        this.prefix.test(message.content)
+        (message.attachments || this.prefix.test(message.content))
       ) {
         this.message.handleMessage({
           channel: 'discord',
           senderId: message.author.id,
           message: this.prefix.exec(message.content)[1],
           messageChannel: message.channel,
+          files: message.attachments.array().map(m => ({
+            name: m.name,
+            url: m.url,
+          })),
         });
       }
     });
