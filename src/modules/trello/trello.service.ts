@@ -27,6 +27,10 @@ export class TrelloService {
   async addCard(listId: string, title: string, description?: string) {
     return await this.client.addCard(title, description, listId);
   }
+
+  async deleteCard(cardId: string) {
+    return await this.client.deleteCard(cardId);
+  }
   async editCard(
     cardId: string,
     title?: string,

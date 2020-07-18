@@ -33,11 +33,10 @@ export class AuthService {
   }
 
   async isAuthenticated(senderId: string, channel: string): Promise<boolean> {
-    if (!this._cache || moment().diff(this._cache.timestamp, 'm') > 2) {
+    if (!this._cache || moment().diff(this._cache.timestamp, 'm') > 10) {
       this.logger.verbose('Cache empty fetching user data');
       await this.getAuthenticationData();
     }
-    console.log('checkla');
     return this._cache.data.includes(`${channel}: ${senderId}`);
   }
 

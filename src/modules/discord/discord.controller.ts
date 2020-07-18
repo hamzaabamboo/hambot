@@ -63,12 +63,15 @@ export class DiscordController {
       }
       if (
         message.channel.type === 'text' &&
-        (message.attachments || this.prefix.test(message.content))
+        (message.attachments.array().length > 0 ||
+          this.prefix.test(message.content))
       ) {
+        const cmd = this.prefix.exec(message.content);
         this.message.handleMessage({
           channel: 'discord',
           senderId: message.author.id,
-          message: this.prefix.exec(message.content)[1],
+          message:
+            cmd && message.attachments.array().length === 0 ? cmd[1] : '',
           messageChannel: message.channel,
           files: message.attachments.array().map(m => ({
             name: m.name,

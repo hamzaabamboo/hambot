@@ -31,7 +31,6 @@ export class FileCommand extends BaseCompoundHandler {
     }
     if (this.messages.length === 0) {
       const params = FileCommand.startCommand.exec(message.message).slice(1);
-      console.log(params);
       return this.handleStart(message, params[0], params[1]);
     }
     if (this.command.test(message.message)) {
@@ -133,7 +132,7 @@ export class FileCommand extends BaseCompoundHandler {
     const res = messages
       .slice(1)
       .flatMap(e => e.files)
-      .map((e, i) => `${i + 1} - ${e.name} : ${e.url}`)
+      .map((e, i) => `${i + 1} - ${e.name}`)
       .join('\n');
     const board = (await this.trello.getBoards()).find(
       b => b.name === 'HamBot',

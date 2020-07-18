@@ -82,10 +82,10 @@ export class MessagesService {
               attachment: m.image.url,
               name: m.image.name,
             },
-            ...m?.files?.map(m => ({
+            ...(m.files?.map(m => ({
               attachment: m.url,
               name: m.name,
-            })),
+            })) ?? []),
           ].filter(e => e),
         });
     }
