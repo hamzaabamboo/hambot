@@ -44,11 +44,12 @@ export class CommandsService {
 
   isCommand(message: Message) {
     return (
-      this.commands
+      (this.commands
         .filter(
           e => e.channels === undefined || e.channels.includes(message.channel),
         )
-        .find(c => c.matchInput(message.message)) ||
+        .find(c => c.matchInput(message.message)) &&
+        message.message !== '') ||
       this.compound.isCompounding(message.senderId)
     );
   }

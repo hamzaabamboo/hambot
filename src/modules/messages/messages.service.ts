@@ -25,11 +25,7 @@ export class MessagesService {
     if (this.commandService.isCommand(message)) {
       reply = await this.commandService.handleCommand(message);
     } else {
-      reply = {
-        channel: message.channel,
-        senderId: message.senderId,
-        message: 'Idk what to do sry',
-      };
+      return;
     }
     switch (message.channel) {
       case 'line':
