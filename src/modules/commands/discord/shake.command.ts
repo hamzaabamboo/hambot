@@ -41,6 +41,12 @@ export class ShakeCommand extends BaseCommand {
         };
       default:
         const userId = matchUser(command);
+        if (!userId) {
+          return {
+            ...message,
+            message: `User not found`,
+          };
+        }
         const user = await guild.members.fetch(userId);
         if (!user.voice?.channelID)
           return {
@@ -60,7 +66,7 @@ export class ShakeCommand extends BaseCommand {
           await user.voice.setChannel(origin, 'you got shaken');
           return {
             ...message,
-            message: `Shaked ${command}`,
+            message: `<@!${message.senderId}> shook ${command}`,
           };
         } catch (error) {
           return {
