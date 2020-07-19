@@ -17,6 +17,7 @@ import { ShakeCommand } from './discord/shake.command';
 import { DiscordModule } from '../discord/discord.module';
 import { YoutubeCommand } from './discord/youtube.command';
 import { AudioModule } from '../audio/audio.module';
+import { StreamCommand } from './discord/stream.command';
 
 @Module({
   providers: [
@@ -32,6 +33,7 @@ import { AudioModule } from '../audio/audio.module';
     BaseDiscordCommand,
     PromptPayCommand,
     YoutubeCommand,
+    StreamCommand,
   ],
   imports: [
     TrelloModule,

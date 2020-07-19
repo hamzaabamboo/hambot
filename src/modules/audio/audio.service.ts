@@ -23,7 +23,11 @@ export class AudioService implements BeforeApplicationShutdown {
   }
 
   private _volumes = new Map<string, number>();
-  async playAudio(message: Message, stream: Readable, volume?: number) {
+  async playAudio(
+    message: Message,
+    stream: Readable | string,
+    volume?: number,
+  ) {
     switch (message.channel) {
       case 'discord':
         const guild = ((message as DiscordMessage)
