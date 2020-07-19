@@ -4,6 +4,8 @@ WORKDIR /app
 
 RUN yarn global add @nestjs/cli
 
+RUN sudo apt install ffmpeg
+
 COPY package.json yarn.lock ./
 
 RUN yarn
