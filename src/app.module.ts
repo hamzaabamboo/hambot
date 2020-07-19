@@ -8,6 +8,7 @@ import { LineModule } from './modules/line/line.module';
 import { DiscordModule } from './modules/discord/discord.module';
 import { QrcodeModule } from './modules/qrcode/qrcode.module';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
+import { AudioModule } from './modules/audio/audio.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SchedulerModule } from './modules/scheduler/scheduler.module';
     ConfigModule.forRoot({
       expandVariables: true,
     }),
+    AudioModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],

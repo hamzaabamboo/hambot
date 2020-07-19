@@ -15,6 +15,8 @@ import { LoggerModule } from '../logger/logger.module';
 import { BaseDiscordCommand } from './discord/base.discord.command';
 import { ShakeCommand } from './discord/shake.command';
 import { DiscordModule } from '../discord/discord.module';
+import { YoutubeCommand } from './discord/youtube.command';
+import { AudioModule } from '../audio/audio.module';
 
 @Module({
   providers: [
@@ -29,9 +31,11 @@ import { DiscordModule } from '../discord/discord.module';
     ShakeCommand,
     BaseDiscordCommand,
     PromptPayCommand,
+    YoutubeCommand,
   ],
   imports: [
     TrelloModule,
+    AudioModule,
     AuthModule,
     ConfigModule,
     LoggerModule,

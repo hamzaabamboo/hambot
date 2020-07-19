@@ -4,8 +4,6 @@ import {
   CompoundResponse,
 } from '../compound.handler.base';
 import { TrelloService } from 'src/modules/trello/trello.service';
-import { Inject, forwardRef, Injectable } from '@nestjs/common';
-import { Module } from '@nestjs/core/injector/module';
 import { ModuleRef } from '@nestjs/core';
 
 export class FileCommand extends BaseCompoundHandler {
