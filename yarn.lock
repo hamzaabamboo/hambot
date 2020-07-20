@@ -736,9 +736,9 @@
   integrity sha512-Az3QsOt1U/K1pbCQ0TXGELTuTkPLOiFIQf3ILzbOyo0FqgV9SxRnxbxM5QlAveERZMHpZY+7u3Jz2tKyl+yg6g==
 
 "@types/qr-image@^3.2.2":
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/@types/qr-image/-/qr-image-3.2.2.tgz#963346a18f0203f5a4cae767d7cdb78bb3601895"
-  integrity sha512-15nILh26cosGRYs5i9gemowO263cAKdIuLR1bwn2oKHL3vxqKyCoT0wXk41Lg6T3eIwo0go1jaGPZbejwMocZA==
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/@types/qr-image/-/qr-image-3.2.3.tgz#10ff469ed3bd5fdcfed1b3dfd8f549f401f47dfa"
+  integrity sha512-vM444NoJ+S8VMgdggUlBtK7Er6MJGdO97HsOmgDUsERL6Eiv9+Pjc3C0rkVAPW/AYnKDPLfCD9vmQlb0HRPdWw==
   dependencies:
     "@types/node" "*"
 
@@ -1804,9 +1804,9 @@ chokidar@^2.1.8:
     fsevents "^1.2.7"
 
 chokidar@^3.4.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.4.0.tgz#b30611423ce376357c765b9b8f904b9fba3c0be8"
-  integrity sha512-aXAaho2VJtisB/1fg1+3nlLJqGOuewTzQpd/Tz0yTg2R0e4IGtshYvtjowyEumcBv2z+y4+kc75Mz7j5xJskcQ==
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.4.1.tgz#e905bdecf10eaa0a0b1db0c664481cc4cbc22ba1"
+  integrity sha512-TQTJyr2stihpC4Sya9hs2Xh+O2wf+igjL36Y75xx2WdHuiICcn/XJza46Jwt0eT5hVpQOzo3FpY3cj3RVYLX0g==
   dependencies:
     anymatch "~3.1.1"
     braces "~3.0.2"
@@ -1893,9 +1893,9 @@ cli-progress@^3.8.2:
     string-width "^4.2.0"
 
 cli-spinners@^2.2.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/cli-spinners/-/cli-spinners-2.3.0.tgz#0632239a4b5aa4c958610142c34bb7a651fc8df5"
-  integrity sha512-Xs2Hf2nzrvJMFKimOR7YR0QwZ8fc0u98kdtwN1eNAZzNQgH3vK2pXzff6GJtKh7S5hoJ87ECiAiZFS2fb5Ii2w==
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/cli-spinners/-/cli-spinners-2.4.0.tgz#c6256db216b878cfba4720e719cec7cf72685d7f"
+  integrity sha512-sJAofoarcm76ZGpuooaO0eDy8saEy+YoZBLjC4h8srt4jeBnkYeOgqxgsJQTpyt2LjI5PTfLJHSL+41Yu4fEJA==
 
 cli-table3@0.5.1:
   version "0.5.1"
@@ -3434,9 +3434,9 @@ has@^1.0.3:
     function-bind "^1.1.1"
 
 hash-arg@^1.0.1:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/hash-arg/-/hash-arg-1.0.2.tgz#83f52e2fb8c3ac50328a6326b9f63931fcc3e3e2"
-  integrity sha512-BXQmc57whO3/cff50F5G4WB0TxuTIHbMQK+GkleDia1mxmPdQxjp6ookfepGc0EXoL9NtxZRG1Xp1FXnyfmPBQ==
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/hash-arg/-/hash-arg-1.0.3.tgz#6364510a81a597d3559c17172bce5d7410c8aa38"
+  integrity sha512-BUvgqsnHlEupirIUo/pyaeodQ4gEP4b5aC/HgOvQcy7MMOhXrQjImcM+jupDNwBZDLxXpD04CufZQN32g1LdfQ==
 
 hash-base@^3.0.0:
   version "3.1.0"
@@ -7076,9 +7076,9 @@ typedarray@^0.0.6:
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
 typescript@^3.6.4, typescript@^3.7.4:
-  version "3.9.6"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.6.tgz#8f3e0198a34c3ae17091b35571d3afd31999365a"
-  integrity sha512-Pspx3oKAPJtjNwE92YS05HQoY7z2SFyOpHo9MqJor3BXAGNaPUs83CuVp9VISFkSjyRfiTpmKuAYGJB7S7hOxw==
+  version "3.9.7"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.7.tgz#98d600a5ebdc38f40cb277522f12dc800e9e25fa"
+  integrity sha512-BLbiRkiBzAwsjut4x/dsibSTB6yWpwT5qWmC2OfuCg3GgVQCSgMs4vEctYPhsaGtd0AeuuHMkjZ2h2WG8MSzRw==
 
 union-value@^1.0.0:
   version "1.0.1"
