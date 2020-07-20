@@ -28,6 +28,9 @@ export class AudioService implements BeforeApplicationShutdown {
       case 'discord':
         const guild = ((message as DiscordMessage)
           .messageChannel as TextChannel).guild;
+        if (!guild) {
+          throw new Error('Not in a guild');
+        }
         if (this._leaveTimer.has(`discord: ${guild.id}`)) {
           clearTimeout(this._leaveTimer.get(`discord: ${guild.id}`));
         }
