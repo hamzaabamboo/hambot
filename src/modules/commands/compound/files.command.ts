@@ -1,10 +1,18 @@
-import { Message } from '../../messages/messages.model';
+import {
+  Message,
+  FileWithStream,
+  FileWithUrl,
+} from '../../messages/messages.model';
 import {
   BaseCompoundHandler,
   CompoundResponse,
 } from '../compound.handler.base';
 import { TrelloService } from 'src/modules/trello/trello.service';
 import { ModuleRef } from '@nestjs/core';
+import * as mkdirp from 'mkdirp';
+import { createWriteStream } from 'fs';
+import { ConfigService } from '@nestjs/config';
+import path = require('path');
 
 export class FileCommand extends BaseCompoundHandler {
   public static startCommand = /^files?(?: (list|get|add)(?: (\d+))?)?/;
@@ -13,11 +21,13 @@ export class FileCommand extends BaseCompoundHandler {
   public endCommand = /^(end)/;
 
   private trello: TrelloService;
+  private config: ConfigService;
 
   private _files: { name: string; url: string }[];
-  constructor(private moduleRef: ModuleRef) {
+  constructor(moduleRef: ModuleRef) {
     super(moduleRef);
     this.trello = moduleRef.get(TrelloService, { strict: false });
+    this.config = moduleRef.get(ConfigService, { strict: false });
   }
   matchStart(input: string): boolean {
     return this.command.test(input);
@@ -112,26 +122,58 @@ export class FileCommand extends BaseCompoundHandler {
     }
   }
 
-  handleMessages(msg: Message, ...params: string[]): CompoundResponse {
+  handleMessages(msg: Message): CompoundResponse {
     this.messages.push(msg);
-    return {
-      isCompounding: true,
-      message: {
-        ...msg,
-        files: [],
-        message: "File added, type 'end' to stop",
-      },
-    };
+    if (msg.files) {
+      return {
+        isCompounding: true,
+        message: {
+          ...msg,
+          files: [],
+          message: "File added, type 'end' to stop",
+        },
+      };
+    } else {
+      return {
+        isCompounding: true,
+        message: {
+          ...msg,
+          files: [],
+          message: "Not a valid file, please try again or type 'end' to stop",
+        },
+      };
+    }
   }
 
   async handleCompound(messages: Message[]): Promise<CompoundResponse> {
     // Do nothing
     const { senderId, channel } = messages[0];
-    const res = messages
-      .slice(1)
-      .flatMap(e => e.files)
-      .map((e, i) => `${i + 1} - ${e.name}`)
-      .join('\n');
+    const tmpPath = path.join(__dirname, '../../file/tmp');
+    await mkdirp(tmpPath);
+    const files = await Promise.all(
+      messages
+        .slice(1)
+        .filter(e => e.files)
+        .flatMap(e => e.files)
+        .map(async f => {
+          if ((f as FileWithStream).stream) {
+            const url = path.join(tmpPath, f.name);
+            await new Promise((resolve, reject) => {
+              (f as FileWithStream).stream
+                .pipe(createWriteStream(url))
+                .on('finish', resolve)
+                .on('error', reject);
+            });
+            return {
+              name: f.name,
+              url: this.config.get('PUBLIC_URL') + 'files/' + f.name,
+            };
+          } else {
+            return f as FileWithUrl;
+          }
+        }),
+    );
+    const msg = files.map((e, i) => `${i + 1} - ${e.name}`).join('\n');
     const board = (await this.trello.getBoards()).find(
       b => b.name === 'HamBot',
     );
@@ -139,17 +181,14 @@ export class FileCommand extends BaseCompoundHandler {
       l => l.name === 'files',
     );
     await Promise.all(
-      messages
-        .slice(1)
-        .flatMap(e => e.files)
-        .map(f => this.trello.addCard(list.id, f.name, f.url)),
+      files.map(f => this.trello.addCard(list.id, f.name, f.url)),
     );
     return {
       isCompounding: false,
       message: {
         senderId,
         channel,
-        message: res === '' ? 'No file received' : 'Added\n' + res,
+        message: msg === '' ? 'No file received' : 'Added\n' + msg,
       },
     };
   }

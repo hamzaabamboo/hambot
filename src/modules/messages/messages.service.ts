@@ -1,5 +1,10 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
-import { Message, LineMessage, DiscordMessage } from './messages.model';
+import {
+  Message,
+  LineMessage,
+  DiscordMessage,
+  FileWithUrl,
+} from './messages.model';
 import { LineService } from '../line/line.service';
 import { CommandsService } from '../commands/commands.service';
 import { DiscordService } from '../discord/discord.service';
@@ -16,7 +21,6 @@ export class MessagesService {
     private logger: AppLogger,
   ) {
     this.logger.setContext('MessageService');
-    // this.lineService = this.moduleRef.get(LineService);
   }
 
   async handleMessage(message: Message) {
@@ -58,14 +62,13 @@ export class MessagesService {
             message.replyToken,
           );
         }
-        if (message.files.length > 0) {
+        const files = message.files as FileWithUrl[];
+        if (files?.length > 0) {
           return this.lineService.sendReplyMessage(
             {
               type: 'text',
               text:
-                message.message +
-                '\n' +
-                `${message.files[0].name} - ${message.files[0].url}`,
+                message.message + '\n' + `${files[0].name} - ${files[0].url}`,
             },
             message.replyToken,
           );
@@ -91,7 +94,7 @@ export class MessagesService {
               name: m.image.name,
             },
             ...(m.files?.map(m => ({
-              attachment: m.url,
+              attachment: (m as FileWithUrl).url,
               name: m.name,
             })) ?? []),
           ].filter(e => e),

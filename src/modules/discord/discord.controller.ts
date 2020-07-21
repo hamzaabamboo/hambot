@@ -1,9 +1,7 @@
 import {
   Controller,
-  LoggerService,
   Get,
   Query,
-  HttpStatus,
   HttpException,
   Inject,
   forwardRef,
@@ -19,7 +17,7 @@ export class DiscordController {
   public prefix = /^hamB (.*)$/;
   private isListening = false;
   private stopToken: string;
-  //   private logger: LoggerService
+
   constructor(
     config: ConfigService,
     service: DiscordService,
@@ -44,7 +42,6 @@ export class DiscordController {
           type: 'CUSTOM_STATUS',
         },
       });
-      //   logger.debug('Discord connected');
     });
     this.client.on('message', message => {
       if (message.author.id === this.client.user.id || message.author.bot)

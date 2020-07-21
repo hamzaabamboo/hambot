@@ -3,6 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { AppLogger } from '../logger/logger';
 import { TrelloService } from '../trello/trello.service';
+import * as path from 'path';
+import * as mkdirp from 'mkdirp';
+import * as rimraf from 'rimraf';
 
 @Injectable()
 export class FileSchedule {
@@ -21,6 +24,9 @@ export class FileSchedule {
     );
     const cards = await this.trello.getCards(list.id);
     await Promise.all(cards.map(c => this.trello.deleteCard(c.id)));
+    const tmpPath = path.join(__dirname, '../file/tmp');
+    await mkdirp(tmpPath);
+    await new Promise(resolve => rimraf(tmpPath, resolve));
     this.logger.debug(`Removed ${cards.length} files`);
   }
 }

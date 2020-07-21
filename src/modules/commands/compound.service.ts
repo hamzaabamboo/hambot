@@ -3,7 +3,6 @@ import { Message } from '../messages/messages.model';
 import { BaseCompoundHandler } from './compound.handler.base';
 import { AuthService } from '../auth/auth.service';
 import { FileCommand } from './compound/files.command';
-import { Module } from '@nestjs/core/injector/module';
 import { ModuleRef } from '@nestjs/core';
 
 @Injectable({

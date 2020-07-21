@@ -13,7 +13,8 @@ export class BaseCompoundHandler {
 
   public messages: Message[] = [];
 
-  constructor(moduleRef: ModuleRef) {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  constructor(private moduleRef: ModuleRef) {}
 
   matchStart(input: string): boolean {
     return this.command.test(input);

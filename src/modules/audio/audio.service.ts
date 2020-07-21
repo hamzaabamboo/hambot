@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  OnApplicationShutdown,
-  BeforeApplicationShutdown,
-  OnModuleDestroy,
-} from '@nestjs/common';
+import { Injectable, BeforeApplicationShutdown } from '@nestjs/common';
 import { Readable } from 'stream';
 import { DiscordMessage, Message } from '../messages/messages.model';
 import { TextChannel, VoiceChannel, StreamDispatcher } from 'discord.js';
@@ -17,7 +12,7 @@ export class AudioService implements BeforeApplicationShutdown {
   private _channels = new Map<string, any>();
 
   async beforeApplicationShutdown() {
-    [...this._channels.entries()].forEach(([k, c]) => {
+    [...this._channels.entries()].forEach(([, c]) => {
       (c as VoiceChannel).leave();
     });
   }
@@ -34,6 +29,9 @@ export class AudioService implements BeforeApplicationShutdown {
       case 'discord':
         const guild = ((message as DiscordMessage)
           .messageChannel as TextChannel).guild;
+        if (!guild) {
+          throw new Error('Not in a guild');
+        }
         if (this._leaveTimer.has(`discord: ${guild.id}`)) {
           clearTimeout(this._leaveTimer.get(`discord: ${guild.id}`));
         }
