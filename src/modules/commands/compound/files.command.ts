@@ -124,24 +124,27 @@ export class FileCommand extends BaseCompoundHandler {
 
   handleMessages(msg: Message): CompoundResponse {
     this.messages.push(msg);
-    return {
-      isCompounding: true,
-      message: {
-        ...msg,
-        files: [],
-        message: "File added, type 'end' to stop",
-      },
-    };
+    if (msg.files) {
+      return {
+        isCompounding: true,
+        message: {
+          ...msg,
+          files: [],
+          message: "File added, type 'end' to stop",
+        },
+      };
+    }
   }
 
   async handleCompound(messages: Message[]): Promise<CompoundResponse> {
     // Do nothing
     const { senderId, channel } = messages[0];
-    const tmpPath = path.join(__dirname, 'tmp');
+    const tmpPath = path.join(__dirname, '../../file/tmp');
     await mkdirp(tmpPath);
     const files = await Promise.all(
       messages
         .slice(1)
+        .filter(e => e.files)
         .flatMap(e => e.files)
         .map(async f => {
           if ((f as FileWithStream).stream) {
@@ -168,7 +171,6 @@ export class FileCommand extends BaseCompoundHandler {
     const list = (await this.trello.getLists(board.id)).find(
       l => l.name === 'files',
     );
-    console.log(files);
     await Promise.all(
       files.map(f => this.trello.addCard(list.id, f.name, f.url)),
     );
