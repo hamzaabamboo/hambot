@@ -133,6 +133,15 @@ export class FileCommand extends BaseCompoundHandler {
           message: "File added, type 'end' to stop",
         },
       };
+    } else {
+      return {
+        isCompounding: true,
+        message: {
+          ...msg,
+          files: [],
+          message: "Not a valid file, please try again or type 'end' to stop",
+        },
+      };
     }
   }
 
