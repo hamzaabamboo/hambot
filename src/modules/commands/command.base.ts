@@ -29,7 +29,7 @@ export class BaseCommand {
     return {
       ...message,
       files: [],
-      message: 'Command not found sry :P',
+      message: 'Command not found sry :P' + params.map(() => '').join(''),
     };
   }
 }

@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  OnApplicationShutdown,
-  BeforeApplicationShutdown,
-  OnModuleDestroy,
-} from '@nestjs/common';
+import { Injectable, BeforeApplicationShutdown } from '@nestjs/common';
 import { Readable } from 'stream';
 import { DiscordMessage, Message } from '../messages/messages.model';
 import { TextChannel, VoiceChannel, StreamDispatcher } from 'discord.js';
@@ -17,7 +12,7 @@ export class AudioService implements BeforeApplicationShutdown {
   private _channels = new Map<string, any>();
 
   async beforeApplicationShutdown() {
-    [...this._channels.entries()].forEach(([k, c]) => {
+    [...this._channels.entries()].forEach(([, c]) => {
       (c as VoiceChannel).leave();
     });
   }

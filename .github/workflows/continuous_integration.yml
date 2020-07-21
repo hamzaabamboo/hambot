@@ -1,7 +1,8 @@
 name: Continuous Integration
 on: push
 jobs:
-  build:
+  check:
+    name: Check Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

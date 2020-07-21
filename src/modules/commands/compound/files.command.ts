@@ -24,7 +24,7 @@ export class FileCommand extends BaseCompoundHandler {
   private config: ConfigService;
 
   private _files: { name: string; url: string }[];
-  constructor(private moduleRef: ModuleRef) {
+  constructor(moduleRef: ModuleRef) {
     super(moduleRef);
     this.trello = moduleRef.get(TrelloService, { strict: false });
     this.config = moduleRef.get(ConfigService, { strict: false });
@@ -122,7 +122,7 @@ export class FileCommand extends BaseCompoundHandler {
     }
   }
 
-  handleMessages(msg: Message, ...params: string[]): CompoundResponse {
+  handleMessages(msg: Message): CompoundResponse {
     this.messages.push(msg);
     return {
       isCompounding: true,
