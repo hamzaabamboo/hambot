@@ -9,6 +9,7 @@ import { DiscordModule } from './modules/discord/discord.module';
 import { QrcodeModule } from './modules/qrcode/qrcode.module';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { AudioModule } from './modules/audio/audio.module';
+import { FileModule } from './modules/file/file.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AudioModule } from './modules/audio/audio.module';
     LineModule,
     QrcodeModule,
     SchedulerModule,
+    FileModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       expandVariables: true,

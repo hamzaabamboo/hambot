@@ -8,10 +8,10 @@ import {
 } from '@nestjs/common';
 import * as crypto from 'crypto';
 import {
-  TextMessage,
   WebhookRequestBody,
   FileEventMessage,
   TextEventMessage,
+  ImageEventMessage,
 } from '@line/bot-sdk';
 import { ConfigService } from '@nestjs/config';
 import { MessagesService } from '../messages/messages.service';
@@ -57,8 +57,54 @@ export class LineController {
                   message: (evt.message as TextEventMessage).text,
                   replyToken: evt.replyToken,
                 });
+              case 'image':
+                const provider = (msg as ImageEventMessage).contentProvider;
+                if (provider.type === 'external') {
+                  return this.messageService.handleMessage({
+                    channel: 'line',
+                    senderId: evt.source.userId,
+                    message: '',
+                    files: [
+                      {
+                        name:
+                          provider.originalContentUrl
+                            .split('/')
+                            .slice(-1)?.[0] ??
+                          `image-${new Date().valueOf()}.png`,
+                        url: provider.originalContentUrl,
+                      },
+                    ],
+                    replyToken: evt.replyToken,
+                  });
+                } else {
+                  const content = await this.lineService.getContent(msg.id);
+                  return this.messageService.handleMessage({
+                    channel: 'line',
+                    senderId: evt.source.userId,
+                    message: '',
+                    files: [
+                      {
+                        name: `image-${new Date().valueOf()}.png`,
+                        stream: content,
+                      },
+                    ],
+                    replyToken: evt.replyToken,
+                  });
+                }
               case 'file':
                 const content = await this.lineService.getContent(msg.id);
+                return this.messageService.handleMessage({
+                  channel: 'line',
+                  senderId: evt.source.userId,
+                  message: '',
+                  files: [
+                    {
+                      name: (msg as FileEventMessage).fileName,
+                      stream: content,
+                    },
+                  ],
+                  replyToken: evt.replyToken,
+                });
             }
           default:
         }

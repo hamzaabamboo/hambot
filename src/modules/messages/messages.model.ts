@@ -1,5 +1,15 @@
 import { Channel } from 'discord.js';
+import { Readable } from 'stream';
 
+export interface FileWithUrl {
+  name?: string;
+  url: string;
+}
+export interface FileWithStream {
+  name?: string;
+  stream: Readable;
+}
+export type File = FileWithStream | FileWithUrl;
 export interface BaseMessage {
   channel: string;
   senderId: string;
@@ -8,10 +18,7 @@ export interface BaseMessage {
     name?: string;
     url: string;
   };
-  files?: {
-    name?: string;
-    url: string;
-  }[];
+  files?: File[];
 }
 export interface LineMessage extends BaseMessage {
   channel: 'line';
