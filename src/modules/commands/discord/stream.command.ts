@@ -1,35 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { Message, DiscordMessage } from '../../messages/messages.model';
 import { BaseCommand } from '../command.base';
-import { DiscordService } from 'src/modules/discord/discord.service';
-import * as ytdl from 'ytdl-core';
 import { AudioService } from 'src/modules/audio/audio.service';
 import { StreamService } from 'src/modules/audio/stream/stream.service';
-import { async } from 'rxjs';
-import { DiscordModule } from 'src/modules/discord/discord.module';
 import { VoiceChannel } from 'discord.js';
 
-const sleep = duration => new Promise(resolve => setTimeout(resolve, duration));
 @Injectable()
 export class StreamCommand extends BaseCommand {
   public command = /^stream(?: (start|stop))?/i;
   public requiresAuth = false;
   public platforms = ['discord'];
 
-  constructor(
-    private discord: DiscordService,
-    private audio: AudioService,
-    private stream: StreamService,
-  ) {
+  constructor(private audio: AudioService, private stream: StreamService) {
     super();
   }
 
-  async handle(
-    message: DiscordMessage,
-    command: string,
-    url: string,
-    volume?: string,
-  ): Promise<Message> {
+  async handle(message: DiscordMessage, command: string): Promise<Message> {
     switch (command) {
       case 'start':
         try {

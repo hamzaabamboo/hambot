@@ -1,24 +1,13 @@
-import { Controller, Injectable, Scope } from '@nestjs/common';
-import { createSimpleServer, createServer } from '@mediafish/rtmp-server';
+import { Injectable, Scope } from '@nestjs/common';
+import { createServer } from '@mediafish/rtmp-server';
 import { writer } from '@mediafish/buffer-operator';
-import { print, writeData, type } from '@mediafish/flv';
+import { writeData, type } from '@mediafish/flv';
 import { AppLogger } from 'src/modules/logger/logger';
-import { Readable, Writable, Transform } from 'stream';
-import path = require('path');
+import { Readable, Transform } from 'stream';
 import { generateRandomKey } from 'src/utils';
 import { Server } from 'net';
 
 const { FLVFile, FLVHeader, FLVTag } = type;
-
-class Terminator extends Writable {
-  constructor() {
-    super({ objectMode: true });
-  }
-
-  _write(chunk, encoding, cb) {
-    setImmediate(cb);
-  }
-}
 
 class AudioExtractor extends Transform {
   header: typeof FLVHeader;
@@ -112,10 +101,8 @@ export class StreamService {
     });
   }
 
-  async serverConnected() {}
-
   stopServer() {
-    this.server?.server.close();
+    (this.server?.server as Server).close();
     this.readable?.destroy();
     this.logger.debug('Stopped RTMP server');
   }

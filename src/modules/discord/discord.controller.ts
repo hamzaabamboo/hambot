@@ -11,7 +11,6 @@ import { ConfigService } from '@nestjs/config';
 import { MessagesService } from '../messages/messages.service';
 import { DiscordService } from './discord.service';
 import { AppLogger } from '../logger/logger';
-import { generate } from 'rxjs';
 import { generateRandomKey } from 'src/utils';
 @Controller('discord')
 export class DiscordController {
