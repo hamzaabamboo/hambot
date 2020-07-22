@@ -4,13 +4,9 @@ import { writer } from '@mediafish/buffer-operator';
 import { print, writeData, type } from '@mediafish/flv';
 import { AppLogger } from 'src/modules/logger/logger';
 import { Readable, Writable, Transform } from 'stream';
-import { createWriteStream, writeFile, fstat } from 'fs';
-import * as NodeMediaServer from 'node-media-server';
 import path = require('path');
-import { createVerify } from 'crypto';
-import { callbackify } from 'util';
+import { generateRandomKey } from 'src/utils';
 import { Server } from 'net';
-import { EventEmitter } from 'events';
 
 const { FLVFile, FLVHeader, FLVTag } = type;
 
@@ -88,15 +84,39 @@ export class StreamService {
   constructor(private logger: AppLogger) {
     this.logger.setContext('RTMPServer');
   }
-  startServer() {
-    this.logger.debug('Started RTMP server');
-    this.server = createSimpleServer('/stream');
-    this.readable = this.server.pipe(new AudioExtractor());
+  async startServer(): Promise<string> {
+    this.server = createServer({ port: 19350 });
+    const key = generateRandomKey();
+    this.logger.debug('Started RTMP server for key ' + key);
+    return key;
   }
 
+  async listenToStream(key: string) {
+    await new Promise((resolve, reject) => {
+      this.server
+        .once('/live', conn => {
+          conn
+            .once(key, (stream: Readable) => {
+              this.readable = stream.pipe(new AudioExtractor());
+              resolve();
+            })
+            .on('error', e => {
+              this.stopServer();
+              reject(e);
+            });
+        })
+        .on('error', e => {
+          this.stopServer();
+          reject(e);
+        });
+    });
+  }
+
+  async serverConnected() {}
+
   stopServer() {
-    (this.server as Readable).destroy();
-    this.readable.destroy();
+    this.server?.server.close();
+    this.readable?.destroy();
     this.logger.debug('Stopped RTMP server');
   }
   get stream(): Readable {

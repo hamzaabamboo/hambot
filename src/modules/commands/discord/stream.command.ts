@@ -7,6 +7,7 @@ import { AudioService } from 'src/modules/audio/audio.service';
 import { StreamService } from 'src/modules/audio/stream/stream.service';
 import { async } from 'rxjs';
 import { DiscordModule } from 'src/modules/discord/discord.module';
+import { VoiceChannel } from 'discord.js';
 
 const sleep = duration => new Promise(resolve => setTimeout(resolve, duration));
 @Injectable()
@@ -23,19 +24,6 @@ export class StreamCommand extends BaseCommand {
     super();
   }
 
-  onReadable(message: DiscordMessage) {
-    return () => {
-      const f = async () => {
-        this.stream.stream.removeListener('readable', this.onReadable);
-      };
-      f();
-    };
-  }
-  onClose(message: DiscordMessage) {
-    return () => {
-      this.audio.stopPlaying(message);
-    };
-  }
   async handle(
     message: DiscordMessage,
     command: string,
@@ -45,25 +33,34 @@ export class StreamCommand extends BaseCommand {
     switch (command) {
       case 'start':
         try {
-          this.stream.startServer();
-          // this.stream.stream.on('readable', this.onReadable(message));
-          const player = await this.audio.playAudio(
-            message,
-            this.stream.stream,
-            1,
-            6,
-            64,
-          );
-          // player.pause();
-          // await sleep(5000);
-          // player.resume();
-          this.stream.stream.on('close', this.onClose(message));
+          const key = await this.stream.startServer();
+          if (message.channel === 'discord') {
+            const guild = (message.messageChannel as VoiceChannel).guild;
+            if (!guild) break;
+            const dm = await (
+              await guild.members.fetch(message.senderId)
+            ).createDM();
+            dm.send({ content: 'Your stream key is ' + key });
+          }
+          await this.stream.listenToStream(key);
+          await this.audio.playAudio(message, this.stream.stream, 1, 6, 64);
+          this.stream.stream.on('close', () => {
+            this.stream.stopServer();
+            this.audio.stopPlaying(message);
+          });
           return {
             ...message,
             files: [],
             message: `Streaming Sound`,
           };
         } catch (e) {
+          if (e.message === 'PLAYING') {
+            return {
+              ...message,
+              files: [],
+              message: `Something is playing, we don't have queue. So either stop or wait lul`,
+            };
+          }
           return {
             ...message,
             files: [],

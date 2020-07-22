@@ -11,6 +11,8 @@ import { ConfigService } from '@nestjs/config';
 import { MessagesService } from '../messages/messages.service';
 import { DiscordService } from './discord.service';
 import { AppLogger } from '../logger/logger';
+import { generate } from 'rxjs';
+import { generateRandomKey } from 'src/utils';
 @Controller('discord')
 export class DiscordController {
   private client: Client;
@@ -82,7 +84,7 @@ export class DiscordController {
   @Get('/activate')
   toggle(@Query('token') token: string) {
     if (!token || !this.stopToken) {
-      this.stopToken = Math.floor(Math.random() * 1e15).toString(16);
+      this.stopToken = generateRandomKey();
       this.logger.verbose('Stop token: ' + this.stopToken);
       return {
         message: 'Check token in console to stop',
