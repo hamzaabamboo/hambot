@@ -38,7 +38,8 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
     "trello": "^0.10.0",
-    "ytdl": "^1.3.3"
+    "ytdl": "^1.3.3",
+    "ytsr": "^0.1.16"
   },
   "devDependencies": {
     "@nestjs/cli": "^6.13.2",

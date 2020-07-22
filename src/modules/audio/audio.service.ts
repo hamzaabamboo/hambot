@@ -29,6 +29,9 @@ export class AudioService implements BeforeApplicationShutdown {
         if (this._leaveTimer.has(`discord: ${guild.id}`)) {
           clearTimeout(this._leaveTimer.get(`discord: ${guild.id}`));
         }
+        if (this._audioConnections.get(`discord: ${guild.id}`)) {
+          throw new Error('PLAYING');
+        }
         const vc = (
           await guild.members.fetch((message as DiscordMessage).senderId)
         ).voice.channelID;
