@@ -13,6 +13,7 @@ import { BaseDiscordCommand } from './discord/base.discord.command';
 import { ShakeCommand } from './discord/shake.command';
 import { YoutubeCommand } from './discord/youtube.command';
 import { StreamCommand } from './discord/stream.command';
+import { ActivateCommand } from './activate.command';
 
 @Injectable()
 export class CommandsService {
@@ -29,6 +30,7 @@ export class CommandsService {
     promptPay: PromptPayCommand,
     shake: ShakeCommand,
     discord: BaseDiscordCommand,
+    activate: ActivateCommand,
     youtube: YoutubeCommand,
     stream: StreamCommand,
     authCmd: AuthCommand,
@@ -41,6 +43,7 @@ export class CommandsService {
       ping,
       shake,
       authCmd,
+      activate,
       youtube,
       stream,
       discord,

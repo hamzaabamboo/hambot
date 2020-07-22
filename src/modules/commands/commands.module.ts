@@ -18,6 +18,7 @@ import { DiscordModule } from '../discord/discord.module';
 import { YoutubeCommand } from './discord/youtube.command';
 import { AudioModule } from '../audio/audio.module';
 import { StreamCommand } from './discord/stream.command';
+import { ActivateCommand } from './activate.command';
 
 @Module({
   providers: [
@@ -29,6 +30,7 @@ import { StreamCommand } from './discord/stream.command';
     TimeCommand,
     TasksCommand,
     AuthCommand,
+    ActivateCommand,
     ShakeCommand,
     BaseDiscordCommand,
     PromptPayCommand,
