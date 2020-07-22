@@ -18,7 +18,13 @@ export class AudioService implements BeforeApplicationShutdown {
   }
 
   private _volumes = new Map<string, number>();
-  async playAudio(message: Message, stream: Readable, volume?: number) {
+  async playAudio(
+    message: Message,
+    stream: Readable | string,
+    volume?: number,
+    seek?: number,
+    bitrate?: number,
+  ): Promise<any> {
     switch (message.channel) {
       case 'discord':
         const guild = ((message as DiscordMessage)
@@ -44,6 +50,8 @@ export class AudioService implements BeforeApplicationShutdown {
           volume: this._volumes.has(`discord: ${guild.id}`)
             ? this._volumes.get(`discord: ${guild.id}`)
             : volume || DEFAULT_VOLUME,
+          seek,
+          bitrate,
         });
         player.on('finish', () => {
           this._audioConnections.delete(`discord: ${guild.id}`);
@@ -54,6 +62,7 @@ export class AudioService implements BeforeApplicationShutdown {
           );
         });
         this._audioConnections.set(`discord: ${guild.id}`, player);
+        return player;
         break;
     }
   }
