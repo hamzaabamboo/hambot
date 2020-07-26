@@ -14,6 +14,7 @@ import { ShakeCommand } from './discord/shake.command';
 import { YoutubeCommand } from './discord/youtube.command';
 import { StreamCommand } from './discord/stream.command';
 import { ActivateCommand } from './activate.command';
+import { PushCommand } from './push.command';
 
 @Injectable()
 export class CommandsService {
@@ -33,6 +34,7 @@ export class CommandsService {
     activate: ActivateCommand,
     youtube: YoutubeCommand,
     stream: StreamCommand,
+    push: PushCommand,
     authCmd: AuthCommand,
   ) {
     this.commands = [
@@ -46,6 +48,7 @@ export class CommandsService {
       activate,
       youtube,
       stream,
+      push,
       discord,
       base,
     ];

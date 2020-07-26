@@ -11,8 +11,8 @@ export interface FileWithStream {
 }
 export type File = FileWithStream | FileWithUrl;
 export interface BaseMessage {
-  channel: string;
-  senderId: string;
+  channel: string | '*';
+  senderId?: string;
   message: string;
   image?: {
     name?: string;
@@ -28,6 +28,7 @@ export interface LineMessage extends BaseMessage {
 export interface DiscordMessage extends BaseMessage {
   channel: 'discord';
   messageChannel?: Channel;
+  destination?: Channel;
 }
 
-export type Message = LineMessage | DiscordMessage;
+export type Message = BaseMessage | LineMessage | DiscordMessage;

@@ -19,6 +19,7 @@ import { YoutubeCommand } from './discord/youtube.command';
 import { AudioModule } from '../audio/audio.module';
 import { StreamCommand } from './discord/stream.command';
 import { ActivateCommand } from './activate.command';
+import { PushCommand } from './push.command';
 
 @Module({
   providers: [
@@ -36,6 +37,7 @@ import { ActivateCommand } from './activate.command';
     PromptPayCommand,
     YoutubeCommand,
     StreamCommand,
+    PushCommand,
   ],
   imports: [
     TrelloModule,

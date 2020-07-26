@@ -10,6 +10,7 @@ import { QrcodeModule } from './modules/qrcode/qrcode.module';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { AudioModule } from './modules/audio/audio.module';
 import { FileModule } from './modules/file/file.module';
+import { TwitterModule } from './modules/twitter/twitter.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { FileModule } from './modules/file/file.module';
     ConfigModule.forRoot({
       expandVariables: true,
     }),
+    TwitterModule,
     AudioModule,
   ],
   controllers: [AppController],

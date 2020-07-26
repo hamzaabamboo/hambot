@@ -59,7 +59,7 @@ export class MessagesService {
               originalContentUrl: message.image.url,
               previewImageUrl: message.image.url,
             },
-            message.replyToken,
+            (message as LineMessage).replyToken,
           );
         }
         const files = message.files as FileWithUrl[];
@@ -70,7 +70,7 @@ export class MessagesService {
               text:
                 message.message + '\n' + `${files[0].name} - ${files[0].url}`,
             },
-            message.replyToken,
+            (message as LineMessage).replyToken,
           );
         }
         return this.lineService
@@ -79,7 +79,7 @@ export class MessagesService {
               type: 'text',
               text: message.message,
             },
-            message.replyToken,
+            (message as LineMessage).replyToken,
           )
           .catch(e => {
             this.logger.error(e.data);
