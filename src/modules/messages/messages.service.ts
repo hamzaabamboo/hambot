@@ -9,6 +9,7 @@ import { LineService } from '../line/line.service';
 import { CommandsService } from '../commands/commands.service';
 import { DiscordService } from '../discord/discord.service';
 import { AppLogger } from '../logger/logger';
+import { Client } from '@line/bot-sdk';
 
 @Injectable()
 export class MessagesService {
@@ -52,35 +53,33 @@ export class MessagesService {
   sendMessage(message: Message) {
     switch (message.channel) {
       case 'line':
+        let lineMsg: Parameters<Client['replyMessage']>[1] = {
+          type: 'text',
+          text: message.message,
+        };
         if (message.image) {
-          return this.lineService.sendReplyMessage(
-            {
-              type: 'image',
-              originalContentUrl: message.image.url,
-              previewImageUrl: message.image.url,
-            },
-            (message as LineMessage).replyToken,
-          );
+          lineMsg = {
+            type: 'image',
+            originalContentUrl: message.image.url,
+            previewImageUrl: message.image.url,
+          };
         }
         const files = message.files as FileWithUrl[];
         if (files?.length > 0) {
-          return this.lineService.sendReplyMessage(
-            {
-              type: 'text',
-              text:
-                message.message + '\n' + `${files[0].name} - ${files[0].url}`,
-            },
-            (message as LineMessage).replyToken,
-          );
+          lineMsg = {
+            type: 'text',
+            text: message.message + '\n' + `${files[0].name} - ${files[0].url}`,
+          };
+        }
+        if ((message as LineMessage).pushTo) {
+          return this.lineService
+            .sendPushMessage(lineMsg, (message as LineMessage).pushTo)
+            .catch(e => {
+              this.logger.error(e.data);
+            });
         }
         return this.lineService
-          .sendReplyMessage(
-            {
-              type: 'text',
-              text: message.message,
-            },
-            (message as LineMessage).replyToken,
-          )
+          .sendReplyMessage(lineMsg, (message as LineMessage).replyToken)
           .catch(e => {
             this.logger.error(e.data);
           });

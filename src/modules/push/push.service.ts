@@ -62,15 +62,23 @@ export class PushService {
     const destinations = await this.getDestinations();
 
     destinations.forEach(d => {
+      console.log(d);
       const f = async () => {
         switch (d.channel) {
           case 'discord':
             await this.messageService.sendMessage({
               ...message,
-              files: [],
               channel: 'discord',
               messageChannel: await this.discord.getClient.channels.fetch(d.id),
             });
+            break;
+          case 'line':
+            await this.messageService.sendMessage({
+              ...message,
+              channel: 'line',
+              pushTo: d.id,
+            });
+            break;
         }
       };
       f();

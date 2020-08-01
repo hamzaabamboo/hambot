@@ -26,56 +26,41 @@ export class PushCommand extends BaseCommand {
     const cards = await this.trello.getCards(list.id);
     switch (command) {
       case 'register':
-        if (message.channel === 'discord') {
-          if (
-            cards.find(
-              c =>
-                c.name ===
-                `${message.channel}: ${
-                  (message as DiscordMessage).messageChannel.id
-                }`,
-            )
-          )
-            return {
-              ...message,
-              files: [],
-              message: 'This channel is already registered ',
-            };
-          await this.trello.addCard(
-            list.id,
-            `${message.channel}: ${
-              (message as DiscordMessage).messageChannel.id
-            }`,
-            tag,
-          );
+        if (
+          cards.find(c => c.name === `${message.channel}: ${message.channelId}`)
+        )
           return {
             ...message,
             files: [],
-            message: `Added this channel to receive push notifications`,
+            message: 'This channel is already registered ',
           };
-        }
+        await this.trello.addCard(
+          list.id,
+          `${message.channel}: ${message.channelId}`,
+          tag,
+        );
+        return {
+          ...message,
+          files: [],
+          message: `Added this channel to receive push notifications`,
+        };
+
       case 'remove':
-        if (message.channel === 'discord') {
-          const toDel = cards.find(
-            c =>
-              c.name ===
-              `${message.channel}: ${
-                (message as DiscordMessage).messageChannel.id
-              }`,
-          );
-          if (!toDel)
-            return {
-              ...message,
-              files: [],
-              message: 'This channel is not yet registered ',
-            };
-          await this.trello.deleteCard(toDel.id);
+        const toDel = cards.find(
+          c => c.name === `${message.channel}: ${message.channelId}`,
+        );
+        if (!toDel)
           return {
             ...message,
             files: [],
-            message: `Removed this channel from receiving notifications`,
+            message: 'This channel is not yet registered ',
           };
-        }
+        await this.trello.deleteCard(toDel.id);
+        return {
+          ...message,
+          files: [],
+          message: `Removed this channel from receiving notifications`,
+        };
       default:
         return {
           ...message,

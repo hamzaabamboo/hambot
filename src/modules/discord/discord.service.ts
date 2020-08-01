@@ -49,6 +49,7 @@ export class DiscordService {
         this.message.handleMessage({
           channel: 'discord',
           senderId: message.author.id,
+          channelId: message.channel.id,
           message: message.content,
           messageChannel: message.channel,
           files: message.attachments.array().map(m => ({
@@ -66,6 +67,7 @@ export class DiscordService {
         this.message.handleMessage({
           channel: 'discord',
           senderId: message.author.id,
+          channelId: message.channel.id,
           message:
             cmd && message.attachments.array().length === 0 ? cmd[1] : '',
           messageChannel: message.channel,

@@ -12,6 +12,8 @@ import {
   FileEventMessage,
   TextEventMessage,
   ImageEventMessage,
+  Group,
+  Room,
 } from '@line/bot-sdk';
 import { ConfigService } from '@nestjs/config';
 import { MessagesService } from '../messages/messages.service';
@@ -45,6 +47,9 @@ export class LineController {
                   return this.messageService.handleMessage({
                     channel: 'line',
                     senderId: evt.source.userId,
+                    channelId:
+                      (evt.source as Group).groupId ||
+                      (evt.source as Room).roomId,
                     message: this.prefix.exec(
                       (msg as TextEventMessage).text,
                     )[1],
@@ -54,6 +59,7 @@ export class LineController {
                 return this.messageService.handleMessage({
                   channel: 'line',
                   senderId: evt.source.userId,
+                  channelId: evt.source.userId,
                   message: (evt.message as TextEventMessage).text,
                   replyToken: evt.replyToken,
                 });
@@ -63,6 +69,10 @@ export class LineController {
                   return this.messageService.handleMessage({
                     channel: 'line',
                     senderId: evt.source.userId,
+                    channelId:
+                      (evt.source as Group).groupId ||
+                      (evt.source as Room).roomId ||
+                      evt.source.userId,
                     message: '',
                     files: [
                       {
@@ -81,6 +91,10 @@ export class LineController {
                   return this.messageService.handleMessage({
                     channel: 'line',
                     senderId: evt.source.userId,
+                    channelId:
+                      (evt.source as Group).groupId ||
+                      (evt.source as Room).roomId ||
+                      evt.source.userId,
                     message: '',
                     files: [
                       {
@@ -96,6 +110,10 @@ export class LineController {
                 return this.messageService.handleMessage({
                   channel: 'line',
                   senderId: evt.source.userId,
+                  channelId:
+                    (evt.source as Group).groupId ||
+                    (evt.source as Room).roomId ||
+                    evt.source.userId,
                   message: '',
                   files: [
                     {

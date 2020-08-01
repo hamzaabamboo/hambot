@@ -17,6 +17,13 @@ export class LineService {
     return this._lineClient.replyMessage(token, message);
   }
 
+  sendPushMessage(
+    message: Parameters<Client['replyMessage']>[1],
+    receiver: string,
+  ) {
+    return this._lineClient.pushMessage(receiver, message);
+  }
+
   getContent(messageId: string) {
     return this._lineClient.getMessageContent(messageId);
   }
