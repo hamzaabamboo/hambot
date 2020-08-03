@@ -45,6 +45,12 @@ export class DiscordService {
     this.client.on('message', message => {
       if (message.author.id === this.client.user.id || message.author.bot)
         return;
+      if (message.author.username.includes('YamaKJ') && Math.random() > 0.5) {
+        this.sendMessage(message.channel, {
+          content: 'Boo boo desu wa :P',
+        });
+        return;
+      }
       if (message.channel.type === 'dm') {
         this.message.handleMessage({
           channel: 'discord',

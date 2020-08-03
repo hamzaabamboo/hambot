@@ -30,13 +30,16 @@ export class RecurringService {
 
   async registerEvents() {
     this.getRecurringEvents().then(cards => {
-      cards.forEach(({ card, cronTab, message }) => {
+      cards.forEach(({ card, cronTab, message, tags }) => {
         const job = new CronJob(cronTab, () => {
-          this.push.push({
-            channel: '*',
-            senderId: '',
-            message,
-          });
+          this.push.push(
+            {
+              channel: '*',
+              senderId: '',
+              message,
+            },
+            tags,
+          );
         });
         this.scheduler.addCronJob(card, job);
         job.start();
@@ -57,15 +60,17 @@ export class RecurringService {
 
     const cards = await this.trello.getCards(list.id);
     const pattern = /\[(.*)\]/;
-    const privateCard = /<Private>/i;
+    const tags = /<(.*)>/i;
     return cards
-      .filter(card => pattern.test(card.name) && !privateCard.test(card.name))
+      .filter(card => pattern.test(card.name))
       .map(card => {
         const cronTab = (card.name as string).match(pattern)[1];
         return {
           card: card.name.replace(pattern, ''),
           cronTab,
-          message: card.desc,
+          message:
+            card.desc || card.name.replace(pattern, ' ').replace(tags, ' '),
+          tags: card.name.match(tags)?.slice(1)[0],
         };
       });
   }

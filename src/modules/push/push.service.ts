@@ -19,7 +19,7 @@ export class PushService {
     data: {
       channel: string;
       id: string;
-      tag: string;
+      tag?: string;
     }[];
   };
   constructor(
@@ -58,31 +58,36 @@ export class PushService {
     return this._cache.data;
   }
 
-  async push(message: Message) {
+  async push(message: Message, tag?: string) {
     const destinations = await this.getDestinations();
 
-    destinations.forEach(d => {
-      console.log(d);
-      const f = async () => {
-        switch (d.channel) {
-          case 'discord':
-            await this.messageService.sendMessage({
-              ...message,
-              channel: 'discord',
-              messageChannel: await this.discord.getClient.channels.fetch(d.id),
-            });
-            break;
-          case 'line':
-            await this.messageService.sendMessage({
-              ...message,
-              channel: 'line',
-              pushTo: d.id,
-            });
-            break;
-        }
-      };
-      f();
-    });
+    destinations
+      .filter(d =>
+        tag ? d.tag?.toLowerCase().includes(tag.toLowerCase()) : true,
+      )
+      .forEach(d => {
+        const f = async () => {
+          switch (d.channel) {
+            case 'discord':
+              await this.messageService.sendMessage({
+                ...message,
+                channel: 'discord',
+                messageChannel: await this.discord.getClient.channels.fetch(
+                  d.id,
+                ),
+              });
+              break;
+            case 'line':
+              await this.messageService.sendMessage({
+                ...message,
+                channel: 'line',
+                pushTo: d.id,
+              });
+              break;
+          }
+        };
+        f();
+      });
     return message;
   }
 }
