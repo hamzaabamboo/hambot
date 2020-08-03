@@ -6,7 +6,7 @@ import moment = require('moment');
 
 @Injectable()
 export class TasksCommand extends BaseCommand {
-  public command = /tasks(?: (.*))?/i;
+  public command = /^tasks(?: (.*))?/i;
   public requiresAuth = true;
 
   constructor(private trello: TrelloService) {

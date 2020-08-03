@@ -28,11 +28,13 @@ Personal cross-platform bot to help keep up with tasks and lots more stuff. Buil
 
 - [x] Task tracking from Trello
   - [ ] Add task
+  - [x] Task reminder
 - [ ] Take notes
 - [x] Youtube music (Discord only)
 - [x] Generate promptpay QRcode
-- [ ] Audio Streaming (Discord only)
+- [X] Audio Streaming (Discord only)
 - [x] Temporary file sharing
+- [x] Push Messages
 
 ## Installation
 
