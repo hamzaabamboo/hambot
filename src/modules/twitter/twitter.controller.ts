@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Query,
-  HttpException,
-  HttpService,
-} from '@nestjs/common';
+import { Controller, Get, Query, HttpException } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { ConfigService } from '@nestjs/config';
 
@@ -28,6 +21,6 @@ export class TwitterController {
     };
   }
 
-  @Post('/')
-  webhook() {}
+  // @Post('/')
+  // webhook() {}
 }

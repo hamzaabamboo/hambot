@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseCommand } from './command.base';
-import { Message, DiscordMessage } from '../messages/messages.model';
+import { Message } from '../messages/messages.model';
 import { TrelloService } from '../trello/trello.service';
-import moment = require('moment');
-
 @Injectable()
 export class PushCommand extends BaseCommand {
   public command = /push(?: (register|remove|status|update)(?: (.*))?)?/i;

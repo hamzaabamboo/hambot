@@ -1,6 +1,5 @@
-import { Injectable, LoggerService } from '@nestjs/common';
-import { Cron, SchedulerRegistry, Timeout } from '@nestjs/schedule';
-import { CronJob } from 'cron';
+import { Injectable } from '@nestjs/common';
+import { Cron, SchedulerRegistry } from '@nestjs/schedule';
 import { TrelloService } from '../trello/trello.service';
 import { AppLogger } from '../logger/logger';
 import { PushService } from '../push/push.service';

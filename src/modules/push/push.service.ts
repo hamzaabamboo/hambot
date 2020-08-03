@@ -1,17 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { DiscordService } from '../discord/discord.service';
-import { LineService } from '../line/line.service';
-import {
-  Message,
-  DiscordMessage,
-  FileWithUrl,
-} from '../messages/messages.model';
+import { Message } from '../messages/messages.model';
 import { TrelloService } from '../trello/trello.service';
 import { MessagesService } from '../messages/messages.service';
 import { AppLogger } from '../logger/logger';
 import moment = require('moment');
-import { async } from 'rxjs';
-
 @Injectable()
 export class PushService {
   private _cache: {
