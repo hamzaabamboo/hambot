@@ -8,7 +8,7 @@ import { VoiceChannel } from 'discord.js';
 @Injectable()
 export class StreamCommand extends BaseCommand {
   public command = /^stream(?: (start|stop))?/i;
-  public requiresAuth = false;
+  public requiresAuth = true;
   public platforms = ['discord'];
 
   constructor(private audio: AudioService, private stream: StreamService) {
@@ -19,7 +19,7 @@ export class StreamCommand extends BaseCommand {
     switch (command) {
       case 'start':
         try {
-          const key = await this.stream.startServer();
+          const key = await this.stream.startServer(message.senderId);
           if (message.channel === 'discord') {
             const guild = (message.messageChannel as VoiceChannel).guild;
             if (!guild) break;
@@ -28,8 +28,8 @@ export class StreamCommand extends BaseCommand {
             ).createDM();
             dm.send({ content: 'Your stream key is ' + key });
           }
-          await this.stream.listenToStream(key);
-          await this.audio.playAudio(message, this.stream.stream, 1, 6, 64);
+          await this.stream.listenToStream(message.senderId);
+          await this.audio.playAudio(message, this.stream.stream, 1, 5, 64);
           this.stream.stream.on('close', () => {
             this.stream.stopServer();
             this.audio.stopPlaying(message);

@@ -57,7 +57,6 @@ export class YoutubeCommand extends BaseCommand {
             message: `Playing \`${meta.videoDetails.title}\``,
           };
         } catch (e) {
-          console.log(e);
           if (e.message === 'PLAYING') {
             return {
               ...message,
