@@ -9,6 +9,7 @@ import { Server } from 'net';
 
 const { FLVFile, FLVHeader, FLVTag } = type;
 
+const BUFFER_SIZE = 750;
 class AudioExtractor extends Transform {
   header: typeof FLVHeader;
   tags: any[];
@@ -31,7 +32,7 @@ class AudioExtractor extends Transform {
       this.tags.push(
         new FLVTag({ type: FLVTag.TagType.audio, timestamp, data }),
       );
-      if (!this.start || timestamp - this.start > 750) {
+      if (!this.start || timestamp - this.start > BUFFER_SIZE) {
         if (!this.wroteHeader) {
           this.wroteHeader = true;
           const flv = new FLVFile(this.header, this.tags);
@@ -73,9 +74,8 @@ export class StreamService {
   constructor(private logger: AppLogger) {
     this.logger.setContext('RTMPServer');
   }
-  async startServer(): Promise<string> {
+  async startServer(key: string = generateRandomKey()): Promise<string> {
     this.server = createServer({ port: 19350 });
-    const key = generateRandomKey();
     this.logger.debug('Started RTMP server for key ' + key);
     return key;
   }
