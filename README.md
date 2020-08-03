@@ -7,7 +7,7 @@ Personal cross-platform bot to help keep up with tasks and lots more stuff. Buil
 - [x] Line Messaging API
 - [x] Discord Bot
 - [x] Trello
-- [ ] Messenger
+- [x] Messenger
 - [ ] Github
 
 ## Features
@@ -32,7 +32,7 @@ Personal cross-platform bot to help keep up with tasks and lots more stuff. Buil
 - [ ] Take notes
 - [x] Youtube music (Discord only)
 - [x] Generate promptpay QRcode
-- [X] Audio Streaming (Discord only)
+- [x] Audio Streaming (Discord only)
 - [x] Temporary file sharing
 - [x] Push Messages
 

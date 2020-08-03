@@ -23,13 +23,15 @@ export class PromptPayCommand extends BaseCommand {
         ...message,
         files: [],
         message: `QRCode for ${id} ` + (amountS ? amountS + ' THB' : ''),
-        image: {
-          url:
-            this.config.get('PUBLIC_URL') +
-            'qrcode/' +
-            generatePayload(id, { amount: amount }),
-          name: 'qrcode.png',
-        },
+        image: [
+          {
+            url:
+              this.config.get('PUBLIC_URL') +
+              'qrcode/' +
+              generatePayload(id, { amount: amount }),
+            name: 'qrcode.png',
+          },
+        ],
       };
     }
     return {

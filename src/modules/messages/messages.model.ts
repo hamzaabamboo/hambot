@@ -18,7 +18,7 @@ export interface BaseMessage {
   image?: {
     name?: string;
     url: string;
-  };
+  }[];
   files?: File[];
 }
 export interface LineMessage extends BaseMessage {

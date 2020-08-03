@@ -10,6 +10,8 @@ import { CommandsService } from '../commands/commands.service';
 import { DiscordService } from '../discord/discord.service';
 import { AppLogger } from '../logger/logger';
 import { Client } from '@line/bot-sdk';
+import { FacebookService } from '../facebook/facebook.service';
+import { DiscordAPIError } from 'discord.js';
 
 @Injectable()
 export class MessagesService {
@@ -19,6 +21,8 @@ export class MessagesService {
     private lineService: LineService,
     @Inject(forwardRef(() => DiscordService))
     private discordService: DiscordService,
+    @Inject(forwardRef(() => FacebookService))
+    private facebookService: FacebookService,
     private logger: AppLogger,
   ) {
     this.logger.setContext('MessageService');
@@ -47,6 +51,12 @@ export class MessagesService {
           messageChannel: (message as DiscordMessage).messageChannel,
         } as DiscordMessage);
         break;
+      case 'facebook':
+        this.sendMessage({
+          ...reply,
+          channel: 'facebook',
+        });
+        break;
     }
   }
 
@@ -60,8 +70,8 @@ export class MessagesService {
         if (message.image) {
           lineMsg = {
             type: 'image',
-            originalContentUrl: message.image.url,
-            previewImageUrl: message.image.url,
+            originalContentUrl: message.image[0].url,
+            previewImageUrl: message.image[0].url,
           };
         }
         const files = message.files as FileWithUrl[];
@@ -75,29 +85,43 @@ export class MessagesService {
           return this.lineService
             .sendPushMessage(lineMsg, (message as LineMessage).pushTo)
             .catch(e => {
-              this.logger.error(e.data);
+              this.logger.error('Line error: ' + e.statusMessage);
             });
         }
         return this.lineService
           .sendReplyMessage(lineMsg, (message as LineMessage).replyToken)
           .catch(e => {
-            this.logger.error(e.data);
+            this.logger.error('Line error: ' + e.statusMessage);
           });
       case 'discord':
         const m = message as DiscordMessage;
-        return this.discordService.sendMessage(m.messageChannel, {
-          content: m.message,
-          files: [
-            m.image && {
-              attachment: m.image.url,
-              name: m.image.name,
-            },
-            ...(m.files?.map(m => ({
-              attachment: (m as FileWithUrl).url,
-              name: m.name,
-            })) ?? []),
-          ].filter(e => e),
-        });
+        return this.discordService
+          .sendMessage(m.messageChannel, {
+            content: m.message,
+            files: [
+              ...(m.files?.map(m => ({
+                attachment: (m as FileWithUrl).url,
+                name: m.name,
+              })) ?? []),
+              ...(m.files?.map(m => ({
+                attachment: (m as FileWithUrl).url,
+                name: m.name,
+              })) ?? []),
+            ].filter(e => e),
+          })
+          .catch((e: DiscordAPIError) => {
+            this.logger.error('Discord  error: ' + e.message);
+          });
+      case 'facebook':
+        if (message.senderId) {
+          return this.facebookService.sendReplyMessage(message).catch(e => {
+            this.logger.error(e.data);
+          });
+        } else {
+          return this.facebookService.sendPushMessage(message).catch(e => {
+            this.logger.error(e.data);
+          });
+        }
     }
   }
 }

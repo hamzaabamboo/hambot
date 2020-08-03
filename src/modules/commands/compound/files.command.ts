@@ -154,7 +154,7 @@ export class FileCommand extends BaseCompoundHandler {
       messages
         .slice(1)
         .filter(e => e.files)
-        .flatMap(e => e.files)
+        .flatMap(e => [...e.files, ...e.image])
         .map(async f => {
           if ((f as FileWithStream).stream) {
             const url = path.join(tmpPath, f.name);

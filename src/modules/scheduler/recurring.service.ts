@@ -31,21 +31,23 @@ export class RecurringService {
   async registerEvents() {
     this.getRecurringEvents().then(cards => {
       cards.forEach(({ card, cronTab, message, tags }) => {
-        const job = new CronJob(cronTab, () => {
-          this.push.push(
-            {
-              channel: '*',
-              senderId: '',
-              message,
-            },
-            tags,
-          );
-        });
-        this.scheduler.addCronJob(card, job);
-        job.start();
+        try {
+          const job = new CronJob(cronTab, () => {
+            this.push.push(
+              {
+                channel: '*',
+                senderId: '',
+                message,
+              },
+              tags,
+            );
+          });
+          this.scheduler.addCronJob(card, job);
+          job.start();
+          this._jobs.push(card);
+        } catch {}
       });
-      this._jobs = cards.map(c => c.card);
-      this.logger.debug('Added ' + cards.length + ' recurring events.');
+      this.logger.debug('Added ' + this._jobs.length + ' recurring events.');
     });
   }
 

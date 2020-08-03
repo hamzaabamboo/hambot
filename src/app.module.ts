@@ -11,6 +11,7 @@ import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { AudioModule } from './modules/audio/audio.module';
 import { FileModule } from './modules/file/file.module';
 import { TwitterModule } from './modules/twitter/twitter.module';
+import { FacebookModule } from './modules/facebook/facebook.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TwitterModule } from './modules/twitter/twitter.module';
     ConfigModule.forRoot({
       expandVariables: true,
     }),
+    FacebookModule,
     TwitterModule,
     AudioModule,
   ],

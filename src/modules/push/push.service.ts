@@ -64,6 +64,7 @@ export class PushService {
             case 'discord':
               await this.messageService.sendMessage({
                 ...message,
+                senderId: '',
                 channel: 'discord',
                 messageChannel: await this.discord.getClient.channels.fetch(
                   d.id,
@@ -73,8 +74,17 @@ export class PushService {
             case 'line':
               await this.messageService.sendMessage({
                 ...message,
+                senderId: '',
                 channel: 'line',
                 pushTo: d.id,
+              });
+              break;
+            default:
+              await this.messageService.sendMessage({
+                ...message,
+                channel: d.channel,
+                channelId: d.id,
+                senderId: '',
               });
               break;
           }
