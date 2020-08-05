@@ -54,7 +54,12 @@ export class ShakeCommand extends BaseCommand {
             message: `${command} is not in a voice channel!`,
           };
         const origin = user.voice.channel;
-        const I = isNaN(Number(intensity)) ? 2 : Number(intensity);
+        const I =
+          isNaN(Number(intensity)) &&
+          Number(intensity) > 0 &&
+          Number(intensity) < 10
+            ? 2
+            : Number(intensity);
         try {
           for (let i = 0; i < I; i++) {
             await user.voice.setChannel(
@@ -67,7 +72,7 @@ export class ShakeCommand extends BaseCommand {
           return {
             ...message,
             files: [],
-            message: `<@!${message.senderId}> shook ${command}`,
+            message: `<@!${message.senderId}> shook ${command} ${I} times`,
           };
         } catch (error) {
           return {
