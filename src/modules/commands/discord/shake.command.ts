@@ -56,8 +56,8 @@ export class ShakeCommand extends BaseCommand {
         const origin = user.voice.channel;
         const I =
           isNaN(Number(intensity)) &&
-          Number(intensity) > 0 &&
-          Number(intensity) < 10
+          Number(intensity) < 0 &&
+          Number(intensity) > 10
             ? 2
             : Number(intensity);
         try {
