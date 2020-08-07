@@ -5,7 +5,6 @@ import {
   HttpException,
   Post,
   Query,
-  Req,
   Inject,
   forwardRef,
 } from '@nestjs/common';

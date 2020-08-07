@@ -10,8 +10,9 @@ export interface FileWithStream {
   stream: Readable;
 }
 export type File = FileWithStream | FileWithUrl;
+
+export type MessageChannel = 'facebook' | 'line' | 'discord' | '*';
 export interface BaseMessage {
-  channel: string | '*';
   senderId?: string;
   channelId?: string;
   message: string;
@@ -33,4 +34,16 @@ export interface DiscordMessage extends BaseMessage {
   destination?: Channel;
 }
 
-export type Message = BaseMessage | LineMessage | DiscordMessage;
+export interface FacebookMessage extends BaseMessage {
+  channel: 'facebook';
+}
+
+export interface BroadcastMessage extends BaseMessage {
+  channel: '*';
+}
+
+export type Message =
+  | FacebookMessage
+  | LineMessage
+  | DiscordMessage
+  | BroadcastMessage;

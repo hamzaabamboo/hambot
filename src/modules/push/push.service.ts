@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DiscordService } from '../discord/discord.service';
-import { Message } from '../messages/messages.model';
+import { Message, MessageChannel } from '../messages/messages.model';
 import { TrelloService } from '../trello/trello.service';
 import { MessagesService } from '../messages/messages.service';
 import { AppLogger } from '../logger/logger';
@@ -10,7 +10,7 @@ export class PushService {
   private _cache: {
     timestamp: number;
     data: {
-      channel: string;
+      channel: MessageChannel;
       id: string;
       tag?: string;
     }[];

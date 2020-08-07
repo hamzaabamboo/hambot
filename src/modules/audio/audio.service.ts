@@ -1,6 +1,6 @@
 import { Injectable, BeforeApplicationShutdown } from '@nestjs/common';
 import { Readable } from 'stream';
-import { DiscordMessage, Message } from '../messages/messages.model';
+import { Message } from '../messages/messages.model';
 import { TextChannel, VoiceChannel, StreamDispatcher } from 'discord.js';
 
 const TIMEOUT_INTERVAL = 10000;
@@ -27,8 +27,7 @@ export class AudioService implements BeforeApplicationShutdown {
   ): Promise<any> {
     switch (message.channel) {
       case 'discord':
-        const guild = ((message as DiscordMessage)
-          .messageChannel as TextChannel).guild;
+        const guild = (message.messageChannel as TextChannel).guild;
         if (!guild) {
           throw new Error('Not in a guild');
         }
@@ -38,9 +37,8 @@ export class AudioService implements BeforeApplicationShutdown {
         if (this._audioConnections.get(`discord: ${guild.id}`)) {
           throw new Error('PLAYING');
         }
-        const vc = (
-          await guild.members.fetch((message as DiscordMessage).senderId)
-        ).voice.channelID;
+        const vc = (await guild.members.fetch(message.senderId)).voice
+          .channelID;
         const channel = guild.channels.cache.find(
           c => c.id === vc,
         ) as VoiceChannel;
@@ -70,8 +68,7 @@ export class AudioService implements BeforeApplicationShutdown {
   async changeVolume(message: Message, volume = 0.5) {
     switch (message.channel) {
       case 'discord':
-        const guild = ((message as DiscordMessage)
-          .messageChannel as TextChannel).guild;
+        const guild = (message.messageChannel as TextChannel).guild;
         if (this._audioConnections.has(`discord: ${guild.id}`)) {
           (this._audioConnections.get(
             `discord: ${guild.id}`,
@@ -84,8 +81,7 @@ export class AudioService implements BeforeApplicationShutdown {
   async stopPlaying(message: Message) {
     switch (message.channel) {
       case 'discord':
-        const guild = ((message as DiscordMessage)
-          .messageChannel as TextChannel).guild;
+        const guild = (message.messageChannel as TextChannel).guild;
         if (this._audioConnections.has(`discord: ${guild.id}`)) {
           (this._audioConnections.get(
             `discord: ${guild.id}`,

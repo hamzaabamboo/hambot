@@ -9,6 +9,7 @@ export class FacebookService {
 
   async sendReplyMessage(message: Message) {
     const msg = {
+      // eslint-disable-next-line @typescript-eslint/camelcase
       messaging_type: 'RESPONSE',
       recipient: {
         id: message.senderId,
@@ -39,6 +40,7 @@ export class FacebookService {
 
   async sendPushMessage(message: Message) {
     const msg = {
+      // eslint-disable-next-line @typescript-eslint/camelcase
       messaging_type: 'MESSAGE_TAG',
       recipient: {
         id: message.channelId,
@@ -59,7 +61,7 @@ export class FacebookService {
       ][0],
     };
     try {
-      const res = await this.http
+      await this.http
         .post(
           `${SEND_API_URL}?access_token=${this.config.get(
             'FACEBOOK_PAGE_ACCESS_TOKEN',

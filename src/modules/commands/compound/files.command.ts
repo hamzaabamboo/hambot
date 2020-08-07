@@ -1,8 +1,4 @@
-import {
-  Message,
-  FileWithStream,
-  FileWithUrl,
-} from '../../messages/messages.model';
+import { Message } from '../../messages/messages.model';
 import {
   BaseCompoundHandler,
   CompoundResponse,
@@ -156,10 +152,10 @@ export class FileCommand extends BaseCompoundHandler {
         .filter(e => e.files)
         .flatMap(e => [...e.files, ...e.image])
         .map(async f => {
-          if ((f as FileWithStream).stream) {
+          if ('stream' in f) {
             const url = path.join(tmpPath, f.name);
             await new Promise((resolve, reject) => {
-              (f as FileWithStream).stream
+              f.stream
                 .pipe(createWriteStream(url))
                 .on('finish', resolve)
                 .on('error', reject);
@@ -169,7 +165,7 @@ export class FileCommand extends BaseCompoundHandler {
               url: this.config.get('PUBLIC_URL') + 'files/' + f.name,
             };
           } else {
-            return f as FileWithUrl;
+            return f;
           }
         }),
     );

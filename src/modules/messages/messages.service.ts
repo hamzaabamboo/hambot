@@ -1,10 +1,5 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
-import {
-  Message,
-  LineMessage,
-  DiscordMessage,
-  FileWithUrl,
-} from './messages.model';
+import { Message, FileWithUrl } from './messages.model';
 import { LineService } from '../line/line.service';
 import { CommandsService } from '../commands/commands.service';
 import { DiscordService } from '../discord/discord.service';
@@ -39,17 +34,17 @@ export class MessagesService {
     switch (message.channel) {
       case 'line':
         this.sendMessage({
-          channel: 'line',
           ...reply,
-          replyToken: (message as LineMessage).replyToken,
-        } as LineMessage);
+          channel: 'line',
+          replyToken: message.replyToken,
+        });
         break;
       case 'discord':
         this.sendMessage({
           ...reply,
           channel: 'discord',
-          messageChannel: (message as DiscordMessage).messageChannel,
-        } as DiscordMessage);
+          messageChannel: message.messageChannel,
+        });
         break;
       case 'facebook':
         this.sendMessage({
@@ -74,39 +69,44 @@ export class MessagesService {
             previewImageUrl: message.image[0].url,
           };
         }
-        const files = message.files as FileWithUrl[];
+        const files = message.files.filter((m): m is FileWithUrl => 'url' in m);
+
         if (files?.length > 0) {
           lineMsg = {
             type: 'text',
             text: message.message + '\n' + `${files[0].name} - ${files[0].url}`,
           };
         }
-        if ((message as LineMessage).pushTo) {
+        if (message.pushTo) {
           return this.lineService
-            .sendPushMessage(lineMsg, (message as LineMessage).pushTo)
+            .sendPushMessage(lineMsg, message.pushTo)
             .catch(e => {
               this.logger.error('Line error: ' + e.statusMessage);
             });
         }
         return this.lineService
-          .sendReplyMessage(lineMsg, (message as LineMessage).replyToken)
+          .sendReplyMessage(lineMsg, message.replyToken)
           .catch(e => {
             this.logger.error('Line error: ' + e.statusMessage);
           });
       case 'discord':
-        const m = message as DiscordMessage;
+        const m = message;
         return this.discordService
           .sendMessage(m.messageChannel, {
             content: m.message,
             files: [
-              ...(m.files?.map(m => ({
-                attachment: (m as FileWithUrl).url,
-                name: m.name,
-              })) ?? []),
-              ...(m.files?.map(m => ({
-                attachment: (m as FileWithUrl).url,
-                name: m.name,
-              })) ?? []),
+              ...(m.files
+                ?.filter((m): m is FileWithUrl => 'url' in m)
+                .map(m => ({
+                  attachment: m.url,
+                  name: m.name,
+                })) ?? []),
+              ...(m.files
+                ?.filter((m): m is FileWithUrl => 'url' in m)
+                .map(m => ({
+                  attachment: m.url,
+                  name: m.name,
+                })) ?? []),
             ].filter(e => e),
           })
           .catch((e: DiscordAPIError) => {
