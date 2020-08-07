@@ -22,7 +22,13 @@ export class TaskSchedule {
   @Cron('0 0 0 * * *')
   update() {
     if (this._jobs.length > 0) {
-      this._jobs.forEach(j => this.scheduler.deleteCronJob(j));
+      this._jobs.forEach(j => {
+        try {
+          this.scheduler.deleteCronJob(j);
+        } catch (e) {
+          this.logger.error('Something went wrong: ' + e);
+        }
+      });
       this.logger.debug('Removed ' + this._jobs.length + ' jobs.');
       this._jobs = [];
     }

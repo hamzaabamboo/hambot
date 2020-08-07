@@ -59,7 +59,7 @@ export class ShakeCommand extends BaseCommand {
           Number(intensity) < 0 ||
           Number(intensity) > 10
             ? 2
-            : Number(intensity);
+            : Math.round(Number(intensity));
         try {
           for (let i = 0; i < I; i++) {
             await user.voice.setChannel(
@@ -78,7 +78,7 @@ export class ShakeCommand extends BaseCommand {
           return {
             ...message,
             files: [],
-            message: `I think ${command} escaped or something just went wrong`,
+            message: `I think ${command} escaped or something just went wrong (tried to shake ${I} times)`,
           };
         }
     }
