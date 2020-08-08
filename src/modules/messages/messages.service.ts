@@ -69,7 +69,7 @@ export class MessagesService {
             previewImageUrl: message.image[0].url,
           };
         }
-        const files = message.files.filter((m): m is FileWithUrl => 'url' in m);
+        const files = message.files?.filter((m): m is FileWithUrl => 'url' in m);
 
         if (files?.length > 0) {
           lineMsg = {
