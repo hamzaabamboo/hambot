@@ -32,6 +32,7 @@
     "crypto": "^1.0.1",
     "discord.js": "^12.2.0",
     "fb": "^2.0.0",
+    "lodash": "^4.17.19",
     "mkdirp": "^1.0.4",
     "moment": "^2.27.0",
     "node-media-server": "^2.2.2",

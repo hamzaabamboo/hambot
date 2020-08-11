@@ -20,6 +20,7 @@ import { AudioModule } from '../audio/audio.module';
 import { StreamCommand } from './discord/stream.command';
 import { ActivateCommand } from './activate.command';
 import { PushCommand } from './push.command';
+import { RandomCommand } from './random.command';
 
 @Module({
   providers: [
@@ -38,6 +39,7 @@ import { PushCommand } from './push.command';
     YoutubeCommand,
     StreamCommand,
     PushCommand,
+    RandomCommand,
   ],
   imports: [
     TrelloModule,

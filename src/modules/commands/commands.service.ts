@@ -15,6 +15,7 @@ import { YoutubeCommand } from './discord/youtube.command';
 import { StreamCommand } from './discord/stream.command';
 import { ActivateCommand } from './activate.command';
 import { PushCommand } from './push.command';
+import { RandomCommand } from './random.command';
 
 @Injectable()
 export class CommandsService {
@@ -36,6 +37,7 @@ export class CommandsService {
     stream: StreamCommand,
     push: PushCommand,
     authCmd: AuthCommand,
+    random: RandomCommand,
   ) {
     this.commands = [
       hello,
@@ -47,6 +49,7 @@ export class CommandsService {
       authCmd,
       activate,
       youtube,
+      random,
       stream,
       push,
       discord,
