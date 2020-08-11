@@ -28,6 +28,7 @@
     "@nestjs/core": "^6.10.14",
     "@nestjs/platform-express": "^6.10.14",
     "@nestjs/schedule": "^0.4.0",
+    "@types/lodash": "^4.14.159",
     "@types/qr-image": "^3.2.2",
     "crypto": "^1.0.1",
     "discord.js": "^12.2.0",
