@@ -44,12 +44,12 @@ import { ClipboardCommand } from './clipboard.command';
     ClipboardCommand,
   ],
   imports: [
+    DiscordModule,
     TrelloModule,
     AudioModule,
     AuthModule,
     ConfigModule,
     LoggerModule,
-    DiscordModule,
   ],
   exports: [CommandsService],
 })

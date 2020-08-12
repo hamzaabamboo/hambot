@@ -69,7 +69,9 @@ export class MessagesService {
             previewImageUrl: message.image[0].url,
           };
         }
-        const files = message.files?.filter((m): m is FileWithUrl => 'url' in m);
+        const files = message.files?.filter(
+          (m): m is FileWithUrl => 'url' in m,
+        );
 
         if (files?.length > 0) {
           lineMsg = {
@@ -110,7 +112,7 @@ export class MessagesService {
             ].filter(e => e),
           })
           .catch((e: DiscordAPIError) => {
-            this.logger.error('Discord  error: ' + e.message);
+            this.logger.error('Discord error: ' + e.message);
           });
       case 'facebook':
         if (message.senderId) {

@@ -22,6 +22,14 @@ export class PushService {
     private logger: AppLogger,
   ) {
     this.logger.setContext('PushService');
+    this.push(
+      {
+        channel: '*',
+        senderId: '',
+        message: `HamBot Online!`,
+      },
+      'debug',
+    );
   }
 
   async getDestinations() {
