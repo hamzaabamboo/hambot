@@ -21,6 +21,7 @@ import { StreamCommand } from './discord/stream.command';
 import { ActivateCommand } from './activate.command';
 import { PushCommand } from './push.command';
 import { RandomCommand } from './random.command';
+import { ClipboardCommand } from './clipboard.command';
 
 @Module({
   providers: [
@@ -40,6 +41,7 @@ import { RandomCommand } from './random.command';
     StreamCommand,
     PushCommand,
     RandomCommand,
+    ClipboardCommand,
   ],
   imports: [
     TrelloModule,

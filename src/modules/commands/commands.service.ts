@@ -16,6 +16,7 @@ import { StreamCommand } from './discord/stream.command';
 import { ActivateCommand } from './activate.command';
 import { PushCommand } from './push.command';
 import { RandomCommand } from './random.command';
+import { ClipboardCommand } from './clipboard.command';
 
 @Injectable()
 export class CommandsService {
@@ -38,6 +39,7 @@ export class CommandsService {
     push: PushCommand,
     authCmd: AuthCommand,
     random: RandomCommand,
+    clipboard: ClipboardCommand,
   ) {
     this.commands = [
       hello,
@@ -53,6 +55,7 @@ export class CommandsService {
       stream,
       push,
       discord,
+      clipboard,
       base,
     ];
   }
