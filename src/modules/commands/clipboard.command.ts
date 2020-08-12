@@ -5,7 +5,7 @@ import { Message } from '../messages/messages.model';
 @Injectable()
 export class ClipboardCommand extends BaseCommand {
   public command = /^(c(?:opy)?|p(?:aste)?)(?: (.*))?/i;
-  requiresAuth = true;
+  public requiresAuth = true;
   clipboard: string;
 
   async handle(message: Message, command: string, things: string) {
