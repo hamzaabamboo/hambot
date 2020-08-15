@@ -17,6 +17,7 @@ import { ActivateCommand } from './activate.command';
 import { PushCommand } from './push.command';
 import { RandomCommand } from './random.command';
 import { ClipboardCommand } from './clipboard.command';
+import { NyaaCommand } from './nyaa.command';
 
 @Injectable()
 export class CommandsService {
@@ -40,6 +41,7 @@ export class CommandsService {
     authCmd: AuthCommand,
     random: RandomCommand,
     clipboard: ClipboardCommand,
+    nyaa: NyaaCommand,
   ) {
     this.commands = [
       hello,
@@ -56,6 +58,7 @@ export class CommandsService {
       push,
       discord,
       clipboard,
+      nyaa,
       base,
     ];
   }

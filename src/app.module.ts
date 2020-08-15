@@ -12,6 +12,7 @@ import { AudioModule } from './modules/audio/audio.module';
 import { FileModule } from './modules/file/file.module';
 import { TwitterModule } from './modules/twitter/twitter.module';
 import { FacebookModule } from './modules/facebook/facebook.module';
+import { RssModule } from './modules/rss/rss.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { FacebookModule } from './modules/facebook/facebook.module';
     FacebookModule,
     TwitterModule,
     AudioModule,
+    RssModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],

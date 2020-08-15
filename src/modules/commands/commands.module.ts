@@ -22,6 +22,8 @@ import { ActivateCommand } from './activate.command';
 import { PushCommand } from './push.command';
 import { RandomCommand } from './random.command';
 import { ClipboardCommand } from './clipboard.command';
+import { NyaaCommand } from './nyaa.command';
+import { RssModule } from '../rss/rss.module';
 
 @Module({
   providers: [
@@ -42,6 +44,7 @@ import { ClipboardCommand } from './clipboard.command';
     PushCommand,
     RandomCommand,
     ClipboardCommand,
+    NyaaCommand,
   ],
   imports: [
     DiscordModule,
@@ -50,6 +53,7 @@ import { ClipboardCommand } from './clipboard.command';
     AuthModule,
     ConfigModule,
     LoggerModule,
+    RssModule,
   ],
   exports: [CommandsService],
 })

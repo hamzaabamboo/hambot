@@ -7,7 +7,7 @@ const TWITTER_BASE_URL =
 @Injectable()
 export class TwitterService {
   constructor(private config: ConfigService, private http: HttpService) {
-    this.getWebhooks().then(console.log);
+    // this.getWebhooks().then(console.log);
   }
 
   async getWebhooks() {
