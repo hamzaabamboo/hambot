@@ -16,25 +16,38 @@ Personal cross-platform bot to help keep up with tasks and lots more stuff. Buil
 
 - [x] Ping
 - [x] Authorization
-- [x] Line integration
 - [x] Message Handling
 - [x] Commands
 - [x] Compound Commands
 - [x] Audio Playing (only on supported platform)
 - [x] Scheduling
-- [ ] Effortlessly add platforms
+- [x] Push Messages, Multiple push channels (Public/ Private/ Debug/ Recurring)
+- [x] Activation/Deactivation of modules
+- [x] Effortlessly add platforms
+- [ ] Help command
 
 ### Functions
+
+#### Personal
+
+These functions requires authentication
 
 - [x] Task tracking from Trello
   - [ ] Add task
   - [x] Task reminder
 - [ ] Take notes
-- [x] Youtube music (Discord only)
-- [x] Generate promptpay QRcode
 - [x] Audio Streaming (Discord only)
 - [x] Temporary file sharing
-- [x] Push Messages
+- [x] Clipboard
+- [x] Recurring events reminder
+
+#### Public
+
+- [x] Youtube music (Discord only)
+- [x] Generate promptpay QRcode
+- [x] Random chooser/ Group maker/ Weighted Randomizer
+- [x] Shaking in Discord ** very recommended **
+- [x] Search nyaa site
 
 ## Installation
 
@@ -47,7 +60,8 @@ TRELLO_API_KEY=<Trello key>
 TRELLO_OAUTH_TOKEN=<Trello OAuth>
 DISCORD_TOKEN=<Discord bot token>
 PUBLIC_URL=<Url of the bot>
-
+FACEBOOK_VERIFY_TOKEN=<A random string for verifying webhook>
+FACEBOOK_PAGE_ACCESS_TOKEN=<Facebook page access token>
 ```
 
 ### Development
