@@ -27,14 +27,14 @@ export class NyaaCommand extends BaseCommand {
       query ?? '',
     )}&page=rss`;
     const rss = await this.rss.getRssFeed(url);
-    const totalPage = Math.floor(rss.channel.item.length / PER_PAGE);
+    const totalPage = Math.floor((rss.channel?.item?.length  ?? 0)/ PER_PAGE);
     const pageN = isNaN(Number(page))
       ? 1
       : Number(page) > totalPage
       ? totalPage
       : Number(page);
     const res =
-      rss.channel && rss.channel?.item.length > 0
+      rss.channel && rss.channel?.item?.length > 0
         ? `Results for ${he.decode(String(rss.channel?.title))} (total: ${
             rss.channel.item.length
           }, page ${pageN}/${totalPage})\n ${rss.channel?.item
