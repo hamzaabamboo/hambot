@@ -56,11 +56,13 @@ export class RecurringService {
       b => b.name === "Ham's Stuff",
     );
 
-    const list = (await this.trello.getLists(board.id)).find(
+    const lists = (await this.trello.getLists(board.id)).filter(
       list => list.name.includes('Recurring'),
     );
+    const cards = (await Promise.all<any[]>(lists.map(async list => {
+      return await this.trello.getCards(list.id);
+    }))).flatMap(c => c)
 
-    const cards = await this.trello.getCards(list.id);
     const pattern = /\[(.*)\]/;
     const tags = /<(.*)>/i;
     return cards

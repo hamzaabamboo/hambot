@@ -1,4 +1,4 @@
-import { Channel } from 'discord.js';
+import { Channel, MessageEmbed } from 'discord.js';
 import { Readable } from 'stream';
 
 export interface FileWithUrl {
@@ -32,6 +32,7 @@ export interface DiscordMessage extends BaseMessage {
   channel: 'discord';
   messageChannel?: Channel;
   destination?: Channel;
+  embeds?: MessageEmbed;
 }
 
 export interface FacebookMessage extends BaseMessage {
