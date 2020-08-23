@@ -1,8 +1,7 @@
-import { Injectable, forwardRef, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BaseCommand } from './command.base';
 import { Message } from '../messages/messages.model';
 import { RecurringService } from '../scheduler/recurring.service';
-import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class RecurringCommand extends BaseCommand {

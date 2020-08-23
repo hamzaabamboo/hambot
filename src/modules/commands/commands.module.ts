@@ -24,10 +24,8 @@ import { RandomCommand } from './random.command';
 import { ClipboardCommand } from './clipboard.command';
 import { NyaaCommand } from './nyaa.command';
 import { RssModule } from '../rss/rss.module';
-import { Scheduler } from 'rxjs';
 import { SchedulerModule } from '../scheduler/scheduler.module';
 import { RecurringCommand } from './recurring.command';
-import { PushModule } from '../push/push.module';
 
 @Module({
   providers: [

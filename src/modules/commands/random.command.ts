@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseCommand } from './command.base';
 import { Message } from '../messages/messages.model';
-import { clone, max } from 'lodash';
+import { clone } from 'lodash';
 
 @Injectable()
 export class RandomCommand extends BaseCommand {
@@ -11,7 +11,7 @@ export class RandomCommand extends BaseCommand {
     const stuff = things.split(' ');
     const groups = Array(isNaN(Number(n)) || Number(n) < 1 ? 2 : Number(n))
       .fill(undefined)
-      .map(_ => []);
+      .map(() => []);
     switch (command) {
       case 'group':
         const arr: string[] = clone(stuff);
