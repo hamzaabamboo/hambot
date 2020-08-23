@@ -57,7 +57,7 @@ export class RecurringService {
     );
 
     const list = (await this.trello.getLists(board.id)).find(
-      list => list.name === 'Recurring',
+      list => list.name.includes('Recurring'),
     );
 
     const cards = await this.trello.getCards(list.id);
