@@ -10,5 +10,6 @@ import { TaskSchedule } from './tasks.service';
 @Module({
   imports: [LoggerModule, TrelloModule, PushModule],
   providers: [FileSchedule, RecurringService, SchedulerRegistry, TaskSchedule],
+  exports: [RecurringService]
 })
 export class SchedulerModule {}

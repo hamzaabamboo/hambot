@@ -16,16 +16,12 @@ export class RecurringService {
     private logger: AppLogger,
   ) {
     this.logger.setContext('RecurringSchedule');
-    this.update();
+    this.refresh();
   }
   @Cron('0 0 0 * * *')
-  update() {
-    if (this._jobs.length > 0) {
-      this._jobs.forEach(j => this.scheduler.deleteCronJob(j));
-      this.logger.debug('Removed ' + this._jobs.length + ' jobs.');
-      this._jobs = [];
-    }
-    this.registerEvents();
+  async refresh() {
+    await this.clearEvents();
+    await this.registerEvents();
   }
 
   async registerEvents() {
@@ -49,6 +45,14 @@ export class RecurringService {
       });
       this.logger.debug('Added ' + this._jobs.length + ' recurring events.');
     });
+  }
+
+  async clearEvents() {
+    if (this._jobs?.length > 0) {
+      this._jobs.forEach(j => this.scheduler.deleteCronJob(j));
+      this.logger.debug('Removed ' + this._jobs.length + ' jobs.');
+      this._jobs = [];
+    }
   }
 
   async getRecurringEvents() {

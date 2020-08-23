@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { DiscordService } from '../discord/discord.service';
 import { Message, MessageChannel } from '../messages/messages.model';
 import { TrelloService } from '../trello/trello.service';
@@ -17,6 +17,7 @@ export class PushService {
   };
   constructor(
     private trello: TrelloService,
+    @Inject(forwardRef(() => MessagesService))
     private messageService: MessagesService,
     private discord: DiscordService,
     private logger: AppLogger,

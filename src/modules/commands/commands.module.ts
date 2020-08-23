@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { HelloCommand } from './hello.command';
 import { BaseCommand } from './command.base';
 import { CommandsService } from './commands.service';
@@ -24,6 +24,10 @@ import { RandomCommand } from './random.command';
 import { ClipboardCommand } from './clipboard.command';
 import { NyaaCommand } from './nyaa.command';
 import { RssModule } from '../rss/rss.module';
+import { Scheduler } from 'rxjs';
+import { SchedulerModule } from '../scheduler/scheduler.module';
+import { RecurringCommand } from './recurring.command';
+import { PushModule } from '../push/push.module';
 
 @Module({
   providers: [
@@ -45,6 +49,7 @@ import { RssModule } from '../rss/rss.module';
     RandomCommand,
     ClipboardCommand,
     NyaaCommand,
+    RecurringCommand
   ],
   imports: [
     DiscordModule,
@@ -54,6 +59,7 @@ import { RssModule } from '../rss/rss.module';
     ConfigModule,
     LoggerModule,
     RssModule,
+    forwardRef(() => SchedulerModule)
   ],
   exports: [CommandsService],
 })
