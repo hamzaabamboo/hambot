@@ -77,7 +77,7 @@ export class CommandsService {
     );
   }
 
-  async handleCommand(message: Message) {
+  async handleCommand(message: Message) : Promise<Message> {
     if (this.compound.isCompounding(message.senderId)) {
       return this.compound.handleCompound(message);
     }
@@ -103,6 +103,22 @@ export class CommandsService {
         };
       }
     }
-    return handler.handleInput(message);
+    try {
+      return handler.handleInput(message);
+    } catch (error) {
+      if (await this.auth.isAuthenticated(message.senderId, message.channel)) {
+        return {
+          ...message,
+          files: [],
+          message: `Something went wrong : ${error?.message || error}`
+        }
+      } else {
+        return {
+          ...message,
+          files: [],
+          message: `Something went wrong`
+        }
+      }
+    }
   }
 }
