@@ -25,7 +25,6 @@ export class PushService {
     private config: ConfigService
   ) {
     this.logger.setContext('PushService');
-    console.log(process.env)
     this.push(
       {
         channel: '*',

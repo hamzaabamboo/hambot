@@ -1,11 +1,12 @@
 import { Injectable, HttpService } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Message, FileWithUrl } from '../messages/messages.model';
+import { AppLogger } from '../logger/logger';
 
 const SEND_API_URL = 'https://graph.facebook.com/v7.0/me/messages';
 @Injectable()
 export class FacebookService {
-  constructor(private http: HttpService, private config: ConfigService) {}
+  constructor(private http: HttpService, private config: ConfigService, private logger: AppLogger) {}
 
   async sendReplyMessage(message: Message) {
     const msg = {
@@ -70,7 +71,7 @@ export class FacebookService {
         )
         .toPromise();
     } catch (e) {
-      console.log(e.response);
+      this.logger.error(e.response)
     }
   }
 }
