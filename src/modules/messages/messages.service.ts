@@ -8,7 +8,7 @@ import { Client } from '@line/bot-sdk';
 import { FacebookService } from '../facebook/facebook.service';
 import { DiscordAPIError, MessageEmbed } from 'discord.js';
 
-const EMBED_PATTERN = /<embed>(.*?)<\/embed>/s
+const EMBED_PATTERN = /<embed>(.*?)<\/embed>/s;
 
 @Injectable()
 export class MessagesService {
@@ -61,10 +61,12 @@ export class MessagesService {
     let embed: MessageEmbed | undefined;
     if (EMBED_PATTERN.test(message.message)) {
       try {
-        embed = JSON.parse(message.message.match(EMBED_PATTERN)[1].replace(/\s+/, ' '))
+        embed = JSON.parse(
+          message.message.match(EMBED_PATTERN)[1].replace(/\s+/, ' '),
+        );
       } catch {
       } finally {
-        message.message = message.message.replace(EMBED_PATTERN, "")
+        message.message = message.message.replace(EMBED_PATTERN, '');
       }
     }
     switch (message.channel) {
@@ -121,13 +123,13 @@ export class MessagesService {
                   name: m.name,
                 })) ?? []),
             ].filter(e => e),
-            embed
+            embed,
           })
           .catch((e: DiscordAPIError) => {
             this.logger.error('Discord error: ' + e.message);
           });
       case 'facebook':
-        message.message = message.message + (embed?.url ? ' ' + embed.url : '')
+        message.message = message.message + (embed?.url ? ' ' + embed.url : '');
         if (message.senderId) {
           return this.facebookService.sendReplyMessage(message).catch(e => {
             this.logger.error(e.data);

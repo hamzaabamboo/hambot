@@ -24,6 +24,7 @@ Personal cross-platform bot to help keep up with tasks and lots more stuff. Buil
 - [x] Push Messages, Multiple push channels (Public/ Private/ Debug/ Recurring)
 - [x] Activation/Deactivation of modules
 - [x] Effortlessly add platforms
+- [x] Embed links
 - [ ] Help command
 
 ### Functions
@@ -40,6 +41,7 @@ These functions requires authentication
 - [x] Temporary file sharing
 - [x] Clipboard
 - [x] Recurring events reminder
+- [x] Calendar (ical) Events reminder
 
 #### Public
 

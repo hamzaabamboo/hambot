@@ -13,6 +13,7 @@ import { FileModule } from './modules/file/file.module';
 import { TwitterModule } from './modules/twitter/twitter.module';
 import { FacebookModule } from './modules/facebook/facebook.module';
 import { RssModule } from './modules/rss/rss.module';
+import { IcalModule } from './modules/ical/ical.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { RssModule } from './modules/rss/rss.module';
     TwitterModule,
     AudioModule,
     RssModule,
+    IcalModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],
