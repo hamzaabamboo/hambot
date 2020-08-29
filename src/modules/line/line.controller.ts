@@ -6,7 +6,7 @@ import {
   Inject,
   forwardRef,
 } from '@nestjs/common';
-import * as crypto from 'crypto';
+import crypto from 'crypto';
 import {
   WebhookRequestBody,
   FileEventMessage,

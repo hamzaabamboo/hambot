@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Message, DiscordMessage } from '../../messages/messages.model';
 import { BaseCommand } from '../command.base';
 import { DiscordService } from 'src/modules/discord/discord.service';
-import * as ytdl from 'ytdl-core';
-import * as ytsr from 'ytsr';
+import ytdl from 'ytdl-core';
+import ytsr from 'ytsr';
 import { AudioService } from 'src/modules/audio/audio.service';
 
 @Injectable()

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseCommand } from './command.base';
 import { Message } from '../messages/messages.model';
-import * as moment from 'moment';
+import moment from 'moment';
 
 @Injectable()
 export class TimeCommand extends BaseCommand {

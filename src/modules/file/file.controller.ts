@@ -7,7 +7,7 @@ import {
   Response,
 } from '@nestjs/common';
 import { join } from 'path';
-import * as mkdirp from 'mkdirp';
+import mkdirp from 'mkdirp';
 import { promises, createReadStream } from 'fs';
 
 @Controller('files')

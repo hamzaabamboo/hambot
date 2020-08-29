@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { BaseCommand } from './command.base';
 import { Message } from '../messages/messages.model';
 import { RssService } from '../rss/rss.service';
-import * as he from 'he';
+import he from 'he';
 
 const PER_PAGE = 10;
 @Injectable()
@@ -27,7 +27,7 @@ export class NyaaCommand extends BaseCommand {
       query ?? '',
     )}&page=rss`;
     const rss = await this.rss.getRssFeed(url);
-    const totalPage = Math.floor((rss.channel?.item?.length  ?? 0)/ PER_PAGE);
+    const totalPage = Math.floor((rss.channel?.item?.length ?? 0) / PER_PAGE);
     const pageN = isNaN(Number(page))
       ? 1
       : Number(page) > totalPage

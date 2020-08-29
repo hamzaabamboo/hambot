@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { AppLogger } from '../logger/logger';
 import { TrelloService } from '../trello/trello.service';
-import * as path from 'path';
-import * as mkdirp from 'mkdirp';
-import * as rimraf from 'rimraf';
+import path from 'path';
+import mkdirp from 'mkdirp';
+import rimraf from 'rimraf';
 
 @Injectable()
 export class FileSchedule {

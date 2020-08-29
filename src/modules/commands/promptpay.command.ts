@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseCommand } from './command.base';
 import { Message } from '../messages/messages.model';
-import * as generatePayload from 'promptpay-qr';
+import generatePayload from 'promptpay-qr';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
