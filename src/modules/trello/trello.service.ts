@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as Trello from 'trello';
+import Trello from 'trello';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

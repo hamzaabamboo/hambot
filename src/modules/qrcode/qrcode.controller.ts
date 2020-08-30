@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Res, Header } from '@nestjs/common';
-import * as qr from 'qr-image';
+import qr from 'qr-image';
 import { Response } from 'express';
 
 @Controller('qrcode')

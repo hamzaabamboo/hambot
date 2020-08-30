@@ -1,5 +1,5 @@
 import { Injectable, HttpService } from '@nestjs/common';
-import * as parser from 'fast-xml-parser';
+import parser from 'fast-xml-parser';
 
 @Injectable()
 export class RssService {

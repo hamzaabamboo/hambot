@@ -1,6 +1,6 @@
 import { Injectable, HttpService } from '@nestjs/common';
-import * as ical from 'node-ical';
-import * as moment from 'moment';
+import ical from 'node-ical';
+import moment from 'moment';
 @Injectable()
 export class IcalService {
   constructor(private http: HttpService) {}

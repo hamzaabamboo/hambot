@@ -5,7 +5,7 @@ import {
 } from '../compound.handler.base';
 import { TrelloService } from 'src/modules/trello/trello.service';
 import { ModuleRef } from '@nestjs/core';
-import * as mkdirp from 'mkdirp';
+import mkdirp from 'mkdirp';
 import { createWriteStream } from 'fs';
 import { ConfigService } from '@nestjs/config';
 import path = require('path');
