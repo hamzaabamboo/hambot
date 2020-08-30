@@ -4,6 +4,7 @@ import axios from 'axios';
 import qs from 'querystring';
 import '../css/tailwind.css';
 import 'rc-slider/assets/index.css';
+import { image } from 'qr-image';
 
 const RangeC = (Range as any) as React.Component;
 
@@ -18,6 +19,7 @@ export default ({ name }: { name: string }) => {
   const [clip, setClip] = useState<[number, number]>([0, 0]);
   const [fps, setFps] = useState<number>(30);
   const [loop, setLoop] = useState<boolean>(true);
+  const [res, setRes] = useState<string>('');
   const videoRef = useRef<HTMLVideoElement>(null);
   const seekingRef = useRef(false);
 
@@ -29,9 +31,8 @@ export default ({ name }: { name: string }) => {
   };
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.volume = volume / 100;
-    }
+    if (!videoRef.current) return;
+    videoRef.current.volume = volume / 100;
   }, [volume]);
 
   useEffect(() => {
@@ -99,6 +100,12 @@ export default ({ name }: { name: string }) => {
     }
   };
 
+  const getGif = () => {
+    setRes(
+      'clip?' + qs.encode({ url, start: clip[0] / fps, end: clip[1] / fps }),
+    );
+  };
+
   return (
     <div className="flex justify-center flex-col items-center min-h-screen py-2">
       <div className="flex justify-center flex-col items-center py-2">
@@ -142,6 +149,11 @@ export default ({ name }: { name: string }) => {
                 defaultValue={[0, 1]}
                 value={clip}
                 onBeforeChange={() => {
+                  seekingRef.current = true;
+                  videoRef.current.pause();
+                }}
+                onAfterChange={() => {
+                  seekingRef.current = false;
                   videoRef.current.pause();
                 }}
                 onChange={r => {
@@ -205,7 +217,11 @@ export default ({ name }: { name: string }) => {
               className="p-2"
             />
           </div>
+          <button className="rounded p-2" onClick={getGif}>
+            Generate GIF !
+          </button>
         </div>
+        {res && <img src={res} />}
       </div>
     </div>
   );
