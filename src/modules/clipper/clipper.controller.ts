@@ -6,13 +6,22 @@ import {
   HttpException,
   Param,
   Query,
+  OnApplicationShutdown,
 } from '@nestjs/common';
 import ytdl from 'ytdl-core';
 import ffmpeg from 'fluent-ffmpeg';
 import { Response } from 'express';
+import { Readable, Stream, Writable } from 'stream';
+import { AppLogger } from '../logger/logger';
 
 @Controller('clipper')
-export class ClipperController {
+export class ClipperController implements OnApplicationShutdown {
+  private streams: Writable[] = [];
+
+  constructor(private logger: AppLogger) {
+    this.logger.setContext('ClipperController');
+  }
+
   @Get()
   @Render('clipper/index') // this will render `views/index.tsx`
   public showHome() {
@@ -49,12 +58,14 @@ export class ClipperController {
     }
     try {
       const info = await ytdl.getInfo(vid);
-      const vidStream = ytdl(vid);
-      let resStream = ffmpeg(vidStream)
-        .seekInput(Number(start ?? 0))
-        .setDuration(Number(end) - Number(start));
+      const vidStream = ytdl(vid, {
+        quality: 'highest',
+        begin: Math.round(Number(start ?? 0) * 1000),
+      });
+      const dur = Number(end) - Number(start);
+      let resStream = ffmpeg(vidStream).setDuration(dur);
 
-      console.log(vid, Number(start ?? 0), end, Number(end) - Number(start));
+      console.log(vid, Number(start ?? 0), end, dur);
 
       let filename = encodeURIComponent(info.videoDetails.title);
 
@@ -74,10 +85,21 @@ export class ClipperController {
           res.setHeader('content-type', 'video/webp');
           filename += '.webp';
           break;
+        case 'mp3':
+          resStream = resStream.format('mp3');
+          res.setHeader('content-type', 'audio/mp3');
+          filename += '.mp3';
+          break;
+        case 'wav':
+          resStream = resStream.format('wav');
+          res.setHeader('content-type', 'audio/wav');
+          filename += '.wav';
+          break;
         default:
           resStream = resStream
             .format('gif')
-            .outputFPS(15)
+            .outputFPS(12)
+            // .videoFilters('split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse')
             .size('50%');
           filename += '.gif';
           res.setHeader('content-type', 'image/gif');
@@ -92,15 +114,26 @@ export class ClipperController {
       } else {
         res.setHeader('content-disposition', `inline; filename=${filename}`);
       }
-      resStream
-        .on('error', e => {
-          console.log('Something wrong', e);
-          vidStream.destroy();
-          resStream.removeAllListeners();
-        })
-        .pipe(res);
+      // console.log(filename);
+      this.streams.push(
+        resStream
+          .on('error', e => {
+            console.log('Something wrong', e);
+            vidStream.destroy();
+            resStream.removeAllListeners();
+          })
+          .pipe(res),
+      );
     } catch (error) {
       return new HttpException('Oops', 400);
     }
+  }
+
+  onApplicationShutdown() {
+    this.streams.forEach(s => {
+      s.destroy();
+    });
+    this.logger.debug('Cleared ' + this.streams.length + ' streams.');
+    this.streams = [];
   }
 }

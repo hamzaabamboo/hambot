@@ -25,7 +25,7 @@ export default ({ name }: { name: string }) => {
 
   const updateProgress = (time: number) => {
     if (videoRef.current) {
-      videoRef.current.currentTime = time / fps;
+      videoRef.current.currentTime = time;
     }
     setProgress(time);
   };
@@ -39,7 +39,7 @@ export default ({ name }: { name: string }) => {
     if (
       clip[1] &&
       !seekingRef.current &&
-      Math.round(progress) > Math.round(clip[1])
+      Math.round(progress) >= Math.round(clip[1])
     ) {
       if (!loop) videoRef.current.pause();
       updateProgress(clip[0]);
@@ -56,14 +56,14 @@ export default ({ name }: { name: string }) => {
     videoRef.current?.addEventListener('volumechange', updateVolume);
 
     const updateTime = e => {
-      setProgress(e.target.currentTime * fps);
+      setProgress(e.target.currentTime);
     };
     videoRef.current?.addEventListener('timeupdate', updateTime);
 
     const checkBounds = e => {
-      if (e.target.currentTime * fps >= clip[1]) {
+      if (Math.round(e.target.currentTime) >= Math.round(clip[1])) {
         setProgress(clip[0]);
-        e.target.currentTime = clip[0] * fps;
+        e.target.currentTime = clip[0];
       }
     };
     videoRef.current?.addEventListener('play', updateTime);
@@ -92,8 +92,8 @@ export default ({ name }: { name: string }) => {
       videoRef.current.play();
       videoRef.current.muted = false;
       setFps(data.fps);
-      setDuration((Number(data.approxDurationMs) / 1000) * data.fps);
-      setClip([0, (Number(data.approxDurationMs) / 1000) * data.fps]);
+      setDuration(Number(data.approxDurationMs) / 1000);
+      setClip([0, Number(data.approxDurationMs) / 1000]);
       setVolume(50);
     } catch {
       setVideoSrc('');
@@ -101,9 +101,7 @@ export default ({ name }: { name: string }) => {
   };
 
   const getGif = () => {
-    setRes(
-      'clip?' + qs.encode({ url, start: clip[0] / fps, end: clip[1] / fps }),
-    );
+    setRes('clip?' + qs.encode({ url, start: clip[0], end: clip[1] }));
   };
 
   return (
@@ -128,9 +126,10 @@ export default ({ name }: { name: string }) => {
               Search
             </button>
           </div>
-          <div className="w-80 flex items-center">
+          <div className="w-80 flex items-center mb-2">
             <input
               type="number"
+              step=".01"
               className="p-2 rounded border border-black flex-shrink"
               value={clip[0]}
               min={0}
@@ -144,6 +143,7 @@ export default ({ name }: { name: string }) => {
             <div className="px-4 w-100 flex-grow">
               <RangeC
                 allowCross={false}
+                step=".01"
                 min={0}
                 max={duration}
                 defaultValue={[0, 1]}
@@ -169,6 +169,7 @@ export default ({ name }: { name: string }) => {
             <input
               type="number"
               className="p-2 rounded border border-black flex-shrink"
+              step=".01"
               value={clip[1]}
               min={clip[0]}
               max={duration}
@@ -178,21 +179,23 @@ export default ({ name }: { name: string }) => {
               }}
             />
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col mb-2">
             <span>Progress</span>
-            <div className="flex">
+            <div className="flex mb-2">
               <input
                 type="number"
+                step=".01"
                 max={clip[1] ?? duration ?? 0}
                 min={clip[0] ?? 0}
                 className="p-2 mr-2 rounded border border-black flex-shrink"
-                value={Math.floor(progress)}
+                value={progress}
                 onChange={e => {
                   updateProgress(Number(e.target.value));
                 }}
               />
               <input
                 type="range"
+                step=".01"
                 className="w-100 flex-grow p-2"
                 max={clip[1] ?? duration ?? 0}
                 min={clip[0] ?? 0}
@@ -204,6 +207,24 @@ export default ({ name }: { name: string }) => {
                   updateProgress(Number(e.target.value));
                 }}
               />
+            </div>
+            <div className="flex">
+              <button
+                className="rounded bg-blue-200 p-2"
+                onClick={() => {
+                  setClip([progress, clip[1]]);
+                }}
+              >
+                Set Start
+              </button>
+              <button
+                className="rounded bg-blue-200 p-2"
+                onClick={() => {
+                  setClip([clip[0], progress]);
+                }}
+              >
+                Set End
+              </button>
             </div>
           </div>
           <div className="flex flex-col">
@@ -217,9 +238,16 @@ export default ({ name }: { name: string }) => {
               className="p-2"
             />
           </div>
-          <button className="rounded p-2" onClick={getGif}>
-            Generate GIF !
-          </button>
+          <div>
+            <button className="rounded bg-blue-400 p-2" onClick={getGif}>
+              Generate GIF !
+            </button>
+            {res && (
+              <a href={res + '&download=true'} target="__blank">
+                Download GIF !
+              </a>
+            )}
+          </div>
         </div>
         {res && <img src={res} />}
       </div>
