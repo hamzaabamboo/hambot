@@ -22,17 +22,20 @@ export class PushService {
     private messageService: MessagesService,
     private discord: DiscordService,
     private logger: AppLogger,
-    private config: ConfigService
+    private config: ConfigService,
   ) {
     this.logger.setContext('PushService');
-    this.push(
-      {
-        channel: '*',
-        senderId: '',
-        message: `HamBot Online! (${this.config.get("NODE_ENV") ?? 'Development'})`,
-      },
-      'debug',
-    );
+    if (this.config.get('NODE_ENV')) {
+      this.push(
+        {
+          channel: '*',
+          senderId: '',
+          message: `HamBot Online! (${this.config.get('NODE_ENV') ??
+            'Development'})`,
+        },
+        'debug',
+      );
+    }
   }
 
   async getDestinations() {
