@@ -26,7 +26,7 @@ export class DiscordService {
   ) {
     this.client = new Client();
     this.client.login(config.get('DISCORD_TOKEN'));
-    this.logger.setContext('DiscordContext');
+    this.logger.setContext('DiscordService');
     this.listen();
   }
 
