@@ -30,7 +30,7 @@ export class ClipperController implements OnApplicationShutdown {
   }
 
   @Get('vid')
-  public async getStreaam(@Query('url') url: string) {
+  public async getStream(@Query('url') url: string) {
     if (!url) throw new HttpException('Url is not supplied', 400);
     const vid = url;
     try {
@@ -53,8 +53,13 @@ export class ClipperController implements OnApplicationShutdown {
     if (!url) throw new HttpException('Url is not supplied', 400);
     const vid = url;
 
+    const dur = Number(end) - Number(start);
     if (isNaN(Number(end)) || isNaN(Number(start))) {
       return new HttpException('Invalid start/end time', 400);
+    }
+
+    if (dur > 600) {
+      return new HttpException('Video clip too long', 400);
     }
     try {
       const info = await ytdl.getInfo(vid);
@@ -62,10 +67,9 @@ export class ClipperController implements OnApplicationShutdown {
         quality: 'highest',
         begin: Math.round(Number(start ?? 0) * 1000),
       });
-      const dur = Number(end) - Number(start);
       let resStream = ffmpeg(vidStream).setDuration(dur);
 
-      console.log(vid, Number(start ?? 0), end, dur);
+      // console.log(vid, Number(start ?? 0), end, dur);
 
       let filename = encodeURIComponent(info.videoDetails.title);
 

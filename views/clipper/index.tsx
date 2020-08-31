@@ -73,6 +73,7 @@ export default ({ name }: { name: string }) => {
         if (videoRef.current.paused) videoRef.current.play();
         else videoRef.current.pause();
         e.preventDefault();
+        e.stopImmediatePropagation();
       }
     };
     const _window = window;
