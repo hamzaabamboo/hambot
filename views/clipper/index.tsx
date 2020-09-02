@@ -244,9 +244,29 @@ export default ({ name }: { name: string }) => {
               Generate GIF !
             </button>
             {res && (
-              <a href={res + '&download=true'} target="__blank">
-                Download GIF !
-              </a>
+              <>
+                <a
+                  className="mx-2"
+                  href={res + '&download=true'}
+                  target="__blank"
+                >
+                  Download GIF !
+                </a>
+                <a
+                  className="mx-2"
+                  href={res + '&type=mp3&download=true'}
+                  target="__blank"
+                >
+                  Download MP3 !
+                </a>
+                <a
+                  className="mx-2"
+                  href={res + '&type=mp4&download=true'}
+                  target="__blank"
+                >
+                  Download MP4 !
+                </a>
+              </>
             )}
           </div>
         </div>

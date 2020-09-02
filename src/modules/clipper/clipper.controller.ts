@@ -65,15 +65,25 @@ export class ClipperController implements OnApplicationShutdown {
       const info = await ytdl.getInfo(vid);
       const vidStream = ytdl(vid, {
         quality: 'highest',
-        begin: Math.round(Number(start ?? 0) * 1000),
       });
-      let resStream = ffmpeg(vidStream).setDuration(dur);
+      let resStream = ffmpeg(vidStream);
+      if (Number(start ?? 0) > 0)
+        resStream = resStream.seekInput(Number(start ?? 0));
 
       // console.log(vid, Number(start ?? 0), end, dur);
 
-      let filename = encodeURIComponent(info.videoDetails.title);
+      let filename = encodeURIComponent(
+        `${info.videoDetails.title}_${start}_${end}`,
+      );
 
       switch (type) {
+        case 'mp4':
+          resStream = resStream
+            .format('mp4')
+            .outputOptions('-movflags frag_keyframe+empty_moov');
+          res.setHeader('content-type', 'video/mp4');
+          filename += '.mp4';
+          break;
         case 'flv':
           resStream = resStream.format('flv');
           res.setHeader('content-type', 'video/flv');
@@ -118,6 +128,8 @@ export class ClipperController implements OnApplicationShutdown {
       } else {
         res.setHeader('content-disposition', `inline; filename=${filename}`);
       }
+
+      resStream = resStream.setDuration(dur);
       // console.log(filename);
       this.streams.push(
         resStream
