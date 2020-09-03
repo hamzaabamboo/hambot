@@ -88,7 +88,7 @@ export default ({ name }: { name: string }) => {
 
   const getVid = async () => {
     try {
-      const { data } = await axios.get('vid?' + qs.encode({ url }));
+      const { data } = await axios.get('/clipper/vid?' + qs.encode({ url }));
       setVideoSrc(data.url);
       videoRef.current.play();
       videoRef.current.muted = false;
@@ -247,21 +247,21 @@ export default ({ name }: { name: string }) => {
               <>
                 <a
                   className="mx-2"
-                  href={res + '&download=true'}
+                  href={'/clipper/' + res + '&download=true'}
                   target="__blank"
                 >
                   Download GIF !
                 </a>
                 <a
                   className="mx-2"
-                  href={res + '&type=mp3&download=true'}
+                  href={'/clipper/' + res + '&type=mp3&download=true'}
                   target="__blank"
                 >
                   Download MP3 !
                 </a>
                 <a
                   className="mx-2"
-                  href={res + '&type=mp4&download=true'}
+                  href={'/clipper/' + res + '&type=mp4&download=true'}
                   target="__blank"
                 >
                   Download MP4 !
@@ -270,7 +270,7 @@ export default ({ name }: { name: string }) => {
             )}
           </div>
         </div>
-        {res && <img src={res} />}
+        {res && <img src={'/clipper/' + res} />}
       </div>
     </div>
   );
