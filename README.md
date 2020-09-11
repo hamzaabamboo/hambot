@@ -42,6 +42,7 @@ These functions requires authentication
 - [x] Clipboard
 - [x] Recurring events reminder
 - [x] Calendar (ical) Events reminder
+- [x] Set Discord server image
 
 #### Public
 

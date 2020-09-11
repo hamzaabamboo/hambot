@@ -37,8 +37,8 @@ export class DiscordService {
       this.client.user.setPresence({
         status: 'online',
         activity: {
-          name: 'Beep Boop Beep Boop',
-          type: 'CUSTOM_STATUS',
+          name: 'simps',
+          type: 'WATCHING',
         },
       });
     });
@@ -47,7 +47,7 @@ export class DiscordService {
         return;
       if (message.author.username.includes('YamaKJ') && Math.random() > 0.5) {
         this.sendMessage(message.channel, {
-          content: 'Boo boo desu wa :P',
+          content: 'Buu buu desu wa :P',
         });
         return;
       }
