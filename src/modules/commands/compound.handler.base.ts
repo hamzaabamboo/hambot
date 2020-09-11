@@ -3,7 +3,7 @@ import { ModuleRef } from '@nestjs/core';
 
 export interface CompoundResponse {
   isCompounding: boolean;
-  message?: Message;
+  message?: Partial<Message>;
 }
 export class BaseCompoundHandler {
   public static startCommand = /^(echom)/;

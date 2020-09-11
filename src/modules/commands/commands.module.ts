@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module, forwardRef, HttpModule } from '@nestjs/common';
 import { HelloCommand } from './hello.command';
 import { BaseCommand } from './command.base';
 import { CommandsService } from './commands.service';
@@ -47,7 +47,7 @@ import { RecurringCommand } from './recurring.command';
     RandomCommand,
     ClipboardCommand,
     NyaaCommand,
-    RecurringCommand
+    RecurringCommand,
   ],
   imports: [
     DiscordModule,
@@ -55,9 +55,10 @@ import { RecurringCommand } from './recurring.command';
     AudioModule,
     AuthModule,
     ConfigModule,
+    HttpModule,
     LoggerModule,
     RssModule,
-    forwardRef(() => SchedulerModule)
+    forwardRef(() => SchedulerModule),
   ],
   exports: [CommandsService],
 })

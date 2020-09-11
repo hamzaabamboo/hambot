@@ -4,7 +4,7 @@ import { Message } from '../messages/messages.model';
 
 @Injectable()
 export class ClipboardCommand extends BaseCommand {
-  public command = /^(c(?:opy)?|p(?:aste)?)(?: (.*))?/i;
+  public command = /^(c(?:opy)(?: (.*))?|p(?:aste)?)$/i;
   public requiresAuth = true;
   clipboard: string;
 
@@ -19,17 +19,16 @@ export class ClipboardCommand extends BaseCommand {
         };
       case 'p':
       case 'paste':
-        if (this.clipboard !== '') {
-          return {
-            files: [],
-            message: this.clipboard,
-          };
-        } else {
+        if (!this.clipboard) {
           return {
             files: [],
             message: 'Clipboard empty',
           };
         }
+        return {
+          files: [],
+          message: this.clipboard,
+        };
     }
   }
 }

@@ -19,6 +19,7 @@ import { RandomCommand } from './random.command';
 import { ClipboardCommand } from './clipboard.command';
 import { NyaaCommand } from './nyaa.command';
 import { RecurringCommand } from './recurring.command';
+import { ProfilePicCommand } from './discord/profilepic.command';
 
 @Injectable()
 export class CommandsService {
@@ -62,6 +63,7 @@ export class CommandsService {
       clipboard,
       nyaa,
       recurring,
+      //Always bottom
       base,
     ];
   }

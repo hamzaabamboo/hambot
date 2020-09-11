@@ -4,6 +4,7 @@ import { BaseCompoundHandler } from './compound.handler.base';
 import { AuthService } from '../auth/auth.service';
 import { FileCommand } from './compound/files.command';
 import { ModuleRef } from '@nestjs/core';
+import { ProfilePicCommand } from './discord/profilepic.command';
 
 @Injectable({
   scope: Scope.DEFAULT,
@@ -11,6 +12,7 @@ import { ModuleRef } from '@nestjs/core';
 export class CompoundService {
   private _compoundingData: Map<string, BaseCompoundHandler>;
   private handlers: typeof BaseCompoundHandler[] = [
+    ProfilePicCommand,
     FileCommand,
     BaseCompoundHandler,
   ];
@@ -55,7 +57,7 @@ export class CompoundService {
       if (!isCompounding) {
         this.finishedCompounding(message.senderId);
       }
-      return returnMsg;
+      return { ...message, ...returnMsg };
     }
     return;
   }
