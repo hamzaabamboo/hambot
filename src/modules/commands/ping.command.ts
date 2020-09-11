@@ -24,7 +24,6 @@ export class PingCommand extends BaseCommand {
         break;
     }
     return {
-      ...message,
       files: [],
       message: res,
     };

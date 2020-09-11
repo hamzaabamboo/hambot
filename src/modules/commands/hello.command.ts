@@ -8,7 +8,6 @@ export class HelloCommand extends BaseCommand {
 
   async handle(message: Message) {
     return {
-      ...message,
       files: [],
       message: 'Hello World',
     };

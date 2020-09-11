@@ -18,7 +18,6 @@ export class NyaaCommand extends BaseCommand {
   async handle(message: Message, page: string, query: string) {
     if (!query) {
       return {
-        ...message,
         files: [],
         message: 'Usage: nyaa <page?> <query>',
       };
@@ -51,7 +50,6 @@ export class NyaaCommand extends BaseCommand {
     `
         : 'Data not found';
     return {
-      ...message,
       files: [],
       message: res,
     };

@@ -24,10 +24,9 @@ export class BaseCommand {
   async handle(
     message: Message,
     ...params: string[]
-  ): Promise<Message | undefined> {
+  ): Promise<Partial<Message> | undefined> {
     // Do nothing
     return {
-      ...message,
       files: [],
       message: 'Command not found sry :P' + params.map(() => '').join(''),
     };

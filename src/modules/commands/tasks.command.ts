@@ -22,7 +22,6 @@ export class TasksCommand extends BaseCommand {
     switch (query) {
       case 'list':
         return {
-          ...message,
           files: [],
           message:
             'Available Lists \n' + allLists.map(l => '- ' + l.name).join('\n'),
@@ -64,7 +63,6 @@ export class TasksCommand extends BaseCommand {
           )
           .join('\n');
         return {
-          ...message,
           files: [],
           message: res.length > 0 ? res : 'List not found',
         };

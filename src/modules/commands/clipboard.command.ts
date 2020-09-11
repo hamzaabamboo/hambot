@@ -14,7 +14,6 @@ export class ClipboardCommand extends BaseCommand {
       case 'copy':
         this.clipboard = things;
         return {
-          ...message,
           files: [],
           message: 'Copied',
         };
@@ -22,13 +21,11 @@ export class ClipboardCommand extends BaseCommand {
       case 'paste':
         if (this.clipboard !== '') {
           return {
-            ...message,
             files: [],
             message: this.clipboard,
           };
         } else {
           return {
-            ...message,
             files: [],
             message: 'Clipboard empty',
           };

@@ -15,7 +15,7 @@ export class StreamCommand extends BaseCommand {
     super();
   }
 
-  async handle(message: DiscordMessage, command: string): Promise<Message> {
+  async handle(message: DiscordMessage, command: string) {
     switch (command) {
       case 'start':
         try {
@@ -35,20 +35,17 @@ export class StreamCommand extends BaseCommand {
             this.audio.stopPlaying(message);
           });
           return {
-            ...message,
             files: [],
             message: `Streaming Sound`,
           };
         } catch (e) {
           if (e.message === 'PLAYING') {
             return {
-              ...message,
               files: [],
               message: `Something is playing, we don't have queue. So either stop or wait lul`,
             };
           }
           return {
-            ...message,
             files: [],
             message: `Something went wrong`,
           };
@@ -57,14 +54,12 @@ export class StreamCommand extends BaseCommand {
         await this.audio.stopPlaying(message);
         this.stream.stopServer();
         return {
-          ...message,
           files: [],
           message: `Stopped music`,
         };
 
       default:
         return {
-          ...message,
           files: [],
           message: 'Usage: stream <start|stop>',
         };

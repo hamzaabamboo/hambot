@@ -28,7 +28,6 @@ export class PushCommand extends BaseCommand {
           cards.find(c => c.name === `${message.channel}: ${message.channelId}`)
         )
           return {
-            ...message,
             files: [],
             message: 'This channel is already registered ',
           };
@@ -38,7 +37,6 @@ export class PushCommand extends BaseCommand {
           tag,
         );
         return {
-          ...message,
           files: [],
           message: `Added this channel to receive push notifications`,
         };
@@ -48,13 +46,11 @@ export class PushCommand extends BaseCommand {
         ).id;
         if (!id)
           return {
-            ...message,
             files: [],
             message: 'This channel is not registered',
           };
         await this.trello.editCard(id, undefined, tag, list.id);
         return {
-          ...message,
           files: [],
           message: tag
             ? `Added this channel to receive ${tag} tags`
@@ -66,12 +62,10 @@ export class PushCommand extends BaseCommand {
         );
         if (!currTag)
           return {
-            ...message,
             files: [],
             message: 'This channel is not registered',
           };
         return {
-          ...message,
           files: [],
           message: currTag.desc
             ? `This channel is receiving ${currTag.desc} and public messages`
@@ -83,19 +77,16 @@ export class PushCommand extends BaseCommand {
         );
         if (!toDel)
           return {
-            ...message,
             files: [],
             message: 'This channel is not yet registered ',
           };
         await this.trello.deleteCard(toDel.id);
         return {
-          ...message,
           files: [],
           message: `Removed this channel from receiving notifications`,
         };
       default:
         return {
-          ...message,
           files: [],
           message: 'Usage: push <register/remove/status/update> <tag>',
         };

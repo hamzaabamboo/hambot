@@ -12,15 +12,10 @@ export class PromptPayCommand extends BaseCommand {
     super();
   }
 
-  async handle(
-    message: Message,
-    id: string,
-    amountS?: string,
-  ): Promise<Message> {
+  async handle(message: Message, id: string, amountS?: string) {
     const amount = parseInt(amountS ?? '0');
     if (id && !isNaN(amount)) {
       return {
-        ...message,
         files: [],
         message: `QRCode for ${id} ` + (amountS ? amountS + ' THB' : ''),
         image: [
@@ -35,7 +30,6 @@ export class PromptPayCommand extends BaseCommand {
       };
     }
     return {
-      ...message,
       files: [],
       message: 'Usage: <pp|promptpay> <id> <amount>',
     };

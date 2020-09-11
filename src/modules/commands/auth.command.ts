@@ -16,7 +16,6 @@ export class AuthCommand extends BaseCommand {
   async handle(message: Message, command: string, token: string) {
     if (await this.auth.isAuthenticated(message.senderId, message.channel)) {
       return {
-        ...message,
         files: [],
         message: 'You are already authenticated',
       };
@@ -25,7 +24,6 @@ export class AuthCommand extends BaseCommand {
       case 'token':
         if (!token)
           return {
-            ...message,
             files: [],
             message: 'Please supply token use: auth token <token>',
           };
@@ -33,13 +31,11 @@ export class AuthCommand extends BaseCommand {
           await this.auth.register(message.senderId, message.channel, token)
         ) {
           return {
-            ...message,
             files: [],
             message: 'Registration successful',
           };
         } else {
           return {
-            ...message,
             files: [],
             message: 'Invalid Token',
           };
@@ -51,13 +47,11 @@ export class AuthCommand extends BaseCommand {
           }) : ${this.auth.getToken(message.senderId, message.channel)}`,
         );
         return {
-          ...message,
           files: [],
           message: 'Please check token in console and use : auth token <token>',
         };
       default:
         return {
-          ...message,
           files: [],
           message: 'Usage : auth <token/register>',
         };

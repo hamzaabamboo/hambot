@@ -22,7 +22,6 @@ export class RandomCommand extends BaseCommand {
           i = (i + 1) % groups.length;
         }
         return {
-          ...message,
           files: [],
           message: groups
             .map((e, i) => `Group ${i + 1}\n ${e.join(' ,')}`)
@@ -48,7 +47,6 @@ export class RandomCommand extends BaseCommand {
           group = (group + 1) % groups.length;
         }
         return {
-          ...message,
           files: [],
           message: groups
             .map((e, i) => `Group ${i + 1}\n ${e.join(' ,')}`)
@@ -56,7 +54,6 @@ export class RandomCommand extends BaseCommand {
         };
       default:
         return {
-          ...message,
           files: [],
           message: stuff[Math.floor(Math.random() * stuff.length)],
         };

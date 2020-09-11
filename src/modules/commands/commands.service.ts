@@ -43,7 +43,7 @@ export class CommandsService {
     random: RandomCommand,
     clipboard: ClipboardCommand,
     nyaa: NyaaCommand,
-    recurring: RecurringCommand
+    recurring: RecurringCommand,
   ) {
     this.commands = [
       hello,
@@ -80,13 +80,13 @@ export class CommandsService {
     );
   }
 
-  async handleCommand(message: Message) : Promise<Message> {
+  async handleCommand(message: Message): Promise<Message> {
     if (this.compound.isCompounding(message.senderId)) {
       return this.compound.handleCompound(message);
     }
     if (this.compound.canCompound(message)) {
-      const res = this.compound.startCompound(message);
-      return res;
+      const res = await this.compound.startCompound(message);
+      return { ...message, ...(res as Partial<Message>) };
     }
     const handler = this.commands
       .filter(
@@ -97,7 +97,10 @@ export class CommandsService {
       });
     if (handler.requiresAuth) {
       if (await this.auth.isAuthenticated(message.senderId, message.channel)) {
-        return handler.handleInput(message);
+        return {
+          ...message,
+          ...(await handler.handleInput(message)),
+        };
       } else {
         return {
           ...message,
@@ -107,20 +110,23 @@ export class CommandsService {
       }
     }
     try {
-      return handler.handleInput(message);
+      return {
+        ...message,
+        ...(await handler.handleInput(message)),
+      };
     } catch (error) {
       if (await this.auth.isAuthenticated(message.senderId, message.channel)) {
         return {
           ...message,
           files: [],
-          message: `Something went wrong : ${error?.message || error}`
-        }
+          message: `Something went wrong : ${error?.message || error}`,
+        };
       } else {
         return {
           ...message,
           files: [],
-          message: `Something went wrong`
-        }
+          message: `Something went wrong`,
+        };
       }
     }
   }

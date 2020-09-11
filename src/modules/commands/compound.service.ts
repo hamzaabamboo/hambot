@@ -22,7 +22,7 @@ export class CompoundService {
     return this.handlers.some(h => h.startCommand.test(message.message));
   }
 
-  async startCompound(message: Message): Promise<Message | undefined> {
+  async startCompound(message: Message): Promise<Partial<Message> | undefined> {
     const handler = this.handlers.find(function(h) {
       return h.startCommand.test(message.message);
     });
@@ -35,7 +35,6 @@ export class CompoundService {
         return this.handleCompound(message);
       } else {
         return {
-          ...message,
           files: [],
           message: 'You cannot use this command',
         };

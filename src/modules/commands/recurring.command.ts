@@ -13,26 +13,23 @@ export class RecurringCommand extends BaseCommand {
 
   async handle(message: Message, command: string) {
     switch (command) {
-        case 'stop':
-            await this.recurring.clearEvents();
-            return {
-                ...message,
-                files: [],
-                message: 'Stopped all recurring Events',
-              };
-        case 'refresh':
-            await this.recurring.refresh();
-            return {
-                ...message,
-                files: [],
-                message: 'Refreshed all recurring Events',
-              };
-        default:
-            return {
-                ...message,
-                files: [],
-                message: "Usage: recurring <stop/refresh>"
-              };
+      case 'stop':
+        await this.recurring.clearEvents();
+        return {
+          files: [],
+          message: 'Stopped all recurring Events',
+        };
+      case 'refresh':
+        await this.recurring.refresh();
+        return {
+          files: [],
+          message: 'Refreshed all recurring Events',
+        };
+      default:
+        return {
+          files: [],
+          message: 'Usage: recurring <stop/refresh>',
+        };
     }
   }
 }

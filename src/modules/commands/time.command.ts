@@ -9,7 +9,6 @@ export class TimeCommand extends BaseCommand {
 
   async handle(message: Message) {
     return {
-      ...message,
       files: [],
       message: moment().format('DD/MM/YYYY HH:mm'),
     };

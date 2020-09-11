@@ -19,7 +19,6 @@ export class ActivateCommand extends BaseCommand {
           case 'discord':
             this.discordService.toggleDiscord(false);
             return {
-              ...message,
               files: [],
               message: 'Activated Discord',
             };
@@ -29,14 +28,12 @@ export class ActivateCommand extends BaseCommand {
           case 'discord':
             this.discordService.toggleDiscord(true);
             return {
-              ...message,
               files: [],
               message: 'Deactivated Discord',
             };
         }
       default:
         return {
-          ...message,
           files: [],
           message: 'Usage : activate/deactivate service',
         };

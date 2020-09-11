@@ -20,12 +20,11 @@ export class YoutubeCommand extends BaseCommand {
     command: string,
     url: string,
     volume?: string,
-  ): Promise<Message> {
+  ) {
     switch (command) {
       case 'play':
         if (!url) {
           return {
-            ...message,
             files: [],
             message: `Please supply a url`,
           };
@@ -38,7 +37,6 @@ export class YoutubeCommand extends BaseCommand {
         const meta = await ytdl.getInfo(vidUrl);
         if (!meta) {
           return {
-            ...message,
             files: [],
             message: `Video not found`,
           };
@@ -52,20 +50,17 @@ export class YoutubeCommand extends BaseCommand {
               : Number(volume),
           );
           return {
-            ...message,
             files: [],
             message: `Playing \`${meta.videoDetails.title}\``,
           };
         } catch (e) {
           if (e.message === 'PLAYING') {
             return {
-              ...message,
               files: [],
               message: `Something is playing, we don't have queue. So either stop or wait lul`,
             };
           }
           return {
-            ...message,
             files: [],
             message: `Something went wrong`,
           };
@@ -73,7 +68,6 @@ export class YoutubeCommand extends BaseCommand {
       case 'stop':
         await this.audio.stopPlaying(message);
         return {
-          ...message,
           files: [],
           message: `Stopped music`,
         };
@@ -81,20 +75,17 @@ export class YoutubeCommand extends BaseCommand {
         const vol = Number(url);
         if (isNaN(vol) || vol <= 0 || vol >= 1) {
           return {
-            ...message,
             files: [],
             message: 'Invalid volume value ( only  0 - 1 )',
           };
         }
         await this.audio.changeVolume(message, vol);
         return {
-          ...message,
           files: [],
           message: `Changed volume to ${Math.round(vol * 100)}%`,
         };
       default:
         return {
-          ...message,
           files: [],
           message: 'Usage: stream <list|play|stop> index',
         };

@@ -7,9 +7,8 @@ export class BaseDiscordCommand extends BaseCommand {
   public command = /^(dping)/i;
   public channels = ['discord'];
 
-  async handle(message: Message): Promise<Message> {
+  async handle(message: Message) {
     return {
-      ...message,
       files: [],
       message: 'Hello Discord!',
     };

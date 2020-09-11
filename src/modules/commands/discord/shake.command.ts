@@ -15,11 +15,7 @@ export class ShakeCommand extends BaseCommand {
   constructor(private discord: DiscordService) {
     super();
   }
-  async handle(
-    message: DiscordMessage,
-    command: string,
-    intensity = '10',
-  ): Promise<Message> {
+  async handle(message: DiscordMessage, command: string, intensity = '10') {
     const guild = (message.messageChannel as TextChannel).guild;
     const channels = guild.channels.cache
       .filter(
@@ -33,7 +29,6 @@ export class ShakeCommand extends BaseCommand {
     switch (command) {
       case 'list':
         return {
-          ...message,
           files: [],
           message: channels.map(c => `${c.id} - ${c.name}`).join('\n'),
         };
@@ -41,7 +36,6 @@ export class ShakeCommand extends BaseCommand {
         const userId = matchUser(command);
         if (!userId) {
           return {
-            ...message,
             files: [],
             message: `User not found`,
           };
@@ -49,7 +43,6 @@ export class ShakeCommand extends BaseCommand {
         const user = await guild.members.fetch(userId);
         if (!user.voice?.channelID)
           return {
-            ...message,
             files: [],
             message: `${command} is not in a voice channel!`,
           };
@@ -70,13 +63,11 @@ export class ShakeCommand extends BaseCommand {
           }
           await user.voice.setChannel(origin, 'you got shaken');
           return {
-            ...message,
             files: [],
             message: `<@!${message.senderId}> shook ${command} ${I} times`,
           };
         } catch (error) {
           return {
-            ...message,
             files: [],
             message: `I think ${command} escaped or something just went wrong (tried to shake ${I} times)`,
           };
