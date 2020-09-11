@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { MessagesService } from '../messages/messages.service';
 import { AppLogger } from '../logger/logger';
 import { generateRandomKey } from 'src/utils';
+import { sleep } from 'src/utils/sleep';
 
 @Injectable()
 export class DiscordService {
@@ -19,15 +20,29 @@ export class DiscordService {
   private stopToken: string;
 
   constructor(
-    config: ConfigService,
+    private config: ConfigService,
     @Inject(forwardRef(() => MessagesService))
     private message: MessagesService,
     private logger: AppLogger,
   ) {
     this.client = new Client();
-    this.client.login(config.get('DISCORD_TOKEN'));
     this.logger.setContext('DiscordService');
-    this.listen();
+    this.login();
+  }
+
+  async login(tries = 0) {
+    if (tries > 5) {
+      this.logger.error("Can't Login");
+      return;
+    }
+    try {
+      await this.client.login(this.config.get('DISCORD_TOKEN'));
+      this.listen();
+    } catch {
+      this.logger.error('Login failed, tries: ' + tries);
+      await sleep(1000);
+      this.login(tries + 1);
+    }
   }
 
   listen() {

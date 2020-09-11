@@ -4,8 +4,7 @@ import { BaseCommand } from '../command.base';
 import { DiscordService } from 'src/modules/discord/discord.service';
 import { TextChannel } from 'discord.js';
 import { matchUser } from 'src/modules/discord/discord.utils';
-
-const sleep = duration => new Promise(resolve => setTimeout(resolve, duration));
+import { sleep } from 'src/utils/sleep';
 
 @Injectable()
 export class ShakeCommand extends BaseCommand {
