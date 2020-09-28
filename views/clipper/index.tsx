@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Slider, { Range } from 'rc-slider';
 import axios from 'axios';
 import qs from 'querystring';
@@ -8,9 +8,14 @@ import { image } from 'qr-image';
 
 const RangeC = (Range as any) as React.Component;
 
+const calculateFps = (w, h, fps, length) => {
+  return 4 * ((w * h * fps * length) / 8);
+};
+
 export default ({ name }: { name: string }) => {
   const [url, setUrl] = useState<string>(
-    'https://www.youtube.com/watch?v=ebSce4xUjo0',
+    localStorage.getItem('videoUrl') ||
+      'https://www.youtube.com/watch?v=ebSce4xUjo0',
   );
   const [duration, setDuration] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
@@ -20,7 +25,36 @@ export default ({ name }: { name: string }) => {
   const [fps, setFps] = useState<number>(30);
   const [loop, setLoop] = useState<boolean>(true);
   const [res, setRes] = useState<string>('');
+
+  const [resScale, setResScale] = useState<number>(1);
+  const [resFps, setResFps] = useState<number>(30);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const sizeRef = useRef<{ width: number; height: number }>({
+    width: 0,
+    height: 0,
+  });
+  const dlUrl = useMemo(() => {
+    return (
+      url &&
+      clip &&
+      'clip?' +
+        qs.encode({
+          url,
+          start: clip[0],
+          end: clip[1],
+          fps: resFps,
+          scale: resScale,
+        })
+    );
+  }, [url, clip, resFps, resScale]);
+  const size = useMemo(() => {
+    return calculateFps(
+      sizeRef.current.width * resScale,
+      sizeRef.current.height * resScale,
+      resFps,
+      clip[1] - clip[0],
+    );
+  }, [clip, resFps, resScale]);
   const seekingRef = useRef(false);
 
   const updateProgress = (time: number) => {
@@ -84,6 +118,7 @@ export default ({ name }: { name: string }) => {
 
   const getVid = async () => {
     try {
+      localStorage.setItem('videoUrl', url);
       const { data } = await axios.get('/clipper/vid?' + qs.encode({ url }));
       setVideoSrc(data.url);
       videoRef.current.play();
@@ -91,6 +126,10 @@ export default ({ name }: { name: string }) => {
       setFps(data.fps);
       setDuration(Number(data.approxDurationMs) / 1000);
       setClip([0, Number(data.approxDurationMs) / 1000]);
+      sizeRef.current = {
+        width: data.width,
+        height: data.height,
+      };
       setVolume(50);
     } catch {
       setVideoSrc('');
@@ -98,7 +137,16 @@ export default ({ name }: { name: string }) => {
   };
 
   const getGif = () => {
-    setRes('clip?' + qs.encode({ url, start: clip[0], end: clip[1] }));
+    setRes(
+      'clip?' +
+        qs.encode({
+          url,
+          start: clip[0],
+          end: clip[1],
+          fps: resFps,
+          scale: resScale,
+        }),
+    );
   };
 
   return (
@@ -235,29 +283,73 @@ export default ({ name }: { name: string }) => {
               className="p-2"
             />
           </div>
+          <div className="flex flex-col">
+            <span>Quality Fps</span>
+            <div>
+              <input
+                type="number"
+                className="p-2 rounded border border-black flex-shrink"
+                step=".01"
+                max={`${fps}`}
+                min="0"
+                value={resFps}
+                onChange={e => setResFps(Number(e.target.value))}
+              />
+              <input
+                type="range"
+                max={`${fps}`}
+                min="0"
+                step=".01"
+                value={resFps}
+                onChange={e => setResFps(Number(e.target.value))}
+                className="p-2"
+              />
+            </div>
+            <div>
+              <input
+                type="number"
+                className="p-2 rounded border border-black flex-shrink"
+                step=".01"
+                max={`${1}`}
+                min="0"
+                value={resScale}
+                onChange={e => setResScale(Number(e.target.value))}
+              />
+              <input
+                type="range"
+                max={`${1}`}
+                min="0"
+                step=".01"
+                value={resScale}
+                onChange={e => setResScale(Number(e.target.value))}
+                className="p-2"
+              />
+            </div>
+          </div>
+          <span>Approx size: {size / 1000000} MB</span>
           <div>
             <button className="rounded bg-blue-400 p-2" onClick={getGif}>
               Generate GIF !
             </button>
-            {res && (
+            {dlUrl && (
               <>
                 <a
                   className="mx-2"
-                  href={'/clipper/' + res + '&download=true'}
+                  href={'/clipper/' + dlUrl + '&download=true'}
                   target="__blank"
                 >
                   Download GIF !
                 </a>
                 <a
                   className="mx-2"
-                  href={'/clipper/' + res + '&type=mp3&download=true'}
+                  href={'/clipper/' + dlUrl + '&type=mp3&download=true'}
                   target="__blank"
                 >
                   Download MP3 !
                 </a>
                 <a
                   className="mx-2"
-                  href={'/clipper/' + res + '&type=mp4&download=true'}
+                  href={'/clipper/' + dlUrl + '&type=mp4&download=true'}
                   target="__blank"
                 >
                   Download MP4 !
