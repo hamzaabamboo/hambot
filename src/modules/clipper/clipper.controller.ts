@@ -11,6 +11,8 @@ import {
 import ytdl from 'ytdl-core';
 import ffmpeg from 'fluent-ffmpeg';
 import { Response } from 'express';
+import mkdirp from 'mkdirp';
+import path from 'path';
 import { Readable, Stream, Writable } from 'stream';
 import { AppLogger } from '../logger/logger';
 
@@ -34,7 +36,9 @@ export class ClipperController implements OnApplicationShutdown {
     if (!url) throw new HttpException('Url is not supplied', 400);
     const vid = url;
     try {
-      const info = await ytdl.getInfo(vid);
+      const info = await ytdl.getInfo(vid, {
+        quality: 'highest',
+      });
       return info.formats[0];
     } catch (error) {
       return new HttpException('Oops', 400);
@@ -48,6 +52,8 @@ export class ClipperController implements OnApplicationShutdown {
     @Query('end') end: string,
     @Query('download') download: string,
     @Query('type') type: string,
+    @Query('fps') fps = 30,
+    @Query('scale') scale = 1,
     @Res() res: Response,
   ) {
     if (!url) throw new HttpException('Url is not supplied', 400);
@@ -70,6 +76,8 @@ export class ClipperController implements OnApplicationShutdown {
       if (Number(start ?? 0) > 0)
         resStream = resStream.seekInput(Number(start ?? 0));
 
+      resStream = resStream.setDuration(dur);
+      resStream = resStream.setSize(`${Math.floor((scale || 0.5) * 100)}%`);
       // console.log(vid, Number(start ?? 0), end, dur);
 
       let filename = encodeURIComponent(
@@ -110,13 +118,21 @@ export class ClipperController implements OnApplicationShutdown {
           filename += '.wav';
           break;
         default:
-          resStream = resStream
+          await new Promise((resolve, reject) =>
+            resStream
+              .saveToFile(path.join(__dirname, 'tmp/tmp.mp4'))
+              .on('progress', progress => {
+                this.logger.verbose(`[ffmpeg] ${JSON.stringify(progress)}`);
+              })
+              .on('end', resolve)
+              .on('error', reject),
+          );
+          resStream = ffmpeg(path.join(__dirname, 'tmp/tmp.mp4'))
             .format('gif')
-            .outputFPS(12)
-            // .videoFilter(
-            //   'fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse',
-            // )
-            .size('50%');
+            .outputFPS(Number(fps))
+            .videoFilter(
+              `fps=${fps},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse`,
+            );
           filename += '.gif';
           res.setHeader('content-type', 'image/gif');
           break;
@@ -131,14 +147,19 @@ export class ClipperController implements OnApplicationShutdown {
         res.setHeader('content-disposition', `inline; filename=${filename}`);
       }
 
-      resStream = resStream.setDuration(dur);
       // console.log(filename);
       this.streams.push(
         resStream
-          .on('error', e => {
-            console.log('Something wrong', e);
+          .on('progress', progress => {
+            this.logger.verbose(`[ffmpeg] ${JSON.stringify(progress)}`);
+          })
+          .on('error', err => {
+            this.logger.debug(`[ffmpeg] error: ${err.message}`);
             vidStream.destroy();
             resStream.removeAllListeners();
+          })
+          .on('end', () => {
+            this.logger.verbose('[ffmpeg] finished');
           })
           .pipe(res),
       );
