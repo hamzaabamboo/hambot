@@ -48,12 +48,16 @@ export class CompoundService {
 
   async handleCompound(message: Message): Promise<Message | undefined> {
     if (this._compoundingData.has(message.senderId)) {
+      const res = await this._compoundingData
+        .get(message.senderId)
+        .handleInput(message);
+      if (!res) {
+        this.finishedCompounding(message.senderId);
+      }
       const {
         isCompounding,
         message: returnMsg,
-      } = await this._compoundingData
-        .get(message.senderId)
-        .handleInput(message);
+      }  = res;
       if (!isCompounding) {
         this.finishedCompounding(message.senderId);
       }
