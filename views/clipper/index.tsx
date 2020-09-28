@@ -36,14 +36,10 @@ export default ({ name }: { name: string }) => {
   }, [volume]);
 
   useEffect(() => {
-    if (
-      clip[1] &&
-      !seekingRef.current &&
-      Math.round(progress) >= Math.round(clip[1])
-    ) {
+    if (clip[1] && !seekingRef.current && progress >= clip[1]) {
       if (!loop) videoRef.current.pause();
       updateProgress(clip[0]);
-    } else if (Math.round(progress) < Math.round(clip[0])) {
+    } else if (progress < clip[0]) {
       if (!videoRef.current.paused) videoRef.current.pause();
       updateProgress(clip[0]);
     }
@@ -61,7 +57,7 @@ export default ({ name }: { name: string }) => {
     videoRef.current?.addEventListener('timeupdate', updateTime);
 
     const checkBounds = e => {
-      if (Math.round(e.target.currentTime) >= Math.round(clip[1])) {
+      if (e.target.currentTime >= clip[1]) {
         setProgress(clip[0]);
         e.target.currentTime = clip[0];
       }
