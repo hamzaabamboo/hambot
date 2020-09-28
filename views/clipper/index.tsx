@@ -13,9 +13,8 @@ const calculateFps = (w, h, fps, length) => {
 };
 
 export default ({ name }: { name: string }) => {
-  const [url, setUrl] = useState<string>(
-    localStorage.getItem('videoUrl') ||
-      'https://www.youtube.com/watch?v=ebSce4xUjo0',
+  const [url, setUrl] = useState<string>( 
+      'https://www.youtube.com/watch?v=ebSce4xUjo0'
   );
   const [duration, setDuration] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
@@ -64,6 +63,10 @@ export default ({ name }: { name: string }) => {
     setProgress(time);
   };
 
+  useEffect(() => {
+    setUrl(localStorage.getItem('videoUrl'));
+  }, [])
+  
   useEffect(() => {
     if (!videoRef.current) return;
     videoRef.current.volume = volume / 100;
