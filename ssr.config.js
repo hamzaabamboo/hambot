@@ -2,7 +2,7 @@ module.exports = {
   id: 'default',
   distDir: 'dist/.ssr',
   viewsDir: 'views',
-  staticViews: ['clipper'],
+  staticViews: ['clipper/index'],
   webpack: (
     config /* webpack.Configuration */,
     env /* 'development' | 'production' */,
