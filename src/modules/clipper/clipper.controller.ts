@@ -118,16 +118,18 @@ export class ClipperController implements OnApplicationShutdown {
           filename += '.wav';
           break;
         default:
+          this.logger.verbose(`Creating GIF for ${filename}`);
+          await mkdirp(path.join(__dirname,'../../../files/tmp'));
           await new Promise((resolve, reject) =>
             resStream
-              .saveToFile(path.join(__dirname, 'tmp/tmp.mp4'))
+              .saveToFile(path.join(__dirname,'../../../files' , 'tmp/tmp.mp4'))
               .on('progress', progress => {
                 this.logger.verbose(`[ffmpeg] ${JSON.stringify(progress)}`);
               })
               .on('end', resolve)
               .on('error', reject),
           );
-          resStream = ffmpeg(path.join(__dirname, 'tmp/tmp.mp4'))
+          resStream = ffmpeg(path.join(__dirname, '../../../files', 'tmp/tmp.mp4'))
             .format('gif')
             .outputFPS(Number(fps))
             .videoFilter(

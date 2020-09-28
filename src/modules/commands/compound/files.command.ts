@@ -144,7 +144,7 @@ export class FileCommand extends BaseCompoundHandler {
   async handleCompound(messages: Message[]): Promise<CompoundResponse> {
     // Do nothing
     const { senderId, channel } = messages[0];
-    const tmpPath = path.join(__dirname, '../../file/tmp');
+    const tmpPath = path.join(__dirname, '../../../../files/file/tmp');
     await mkdirp(tmpPath);
     const files = await Promise.all(
       messages

@@ -28,7 +28,7 @@ export class ProfilePicCommand extends BaseCompoundHandler {
   public requiresAuth = true;
   public platforms = ['discord'];
 
-  public path = path.join(__dirname, '../../../file/pfp');
+  public path = path.join(__dirname, '../../../../files/profilepic');
 
   private http: HttpService;
 

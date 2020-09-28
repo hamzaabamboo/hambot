@@ -14,7 +14,7 @@ import { promises, createReadStream } from 'fs';
 export class FileController {
   @Get(':name')
   async getFile(@Param('name') name: string, @Res() res: Response) {
-    const tmpDir = join(__dirname, 'tmp');
+    const tmpDir = join(__dirname, '../../../files/tmp');
     await mkdirp(tmpDir);
     if (!name) throw new HttpException('Name not supplied', 401);
     try {
