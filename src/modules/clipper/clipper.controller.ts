@@ -39,7 +39,12 @@ export class ClipperController implements OnApplicationShutdown {
       const info = await ytdl.getInfo(vid, {
         quality: 'highest',
       });
-      return info.formats[0];
+      return {
+        data: info.formats[0],
+        bestVideo: info.formats.reduce((p, c) =>
+          c.bitrate > p.bitrate ? c : p,
+        ),
+      };
     } catch (error) {
       return new HttpException('Oops', 400);
     }
@@ -118,18 +123,20 @@ export class ClipperController implements OnApplicationShutdown {
           filename += '.wav';
           break;
         default:
-          this.logger.verbose(`Creating GIF for ${filename}`);
-          await mkdirp(path.join(__dirname,'../../../files/tmp'));
+          this.logger.verbose(`Creating GIF for ${info.videoDetails.title}`);
+          await mkdirp(path.join(__dirname, '../../../files/tmp'));
           await new Promise((resolve, reject) =>
             resStream
-              .saveToFile(path.join(__dirname,'../../../files' , 'tmp/tmp.mp4'))
-              .on('progress', progress => {
+              .saveToFile(path.join(__dirname, '../../../files', 'tmp/tmp.mp4'))
+              .on('progress', (progress) => {
                 this.logger.verbose(`[ffmpeg] ${JSON.stringify(progress)}`);
               })
               .on('end', resolve)
               .on('error', reject),
           );
-          resStream = ffmpeg(path.join(__dirname, '../../../files', 'tmp/tmp.mp4'))
+          resStream = ffmpeg(
+            path.join(__dirname, '../../../files', 'tmp/tmp.mp4'),
+          )
             .format('gif')
             .outputFPS(Number(fps))
             .videoFilter(
@@ -152,10 +159,10 @@ export class ClipperController implements OnApplicationShutdown {
       // console.log(filename);
       this.streams.push(
         resStream
-          .on('progress', progress => {
+          .on('progress', (progress) => {
             this.logger.verbose(`[ffmpeg] ${JSON.stringify(progress)}`);
           })
-          .on('error', err => {
+          .on('error', (err) => {
             this.logger.debug(`[ffmpeg] error: ${err.message}`);
             vidStream.destroy();
             resStream.removeAllListeners();
@@ -171,7 +178,7 @@ export class ClipperController implements OnApplicationShutdown {
   }
 
   onApplicationShutdown() {
-    this.streams.forEach(s => {
+    this.streams.forEach((s) => {
       s.destroy();
     });
     this.logger.debug('Cleared ' + this.streams.length + ' streams.');

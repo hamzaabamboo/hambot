@@ -9,12 +9,12 @@ import { image } from 'qr-image';
 const RangeC = (Range as any) as React.Component;
 
 const calculateFps = (w, h, fps, length) => {
-  return 4 * ((w * h * fps * length) / 8);
+  return (w * h * fps * length) / 8;
 };
 
 export default ({ name }: { name: string }) => {
-  const [url, setUrl] = useState<string>( 
-      'https://www.youtube.com/watch?v=ebSce4xUjo0'
+  const [url, setUrl] = useState<string>(
+    'https://www.youtube.com/watch?v=ebSce4xUjo0',
   );
   const [duration, setDuration] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
@@ -65,8 +65,8 @@ export default ({ name }: { name: string }) => {
 
   useEffect(() => {
     setUrl(localStorage.getItem('videoUrl'));
-  }, [])
-  
+  }, []);
+
   useEffect(() => {
     if (!videoRef.current) return;
     videoRef.current.volume = volume / 100;
@@ -83,17 +83,17 @@ export default ({ name }: { name: string }) => {
   }, [progress]);
 
   useEffect(() => {
-    const updateVolume = e => {
+    const updateVolume = (e) => {
       setVolume(e.target.volume * 100);
     };
     videoRef.current?.addEventListener('volumechange', updateVolume);
 
-    const updateTime = e => {
+    const updateTime = (e) => {
       setProgress(e.target.currentTime);
     };
     videoRef.current?.addEventListener('timeupdate', updateTime);
 
-    const checkBounds = e => {
+    const checkBounds = (e) => {
       if (e.target.currentTime >= clip[1]) {
         setProgress(clip[0]);
         e.target.currentTime = clip[0];
@@ -101,7 +101,7 @@ export default ({ name }: { name: string }) => {
     };
     videoRef.current?.addEventListener('play', updateTime);
 
-    const toggle = e => {
+    const toggle = (e) => {
       if (e.key === ' ') {
         if (videoRef.current.paused) videoRef.current.play();
         else videoRef.current.pause();
@@ -122,7 +122,9 @@ export default ({ name }: { name: string }) => {
   const getVid = async () => {
     try {
       localStorage.setItem('videoUrl', url);
-      const { data } = await axios.get('/clipper/vid?' + qs.encode({ url }));
+      const {
+        data: { data, bestVideo },
+      } = await axios.get('/clipper/vid?' + qs.encode({ url }));
       setVideoSrc(data.url);
       videoRef.current.play();
       videoRef.current.muted = false;
@@ -130,8 +132,8 @@ export default ({ name }: { name: string }) => {
       setDuration(Number(data.approxDurationMs) / 1000);
       setClip([0, Number(data.approxDurationMs) / 1000]);
       sizeRef.current = {
-        width: data.width,
-        height: data.height,
+        width: bestVideo.width,
+        height: bestVideo.height,
       };
       setVolume(50);
     } catch {
@@ -165,7 +167,7 @@ export default ({ name }: { name: string }) => {
               type="text"
               className="p-2 mr-2 rounded border w-full border-black"
               value={url}
-              onChange={e => setUrl(e.target.value)}
+              onChange={(e) => setUrl(e.target.value)}
             />
             <button
               className="rounded border bg-red-500 m-2 p-2 text-white"
@@ -182,7 +184,7 @@ export default ({ name }: { name: string }) => {
               value={clip[0]}
               min={0}
               max={clip[1]}
-              onChange={e => {
+              onChange={(e) => {
                 updateProgress(Number(e.target.value));
                 setProgress(Number(e.target.value));
                 setClip([Number(e.target.value), clip[1]]);
@@ -204,7 +206,7 @@ export default ({ name }: { name: string }) => {
                   seekingRef.current = false;
                   videoRef.current.pause();
                 }}
-                onChange={r => {
+                onChange={(r) => {
                   if (clip[0] !== r[0]) {
                     updateProgress(r[0]);
                   } else {
@@ -221,7 +223,7 @@ export default ({ name }: { name: string }) => {
               value={clip[1]}
               min={clip[0]}
               max={duration}
-              onChange={e => {
+              onChange={(e) => {
                 updateProgress(Number(e.target.value));
                 setClip([clip[0], Number(e.target.value)]);
               }}
@@ -237,7 +239,7 @@ export default ({ name }: { name: string }) => {
                 min={clip[0] ?? 0}
                 className="p-2 mr-2 rounded border border-black flex-shrink"
                 value={progress}
-                onChange={e => {
+                onChange={(e) => {
                   updateProgress(Number(e.target.value));
                 }}
               />
@@ -251,7 +253,7 @@ export default ({ name }: { name: string }) => {
                 onMouseDown={() => {
                   videoRef.current.pause();
                 }}
-                onChange={e => {
+                onChange={(e) => {
                   updateProgress(Number(e.target.value));
                 }}
               />
@@ -282,7 +284,7 @@ export default ({ name }: { name: string }) => {
               max="100"
               min="0"
               value={volume}
-              onChange={e => setVolume(Number(e.target.value))}
+              onChange={(e) => setVolume(Number(e.target.value))}
               className="p-2"
             />
           </div>
@@ -296,7 +298,7 @@ export default ({ name }: { name: string }) => {
                 max={`${fps}`}
                 min="0"
                 value={resFps}
-                onChange={e => setResFps(Number(e.target.value))}
+                onChange={(e) => setResFps(Number(e.target.value))}
               />
               <input
                 type="range"
@@ -304,7 +306,7 @@ export default ({ name }: { name: string }) => {
                 min="0"
                 step=".01"
                 value={resFps}
-                onChange={e => setResFps(Number(e.target.value))}
+                onChange={(e) => setResFps(Number(e.target.value))}
                 className="p-2"
               />
             </div>
@@ -316,7 +318,7 @@ export default ({ name }: { name: string }) => {
                 max={`${1}`}
                 min="0"
                 value={resScale}
-                onChange={e => setResScale(Number(e.target.value))}
+                onChange={(e) => setResScale(Number(e.target.value))}
               />
               <input
                 type="range"
@@ -324,12 +326,16 @@ export default ({ name }: { name: string }) => {
                 min="0"
                 step=".01"
                 value={resScale}
-                onChange={e => setResScale(Number(e.target.value))}
+                onChange={(e) => setResScale(Number(e.target.value))}
                 className="p-2"
               />
             </div>
           </div>
-          <span>Approx size: {size / 1000000} MB</span>
+          <span>
+            Approx size: {size / 1000000} MB (
+            {Math.round(sizeRef.current.width * resScale)}x
+            {Math.round(sizeRef.current.height * resScale)}px){' '}
+          </span>
           <div>
             <button className="rounded bg-blue-400 p-2" onClick={getGif}>
               Generate GIF !
