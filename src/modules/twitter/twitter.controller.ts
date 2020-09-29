@@ -16,7 +16,6 @@ export class TwitterController {
     hmac.update(token);
     const digest = hmac.digest('hex');
     return {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       response_token: 'sha256=' + digest,
     };
   }

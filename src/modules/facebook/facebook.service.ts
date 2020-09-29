@@ -10,7 +10,6 @@ export class FacebookService {
 
   async sendReplyMessage(message: Message) {
     const msg = {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       messaging_type: 'RESPONSE',
       recipient: {
         id: message.senderId,
@@ -41,7 +40,6 @@ export class FacebookService {
 
   async sendPushMessage(message: Message) {
     const msg = {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       messaging_type: 'MESSAGE_TAG',
       recipient: {
         id: message.channelId,
