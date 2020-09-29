@@ -60,7 +60,7 @@ export class DiscordService {
     this.client.on('message', message => {
       if (message.author.id === this.client.user.id || message.author.bot)
         return;
-      if (message.author.username.includes('YamaKJ') && Math.random() > 0.1) {
+      if (message.author.username.includes('YamaKJ') && Math.random() < 0.1) {
         this.sendMessage(message.channel, {
           content: 'Buu buu desu wa :P',
         });
