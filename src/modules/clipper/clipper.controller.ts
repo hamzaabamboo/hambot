@@ -41,9 +41,7 @@ export class ClipperController implements OnApplicationShutdown {
       });
       return {
         data: info.formats[0],
-        bestVideo: info.formats.reduce((p, c) =>
-          c.bitrate > p.bitrate ? c : p,
-        ),
+        bestVideo: info.formats.find((t) => t.itag === 136),
       };
     } catch (error) {
       return new HttpException('Oops', 400);
@@ -74,16 +72,27 @@ export class ClipperController implements OnApplicationShutdown {
     }
     try {
       const info = await ytdl.getInfo(vid);
-      const vidStream = ytdl(vid, {
-        quality: 'highest',
-      });
+      const vidStream =
+        !type || type === 'gif'
+          ? ytdl(vid, {
+              quality: 136,
+            })
+          : ytdl(vid, {
+              quality: 'highest',
+            });
+
+      // vidStream.on('progress', (_, downloaded, total) => {
+      //   this.logger.verbose(
+      //     `[ytdl] ${Math.round((downloaded * 100) / total)}% of ${total}`,
+      //   );
+      // });
       let resStream = ffmpeg(vidStream);
-      if (Number(start ?? 0) > 0)
-        resStream = resStream.seekInput(Number(start ?? 0));
 
       resStream = resStream.setDuration(dur);
       resStream = resStream.setSize(`${Math.floor((scale || 0.5) * 100)}%`);
       // console.log(vid, Number(start ?? 0), end, dur);
+      if (Number(start ?? 0) > 0)
+        resStream = resStream.seekOutput(Number(start ?? 0));
 
       let filename = encodeURIComponent(
         `${info.videoDetails.title}_${start}_${end}`,

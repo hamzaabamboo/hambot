@@ -9,7 +9,7 @@ import { image } from 'qr-image';
 const RangeC = (Range as any) as React.Component;
 
 const calculateFps = (w, h, fps, length) => {
-  return (w * h * fps * length) / 8;
+  return (4 * (w * h * fps * length)) / 8;
 };
 
 export default ({ name }: { name: string }) => {
@@ -309,6 +309,24 @@ export default ({ name }: { name: string }) => {
                 onChange={(e) => setResFps(Number(e.target.value))}
                 className="p-2"
               />
+              <button
+                className="rounded bg-blue-400 p-2"
+                onClick={() => setResFps(10)}
+              >
+                10fps
+              </button>
+              <button
+                className="rounded bg-blue-400 p-2"
+                onClick={() => setResFps(15)}
+              >
+                15fps
+              </button>
+              <button
+                className="rounded bg-blue-400 p-2"
+                onClick={() => setResFps(21)}
+              >
+                21fps
+              </button>
             </div>
             <div>
               <input
@@ -329,6 +347,30 @@ export default ({ name }: { name: string }) => {
                 onChange={(e) => setResScale(Number(e.target.value))}
                 className="p-2"
               />
+              <button
+                className="rounded bg-blue-400 p-2"
+                onClick={() => setResScale(1080 / sizeRef.current.height)}
+              >
+                1080p
+              </button>
+              <button
+                className="rounded bg-blue-400 p-2"
+                onClick={() => setResScale(720 / sizeRef.current.height)}
+              >
+                720p
+              </button>
+              <button
+                className="rounded bg-blue-400 p-2"
+                onClick={() => setResScale(480 / sizeRef.current.height)}
+              >
+                480p
+              </button>
+              <button
+                className="rounded bg-blue-400 p-2"
+                onClick={() => setResScale(360 / sizeRef.current.height)}
+              >
+                360p
+              </button>
             </div>
           </div>
           <span>
