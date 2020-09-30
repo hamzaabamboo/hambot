@@ -73,13 +73,14 @@ export class ClipperController implements OnApplicationShutdown {
     try {
       const info = await ytdl.getInfo(vid);
       const vidStream =
-        !type || type === 'gif'
-          ? ytdl(vid, {
-              quality: 136,
-            })
-          : ytdl(vid, {
-              quality: 'highest',
-            });
+        // !type || type === 'gif'
+        //   ? ytdl(vid, {
+        //       quality: 136,
+        //     })
+        //   :
+        ytdl(vid, {
+          quality: 'highest',
+        });
 
       // vidStream.on('progress', (_, downloaded, total) => {
       //   this.logger.verbose(
@@ -92,7 +93,7 @@ export class ClipperController implements OnApplicationShutdown {
       resStream = resStream.setSize(`${Math.floor((scale || 0.5) * 100)}%`);
       // console.log(vid, Number(start ?? 0), end, dur);
       if (Number(start ?? 0) > 0)
-        resStream = resStream.seekOutput(Number(start ?? 0));
+        resStream = resStream.seekInput(Number(start ?? 0));
 
       let filename = encodeURIComponent(
         `${info.videoDetails.title}_${start}_${end}`,
