@@ -15,6 +15,8 @@ import mkdirp from 'mkdirp';
 import path from 'path';
 import { Readable, Stream, Writable } from 'stream';
 import { AppLogger } from '../logger/logger';
+import { fstat } from 'fs/promises';
+import { existsSync } from 'fs';
 
 @Controller('clipper')
 export class ClipperController implements OnApplicationShutdown {
@@ -41,7 +43,7 @@ export class ClipperController implements OnApplicationShutdown {
       });
       return {
         data: info.formats[0],
-        bestVideo: info.formats.find((t) => t.itag === 136),
+        bestVideo: info.formats.find((t) => t.itag === 18),
       };
     } catch (error) {
       return new HttpException('Oops', 400);
@@ -73,14 +75,13 @@ export class ClipperController implements OnApplicationShutdown {
     try {
       const info = await ytdl.getInfo(vid);
       const vidStream =
-        // !type || type === 'gif'
-        //   ? ytdl(vid, {
-        //       quality: 136,
-        //     })
-        //   :
-        ytdl(vid, {
-          quality: 'highest',
-        });
+        !type || type === 'gif'
+          ? ytdl(vid, {
+              quality: 18,
+            })
+          : ytdl(vid, {
+              quality: 'highest',
+            });
 
       // vidStream.on('progress', (_, downloaded, total) => {
       //   this.logger.verbose(
@@ -95,9 +96,7 @@ export class ClipperController implements OnApplicationShutdown {
       if (Number(start ?? 0) > 0)
         resStream = resStream.seekInput(Number(start ?? 0));
 
-      let filename = encodeURIComponent(
-        `${info.videoDetails.title}_${start}_${end}`,
-      );
+      let filename = `${info.videoDetails.title}_${start}_${end}`;
 
       switch (type) {
         case 'mp4':
@@ -133,19 +132,40 @@ export class ClipperController implements OnApplicationShutdown {
           filename += '.wav';
           break;
         default:
-          this.logger.verbose(`Creating GIF for ${info.videoDetails.title}`);
-          await mkdirp(path.join(__dirname, '../../../files/tmp'));
-          await new Promise((resolve, reject) =>
-            resStream
-              .saveToFile(path.join(__dirname, '../../../files', 'tmp/tmp.mp4'))
-              .on('progress', (progress) => {
-                this.logger.verbose(`[ffmpeg] ${JSON.stringify(progress)}`);
-              })
-              .on('end', resolve)
-              .on('error', reject),
+          this.logger.verbose(
+            `Saving temp file for ${info.videoDetails.title}`,
           );
+          await mkdirp(path.join(__dirname, '../../../files/tmp'));
+          if (
+            !existsSync(
+              path.join(__dirname, '../../../files', `tmp/tmp-${filename}.mp4`),
+            )
+          )
+            await new Promise((resolve, reject) =>
+              resStream
+                .saveToFile(
+                  path.join(
+                    __dirname,
+                    '../../../files',
+                    `tmp/tmp-${filename}.mp4`,
+                  ),
+                )
+                .on('progress', (progress) => {
+                  this.logger.verbose(`[download] ${JSON.stringify(progress)}`);
+                })
+                .on('end', () => {
+                  this.logger.verbose(`[download] saved temp file`);
+                  resolve();
+                })
+                .on('error', (err) => {
+                  this.logger.debug(`[download] error: ${err.message}`);
+                  reject();
+                }),
+            );
+
+          this.logger.verbose(`Creating GIF for ${info.videoDetails.title}`);
           resStream = ffmpeg(
-            path.join(__dirname, '../../../files', 'tmp/tmp.mp4'),
+            path.join(__dirname, '../../../files', `tmp/tmp-${filename}.mp4`),
           )
             .format('gif')
             .outputFPS(Number(fps))
@@ -160,25 +180,28 @@ export class ClipperController implements OnApplicationShutdown {
       if (download) {
         res.setHeader(
           'content-disposition',
-          `attachment; filename=${filename}`,
+          `attachment; filename=${encodeURIComponent(filename)}`,
         );
       } else {
-        res.setHeader('content-disposition', `inline; filename=${filename}`);
+        res.setHeader(
+          'content-disposition',
+          `inline; filename=${encodeURIComponent(filename)}`,
+        );
       }
 
       // console.log(filename);
       this.streams.push(
         resStream
           .on('progress', (progress) => {
-            this.logger.verbose(`[ffmpeg] ${JSON.stringify(progress)}`);
+            this.logger.verbose(`[conversion] ${JSON.stringify(progress)}`);
           })
           .on('error', (err) => {
-            this.logger.debug(`[ffmpeg] error: ${err.message}`);
+            this.logger.debug(`[conversion] error: ${err.message}`);
             vidStream.destroy();
             resStream.removeAllListeners();
           })
           .on('end', () => {
-            this.logger.verbose('[ffmpeg] finished');
+            this.logger.verbose('[conversion] finished');
           })
           .pipe(res),
       );
