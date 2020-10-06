@@ -1,29 +1,31 @@
 import {
   Controller,
   Get,
-  Render,
   Res,
   HttpException,
-  Param,
   Query,
   OnApplicationShutdown,
+  Render,
 } from '@nestjs/common';
 import ytdl from 'ytdl-core';
 import ffmpeg from 'fluent-ffmpeg';
 import { Response } from 'express';
 import mkdirp from 'mkdirp';
+import rimraf from 'rimraf';
 import path from 'path';
-import { Readable, Stream, Writable } from 'stream';
+import { Writable } from 'stream';
 import { AppLogger } from '../logger/logger';
-import { fstat } from 'fs/promises';
-import { existsSync } from 'fs';
+import { createWriteStream, existsSync } from 'fs';
 
+const round = (n) => Math.round(n * 100) / 100;
 @Controller('clipper')
 export class ClipperController implements OnApplicationShutdown {
   private streams: Writable[] = [];
+  private preloadMap = new Map<string, number>();
 
   constructor(private logger: AppLogger) {
     this.logger.setContext('ClipperController');
+    rimraf.sync(path.join(__dirname, '../../../files/tmp'));
   }
 
   @Get()
@@ -49,6 +51,81 @@ export class ClipperController implements OnApplicationShutdown {
       return new HttpException('Oops', 400);
     }
   }
+  @Get('preload')
+  public async preload(
+    @Query('url') url: string,
+    @Query('type') type: string,
+    @Query('max') maxStr = 'false',
+    @Res() res: Response,
+  ) {
+    try {
+      const vid = url;
+      const max = maxStr === 'true';
+      const options = max
+        ? { quality: 'highestvideo' }
+        : {
+            quality: !type || type === 'gif' ? 18 : 'highest',
+          };
+      const info = await ytdl.getInfo(vid, {
+        ...options,
+        highWaterMark: 1024 * 256,
+      });
+      const vidStream = ytdl(vid, options);
+      const tmpname = `tmp/preload-${info.videoDetails.title}${
+        max ? '-max' : ''
+      }.mp4`;
+
+      if (this.preloadMap.get(tmpname) >= 100) {
+        res.send({
+          message: 'Downloaded',
+          progress: 100,
+        });
+        return;
+      }
+      if (this.preloadMap.get(tmpname) < 0) {
+        res.send({
+          message: 'Failed',
+          progress: -1,
+        });
+        return;
+      }
+      if (this.preloadMap.get(tmpname) < 100) {
+        res.send({
+          message: 'Downloading',
+          progress: this.preloadMap.get(tmpname),
+        });
+        return;
+      }
+      vidStream.on('progress', (_, downloaded, total) => {
+        const percent = Math.round((downloaded * 100) / total);
+        this.preloadMap.set(tmpname, percent);
+        // this.logger.verbose('[preload] downloading ' + tmpname + ' ' + percent);
+      });
+      await mkdirp(path.join(__dirname, '../../../files/tmp'));
+      const resStream = vidStream
+        .pipe(
+          createWriteStream(path.join(__dirname, '../../../files', tmpname), {
+            highWaterMark: 1024 * 64,
+          }),
+        )
+        .on('error', (e) => {
+          this.preloadMap.set(tmpname, -1);
+          this.logger.verbose('[preload] something went wrong ' + e);
+        })
+        .on('end', () => {
+          this.preloadMap.set(tmpname, 1);
+          this.logger.verbose('[preload] downloaded ' + tmpname);
+        });
+      this.streams.push(resStream);
+
+      this.preloadMap.set(tmpname, 0);
+      this.logger.verbose('[preload] downloading ' + tmpname);
+      res.send({
+        message: 'Started',
+        progress: 0,
+      });
+    } catch {}
+  }
 
   @Get('clip')
   public async clipStream(
@@ -59,10 +136,16 @@ export class ClipperController implements OnApplicationShutdown {
     @Query('type') type: string,
     @Query('fps') fps = 30,
     @Query('scale') scale = 1,
+    @Query('x') x = 0,
+    @Query('y') y = 0,
+    @Query('width') width = 1,
+    @Query('height') height = 1,
+    @Query('max') maxStr = 'false',
     @Res() res: Response,
   ) {
     if (!url) throw new HttpException('Url is not supplied', 400);
     const vid = url;
+    const max = maxStr === 'true';
 
     const dur = Number(end) - Number(start);
     if (isNaN(Number(end)) || isNaN(Number(start))) {
@@ -73,26 +156,54 @@ export class ClipperController implements OnApplicationShutdown {
       return new HttpException('Video clip too long', 400);
     }
     try {
-      const info = await ytdl.getInfo(vid);
-      const vidStream =
-        !type || type === 'gif'
-          ? ytdl(vid, {
-              quality: 18,
-            })
-          : ytdl(vid, {
-              quality: 'highest',
-            });
-
-      // vidStream.on('progress', (_, downloaded, total) => {
-      //   this.logger.verbose(
-      //     `[ytdl] ${Math.round((downloaded * 100) / total)}% of ${total}`,
-      //   );
-      // });
-      let resStream = ffmpeg(vidStream);
-
+      this.logger.verbose('[clipper] downloading info');
+      const options =
+        type === 'mp3'
+          ? { quality: '140' }
+          : max
+          ? { quality: 'highestvideo' }
+          : {
+              quality: !type || type === 'gif' ? 18 : 'highest',
+            };
+      const info = await ytdl.getInfo(vid, options);
+      const vidStream = ytdl(vid, options);
+      const preload = `tmp/preload-${info.videoDetails.title}${
+        max ? '-max' : ''
+      }.mp4`;
+      let resStream;
+      if (this.preloadMap.get(preload) === 100) {
+        this.logger.verbose('[clipper] using preloaded video');
+        resStream = ffmpeg(path.join(__dirname, '../../../files', preload));
+      } else {
+        this.logger.verbose('[clipper] downloaded info');
+        console.log(info.formats[0]);
+        // vidStream.on('progress', (_, downloaded, total) => {
+        //   this.logger.verbose(
+        //     `[ytdl] ${Math.round((downloaded * 100) / total)}% of ${total}`,
+        //   );
+        // });
+        resStream = ffmpeg(vidStream);
+      }
       resStream = resStream.setDuration(dur);
-      resStream = resStream.setSize(`${Math.floor((scale || 0.5) * 100)}%`);
-      // console.log(vid, Number(start ?? 0), end, dur);
+      if (type !== 'mp3') {
+        const filters = [];
+        if (
+          Number(x) >= 0 &&
+          Number(y) >= 0 &&
+          Number(width) > 0 &&
+          Number(height) > 0
+        ) {
+          filters.push(
+            `crop=${round(width)}*in_w:${round(height)}*in_h:${round(
+              x,
+            )}*in_w:${round(y)}*in_h`,
+          );
+        }
+
+        filters.push(`scale=${scale}*in_w:-2`);
+        resStream = resStream.videoFilters(filters);
+      }
+
       if (Number(start ?? 0) > 0)
         resStream = resStream.seekInput(Number(start ?? 0));
 
@@ -135,21 +246,14 @@ export class ClipperController implements OnApplicationShutdown {
           this.logger.verbose(
             `Saving temp file for ${info.videoDetails.title}`,
           );
+          const tmpname = `tmp/tmp-${filename}-${scale}-${x}-${y}-${width}-${height}${
+            max ? '-max' : ''
+          }.mp4`;
           await mkdirp(path.join(__dirname, '../../../files/tmp'));
-          if (
-            !existsSync(
-              path.join(__dirname, '../../../files', `tmp/tmp-${filename}.mp4`),
-            )
-          )
+          if (!existsSync(path.join(__dirname, '../../../files', tmpname)))
             await new Promise((resolve, reject) =>
               resStream
-                .saveToFile(
-                  path.join(
-                    __dirname,
-                    '../../../files',
-                    `tmp/tmp-${filename}.mp4`,
-                  ),
-                )
+                .saveToFile(path.join(__dirname, '../../../files', tmpname))
                 .on('progress', (progress) => {
                   this.logger.verbose(`[download] ${JSON.stringify(progress)}`);
                 })
@@ -164,9 +268,7 @@ export class ClipperController implements OnApplicationShutdown {
             );
 
           this.logger.verbose(`Creating GIF for ${info.videoDetails.title}`);
-          resStream = ffmpeg(
-            path.join(__dirname, '../../../files', `tmp/tmp-${filename}.mp4`),
-          )
+          resStream = ffmpeg(path.join(__dirname, '../../../files', tmpname))
             .format('gif')
             .outputFPS(Number(fps))
             .videoFilter(
