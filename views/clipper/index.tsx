@@ -145,20 +145,6 @@ export default () => {
   useEffect(() => {
     setUrl(localStorage.getItem('videoUrl') ?? '');
     updateCrop();
-    let done = false;
-    const f = async () => {
-      await axios.get('/clipper/ping');
-      await sleep(10000);
-      if (!done) {
-        await f();
-      } else {
-        console.log('bye');
-      }
-    };
-    f();
-    return () => {
-      done = true;
-    };
   }, []);
 
   useEffect(() => {
@@ -458,7 +444,7 @@ export default () => {
               }
             }}
             autoPlay
-            // controls
+            controls
           ></video>
         </div>
         <div className="flex flex-col w-4/5 mx-auto">

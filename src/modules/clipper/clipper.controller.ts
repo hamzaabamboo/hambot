@@ -41,14 +41,17 @@ export class ClipperController implements OnApplicationShutdown {
     const vid = url;
     try {
       const info = await ytdl.getInfo(vid, {
-        quality: 'highest',
+        requestOptions: {
+          quality: 'highest',
+        },
       });
       return {
         data: info.formats[0],
         bestVideo: info.formats.find((t) => t.itag === 18),
       };
     } catch (error) {
-      return new HttpException('Oops', 400);
+      console.log(error);
+      return new HttpException(error, 400);
     }
   }
   @Get('preload')
@@ -67,8 +70,10 @@ export class ClipperController implements OnApplicationShutdown {
             quality: !type || type === 'gif' ? 18 : 'highest',
           };
       const info = await ytdl.getInfo(vid, {
-        ...options,
-        highWaterMark: 1024 * 256,
+        requestOptions: {
+          ...options,
+          highWaterMark: 1024 * 256,
+        },
       });
       const vidStream = ytdl(vid, options);
       const tmpname = `tmp/preload-${info.videoDetails.title}${
@@ -165,7 +170,11 @@ export class ClipperController implements OnApplicationShutdown {
           : {
               quality: !type || type === 'gif' ? 18 : 'highest',
             };
-      const info = await ytdl.getInfo(vid, options);
+      const info = await ytdl.getInfo(vid, {
+        requestOptions: {
+          options,
+        },
+      });
       const vidStream = ytdl(vid, options);
       const preload = `tmp/preload-${info.videoDetails.title}${
         max ? '-max' : ''
