@@ -45,9 +45,12 @@ export class ClipperController implements OnApplicationShutdown {
           quality: 'highest',
         },
       });
+      const formats = info.formats.filter(
+        (f) => !f.isHLS && !f.isDashMPD && !f.isLive,
+      );
       return {
-        data: info.formats[0],
-        bestVideo: info.formats.find((t) => t.itag === 18),
+        data: formats[0],
+        bestVideo: formats.find((t) => t.itag === 18),
       };
     } catch (error) {
       console.log(error);
