@@ -99,13 +99,10 @@ export class TwitterService implements OnApplicationShutdown {
     await this.stream.refresh();
     this.listen();
   }
-  public clear(): void {}
 
   getStatus(): boolean {
     return this.stream.isConnected;
   }
 
-  onApplicationShutdown(): void {
-    this.clear();
-  }
+  onApplicationShutdown(): void {}
 }
