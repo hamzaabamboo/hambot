@@ -83,7 +83,6 @@ export class TwitterService {
 
   async untrack(channel: string) {
     const ids = this.rules.filter((r) => r.tag === channel).map((e) => e.id);
-    console.log(ids);
     if (ids.length < 1) return;
     const res = await this.stream.deleteRules(ids);
     this.rules = this.rules.filter((r) => r.tag === channel);
@@ -92,7 +91,7 @@ export class TwitterService {
   }
 
   async deleteAll(): Promise<void> {
-    await this.stream.deleteAllRules({ data: this.rules }).then(console.log);
+    await this.stream.deleteAllRules({ data: this.rules });
   }
 
   public async refreshStreams(): Promise<void> {

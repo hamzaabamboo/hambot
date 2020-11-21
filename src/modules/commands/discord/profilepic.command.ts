@@ -86,8 +86,6 @@ export class ProfilePicCommand extends BaseCompoundHandler {
     switch (command) {
       case 'list':
         const files = await fs.readdir(this.path);
-        console.log(files);
-
         return {
           isCompounding: false,
           message: {

@@ -46,17 +46,20 @@ export class TwitterStreamService implements OnApplicationShutdown {
     private http: HttpService,
     private push: PushService,
   ) {
-    this.stream = this.streamConnect();
     this.logger.setContext('TwitterStreamService');
+    this.init();
+  }
+
+  init() {
     let timeout = 0;
+    this.stream = this.streamConnect();
     this.stream.on('timeout', () => {
       // Reconnect on error
-      console.warn('A connection error occurred. Reconnecting…');
+      this.logger.warn('A connection error occurred. Reconnecting…');
       setTimeout(() => {
         timeout++;
         this.streamConnect();
       }, 2 ** timeout);
-      this.streamConnect();
     });
   }
 
@@ -180,9 +183,9 @@ export class TwitterStreamService implements OnApplicationShutdown {
         this.logger.verbose('Twitter Stream Disconnected!');
       });
       stream.on('error', (error) => {
-        console.log(error);
+        this.logger.error('Stream Error: ' + JSON.stringify(error));
         if (error.code === 'ETIMEDOUT') {
-          this.logger.error('Twitter Stream Connected!');
+          this.logger.error('Connection Timedout.');
           stream.emit('timeout');
         }
       });
