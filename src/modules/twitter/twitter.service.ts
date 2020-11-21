@@ -1,4 +1,4 @@
-import { Injectable, OnApplicationShutdown } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppLogger } from '../logger/logger';
 import { PushService } from '../push/push.service';
@@ -9,7 +9,7 @@ import {
 } from './twitter-stream.service';
 import { Cron } from '@nestjs/schedule';
 @Injectable()
-export class TwitterService implements OnApplicationShutdown {
+export class TwitterService {
   rules: TwitterRule[] = [];
 
   @Cron('0 0 * * * *')
@@ -103,6 +103,4 @@ export class TwitterService implements OnApplicationShutdown {
   getStatus(): boolean {
     return this.stream.isConnected;
   }
-
-  onApplicationShutdown(): void {}
 }

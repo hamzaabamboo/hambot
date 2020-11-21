@@ -1,5 +1,4 @@
-import { Controller, Get, Query, HttpException } from '@nestjs/common';
-import crypto from 'crypto';
+import { Controller } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 @Controller('twitter')

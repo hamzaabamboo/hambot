@@ -1,7 +1,6 @@
 import { Injectable, HttpService, OnApplicationShutdown } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppLogger } from '../logger/logger';
-import { FullUser, Status } from 'twitter-d';
 import { PushService } from '../push/push.service';
 import needle from 'needle';
 import qs from 'querystring';
@@ -152,9 +151,9 @@ export class TwitterStreamService implements OnApplicationShutdown {
 
   streamConnect(): any {
     //Listen to the stream
-    const options = {
-      timeout: 20000,
-    };
+    // const options = {
+    //   timeout: 20000,
+    // };
 
     try {
       const stream = needle.get(
