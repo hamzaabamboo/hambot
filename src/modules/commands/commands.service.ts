@@ -20,6 +20,7 @@ import { ClipboardCommand } from './clipboard.command';
 import { NyaaCommand } from './nyaa.command';
 import { RecurringCommand } from './recurring.command';
 import { ProfilePicCommand } from './discord/profilepic.command';
+import { TwitterCommand } from './twitter.command';
 
 @Injectable()
 export class CommandsService {
@@ -45,6 +46,7 @@ export class CommandsService {
     clipboard: ClipboardCommand,
     nyaa: NyaaCommand,
     recurring: RecurringCommand,
+    twitter: TwitterCommand,
   ) {
     this.commands = [
       hello,
@@ -63,6 +65,7 @@ export class CommandsService {
       clipboard,
       nyaa,
       recurring,
+      twitter,
       //Always bottom
       base,
     ];
@@ -71,12 +74,12 @@ export class CommandsService {
   isCommand(message: Message) {
     return (
       (this.commands
-        .filter(e =>
+        .filter((e) =>
           e.channels === undefined
             ? true
             : e.channels.includes(message.channel),
         )
-        .find(c => c.matchInput(message.message)) &&
+        .find((c) => c.matchInput(message.message)) &&
         message.message !== '') ||
       this.compound.isCompounding(message.senderId)
     );
@@ -92,9 +95,9 @@ export class CommandsService {
     }
     const handler = this.commands
       .filter(
-        e => e.channels === undefined || e.channels.includes(message.channel),
+        (e) => e.channels === undefined || e.channels.includes(message.channel),
       )
-      .find(function(command) {
+      .find(function (command) {
         return command.matchInput(message.message);
       });
     if (handler.requiresAuth) {

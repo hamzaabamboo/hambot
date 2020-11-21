@@ -26,6 +26,8 @@ import { NyaaCommand } from './nyaa.command';
 import { RssModule } from '../rss/rss.module';
 import { SchedulerModule } from '../scheduler/scheduler.module';
 import { RecurringCommand } from './recurring.command';
+import { TwitterModule } from '../twitter/twitter.module';
+import { TwitterCommand } from './twitter.command';
 
 @Module({
   providers: [
@@ -48,6 +50,7 @@ import { RecurringCommand } from './recurring.command';
     ClipboardCommand,
     NyaaCommand,
     RecurringCommand,
+    TwitterCommand,
   ],
   imports: [
     DiscordModule,
@@ -57,6 +60,7 @@ import { RecurringCommand } from './recurring.command';
     ConfigModule,
     HttpModule,
     LoggerModule,
+    TwitterModule,
     RssModule,
     forwardRef(() => SchedulerModule),
   ],

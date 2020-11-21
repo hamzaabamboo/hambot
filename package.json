@@ -39,6 +39,7 @@
     "lodash": "^4.17.19",
     "mkdirp": "^1.0.4",
     "moment": "^2.27.0",
+    "needle": "^2.5.2",
     "node-ical": "^0.12.1",
     "node-media-server": "^2.2.2",
     "promptpay-qr": "^0.4.4",
@@ -80,6 +81,7 @@
     "ts-loader": "^8.0.4",
     "ts-node": "^9.0.0",
     "tsconfig-paths": "^3.9.0",
+    "twitter-d": "^0.4.0",
     "typescript": "^4.0.3"
   },
   "jest": {

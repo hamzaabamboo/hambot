@@ -6,20 +6,17 @@ import { ConfigService } from '@nestjs/config';
 export class TwitterController {
   constructor(private config: ConfigService) {}
 
-  @Get('/')
-  challengeCRC(@Query('crc_token') token: string) {
-    if (!token) throw new HttpException('token not supplied', 400);
-    const hmac = crypto.createHmac(
-      'sha256',
-      this.config.get('TWITTER_API_SECRET'),
-    );
-    hmac.update(token);
-    const digest = hmac.digest('hex');
-    return {
-      response_token: 'sha256=' + digest,
-    };
-  }
-
-  // @Post('/')
-  // webhook() {}
+  // @Get('/')
+  // challengeCRC(@Query('crc_token') token: string) {
+  //   if (!token) throw new HttpException('token not supplied', 400);
+  //   const hmac = crypto.createHmac(
+  //     'sha256',
+  //     this.config.get('TWITTER_API_SECRET'),
+  //   );
+  //   hmac.update(token);
+  //   const digest = hmac.digest('hex');
+  //   return {
+  //     response_token: 'sha256=' + digest,
+  //   };
+  // }
 }
