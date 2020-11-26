@@ -6,8 +6,10 @@ import {
   Tweet,
   TwitterRule,
   TwitterStreamService,
+  TWITTER_DELAY,
 } from './twitter-stream.service';
 import { Cron } from '@nestjs/schedule';
+import { sleep } from 'src/utils/sleep';
 @Injectable()
 export class TwitterService {
   rules: TwitterRule[] = [];
@@ -35,6 +37,14 @@ export class TwitterService {
         this.handleTweet(json as Tweet);
       } catch (e) {
         // Keep alive signal received. Do nothing.
+      }
+    });
+    this.stream.stream.on('error', (error) => {
+      if ('connection_issue' in error) {
+        this.logger.debug('Reconnecting');
+        sleep(TWITTER_DELAY).then(() => {
+          this.refreshStreams();
+        });
       }
     });
   }

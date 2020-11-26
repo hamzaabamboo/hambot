@@ -37,7 +37,7 @@ export interface Tweet {
 const rulesURL = 'https://api.twitter.com/2/tweets/search/stream/rules';
 const streamURL = 'https://api.twitter.com/2/tweets/search/stream';
 
-const TWITTER_DELAY = 15000;
+export const TWITTER_DELAY = 15000;
 @Injectable()
 export class TwitterStreamService implements OnApplicationShutdown {
   public stream: Readable | any;
@@ -180,12 +180,6 @@ export class TwitterStreamService implements OnApplicationShutdown {
       stream.on('error', (error) => {
         this.isConnected = false;
         this.logger.error('Stream Errored: ' + JSON.stringify(error));
-        if ('connection_issue' in error) {
-          this.logger.debug('Reconnecting');
-          sleep(TWITTER_DELAY).then(() => {
-            this.stream = this.streamConnect();
-          });
-        }
         if (error.code === 'ETIMEDOUT') {
           this.logger.error('Connection Timed out.');
           stream.emit('timeout');
@@ -201,14 +195,10 @@ export class TwitterStreamService implements OnApplicationShutdown {
         this.logger.verbose('Twitter Stream Disconnected!');
       });
       stream.on('data', (e: any) => {
-        if (!('data' in e)) {
-          try {
-            const f = JSON.parse(e as string);
-            this.logger.debug('Data: ' + JSON.stringify(f));
-          } catch {
-            this.logger.debug('Something went wrong: ' + e);
-          }
-        }
+        try {
+          const f = JSON.parse(e as string);
+          if (!('data' in f)) this.logger.debug('Data: ' + JSON.stringify(f));
+        } catch {}
         if ('connection_issue' in e) {
           stream.emit('error', e);
         }
