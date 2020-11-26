@@ -60,7 +60,7 @@ export class TwitterStreamService implements OnApplicationShutdown {
       this.logger.warn('A connection error occurred. Reconnecting…');
       setTimeout(() => {
         timeout++;
-        this.streamConnect();
+        this.stream = this.streamConnect();
       }, 2 ** timeout);
     });
   }
