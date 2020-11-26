@@ -5,6 +5,7 @@ import { PushService } from '../push/push.service';
 import needle from 'needle';
 import qs from 'querystring';
 import { Readable } from 'stream';
+import { sleep } from 'src/utils/sleep';
 
 export interface TwitterRule {
   id?: string;
@@ -36,6 +37,7 @@ export interface Tweet {
 const rulesURL = 'https://api.twitter.com/2/tweets/search/stream/rules';
 const streamURL = 'https://api.twitter.com/2/tweets/search/stream';
 
+const TWITTER_DELAY = 15000;
 @Injectable()
 export class TwitterStreamService implements OnApplicationShutdown {
   public stream: Readable | any;
@@ -174,34 +176,46 @@ export class TwitterStreamService implements OnApplicationShutdown {
           },
         },
       );
-      stream.on('header', (h) => {
-        this.isConnected = true;
-        this.logger.verbose('Twitter Stream Connected!');
-      });
-      stream.on('done', () => {
-        this.isConnected = false;
-        this.logger.verbose('Twitter Stream Disconnected!');
-      });
+
       stream.on('error', (error) => {
-        this.logger.error('Stream Error: ' + JSON.stringify(error));
+        this.logger.error('Stream Errored: ' + JSON.stringify(error));
+        if ('connection_issue' in error) {
+          this.logger.debug('Reconnecting');
+          sleep(TWITTER_DELAY).then(() => {
+            this.stream = this.streamConnect();
+          });
+        }
         if (error.code === 'ETIMEDOUT') {
-          this.logger.error('Connection Timedout.');
+          this.logger.error('Connection Timed out.');
           stream.emit('timeout');
         }
       });
 
+      stream.on('header', (h) => {
+        this.isConnected = true;
+        this.logger.verbose('Twitter Stream Connected!');
+      });
+      stream.on('done', (e) => {
+        this.isConnected = false;
+        this.logger.verbose('Twitter Stream Disconnected!');
+      });
+      stream.on('data', (e: any) => {
+        if ('connection_issue' in e) {
+          stream.emit('error', e);
+        }
+      });
+
       return stream;
-    } catch (e) {
-      this.logger.error('Stream Errored ' + e);
-      return this.streamConnect();
-    }
+    } catch {}
   }
 
   async refresh() {
     this.logger.verbose('Refreshing Streams....');
     const p = new Promise((resolve) => {
-      this.logger.verbose('Waiting for stream to disconnect');
+      this.logger.verbose('Waiting for stream to disconnect...');
       this.stream.request.on('abort', (s) => {
+        this.logger.verbose('Disconnected!');
+        this.isConnected = false;
         resolve();
       });
     });
@@ -209,6 +223,8 @@ export class TwitterStreamService implements OnApplicationShutdown {
     this.stream.removeAllListeners();
     this.stream.destroy();
     await p;
+    this.logger.verbose('Wait 15 seconds.');
+    await sleep(15000);
     this.stream = await this.streamConnect();
   }
 
