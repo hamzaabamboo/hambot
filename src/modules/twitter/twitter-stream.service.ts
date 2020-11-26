@@ -178,6 +178,7 @@ export class TwitterStreamService implements OnApplicationShutdown {
       );
 
       stream.on('error', (error) => {
+        this.isConnected = false;
         this.logger.error('Stream Errored: ' + JSON.stringify(error));
         if ('connection_issue' in error) {
           this.logger.debug('Reconnecting');
@@ -200,6 +201,9 @@ export class TwitterStreamService implements OnApplicationShutdown {
         this.logger.verbose('Twitter Stream Disconnected!');
       });
       stream.on('data', (e: any) => {
+        if (!('data' in e)) {
+          this.logger.debug('Data: ' + JSON.stringify(e));
+        }
         if ('connection_issue' in e) {
           stream.emit('error', e);
         }
@@ -211,20 +215,22 @@ export class TwitterStreamService implements OnApplicationShutdown {
 
   async refresh() {
     this.logger.verbose('Refreshing Streams....');
-    const p = new Promise((resolve) => {
-      this.logger.verbose('Waiting for stream to disconnect...');
-      this.stream.request.on('abort', (s) => {
-        this.logger.verbose('Disconnected!');
-        this.isConnected = false;
-        resolve();
+    if (this.isConnected) {
+      const p = new Promise((resolve) => {
+        this.logger.verbose('Waiting for stream to disconnect...');
+        this.stream.request.on('abort', (s) => {
+          this.logger.verbose('Disconnected!');
+          this.isConnected = false;
+          resolve();
+        });
       });
-    });
-    this.stream.request.abort();
-    this.stream.removeAllListeners();
-    this.stream.destroy();
-    await p;
-    this.logger.verbose('Wait 15 seconds.');
-    await sleep(15000);
+      this.stream.request.abort();
+      this.stream.removeAllListeners();
+      this.stream.destroy();
+      await p;
+      this.logger.verbose('Wait 15 seconds.');
+      await sleep(15000);
+    }
     this.stream = await this.streamConnect();
   }
 
