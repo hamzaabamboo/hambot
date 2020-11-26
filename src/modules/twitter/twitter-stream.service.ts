@@ -202,8 +202,12 @@ export class TwitterStreamService implements OnApplicationShutdown {
       });
       stream.on('data', (e: any) => {
         if (!('data' in e)) {
-          const f = JSON.parse(e as string);
-          this.logger.debug('Data: ' + JSON.stringify(f));
+          try {
+            const f = JSON.parse(e as string);
+            this.logger.debug('Data: ' + JSON.stringify(f));
+          } catch {
+            this.logger.debug('Something went wrong: ' + e);
+          }
         }
         if ('connection_issue' in e) {
           stream.emit('error', e);
