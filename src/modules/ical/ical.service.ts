@@ -1,6 +1,7 @@
 import { Injectable, HttpService } from '@nestjs/common';
 import ical from 'node-ical';
 import moment from 'moment';
+import { CalendarEvent } from './events.model';
 @Injectable()
 export class IcalService {
   constructor(private http: HttpService) {}
@@ -8,7 +9,7 @@ export class IcalService {
   async getCalenderData(url: string): Promise<CalendarEvent[]> {
     const res = await this.http.get(url).toPromise();
     const data = await ical.async.parseICS(res.data);
-    return Object.values(data).map(d => ({
+    return Object.values(data).map((d) => ({
       id: d.uid as string,
       title: d.summary as string,
       startTime: moment(d.start as ical.DateWithTimeZone).toDate(),

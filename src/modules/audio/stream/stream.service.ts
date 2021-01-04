@@ -43,11 +43,11 @@ class AudioExtractor extends Transform {
           cb(null, buf);
         } else {
           const byteLength = this.tags
-            .map(t => writeData(t, null, 0))
+            .map((t) => writeData(t, null, 0))
             .reduce((p, c) => p + c, 0);
           const buf = Buffer.alloc(byteLength);
           let offset = 4;
-          this.tags.forEach(t => {
+          this.tags.forEach((t) => {
             const base = writeData(t, buf, offset);
             offset = writer.writeNumber(base - offset, buf, base, 4);
           });
@@ -83,18 +83,18 @@ export class StreamService {
   async listenToStream(key: string) {
     await new Promise((resolve, reject) => {
       this.server
-        .once('/live', conn => {
+        .once('/live', (conn) => {
           conn
             .once(key, (stream: Readable) => {
               this.readable = stream.pipe(new AudioExtractor());
-              resolve();
+              resolve(null);
             })
-            .on('error', e => {
+            .on('error', (e) => {
               this.stopServer();
               reject(e);
             });
         })
-        .on('error', e => {
+        .on('error', (e) => {
           this.stopServer();
           reject(e);
         });

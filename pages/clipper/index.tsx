@@ -4,7 +4,6 @@ import { Slider } from './components/Slider';
 import axios from 'axios';
 import qs from 'querystring';
 import '../css/tailwind.css';
-const RangeC = (Range as any) as React.Component;
 
 const calculateFps = (w: number, h: number, fps: number, length: number) => {
   return (4 * (w * h * fps * length)) / 8;
@@ -489,7 +488,7 @@ export default () => {
               }}
             />
             <div className="px-4 w-100 flex-grow">
-              <RangeC
+              {/* <Range
                 allowCross={false}
                 step={0.01}
                 min={0}
@@ -512,7 +511,7 @@ export default () => {
                   }
                   setClip(r as [number, number]);
                 }}
-              />
+              /> */}
             </div>
             <input
               type="number"

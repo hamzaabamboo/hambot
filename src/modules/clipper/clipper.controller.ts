@@ -271,7 +271,7 @@ export class ClipperController implements OnApplicationShutdown {
                 })
                 .on('end', () => {
                   this.logger.verbose(`[download] saved temp file`);
-                  resolve();
+                  resolve(null);
                 })
                 .on('error', (err) => {
                   this.logger.debug(`[download] error: ${err.message}`);

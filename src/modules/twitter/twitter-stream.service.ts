@@ -216,7 +216,7 @@ export class TwitterStreamService implements OnApplicationShutdown {
         this.stream.request.on('abort', (s) => {
           this.logger.verbose('Disconnected!');
           this.isConnected = false;
-          resolve();
+          resolve(null);
         });
       });
       this.stream.request.abort();

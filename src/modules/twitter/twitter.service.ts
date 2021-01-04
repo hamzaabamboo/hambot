@@ -13,6 +13,7 @@ import { sleep } from 'src/utils/sleep';
 @Injectable()
 export class TwitterService {
   rules: TwitterRule[] = [];
+  error = 0;
 
   @Cron('0 0 * * * *')
   refresh() {
@@ -35,13 +36,15 @@ export class TwitterService {
       try {
         const json = JSON.parse(data);
         this.handleTweet(json as Tweet);
+        this.error = 0;
       } catch (e) {
         // Keep alive signal received. Do nothing.
       }
     });
     this.stream.stream.on('error', (error) => {
-      if ('connection_issue' in error) {
-        this.logger.debug('Reconnecting');
+      this.error = this.error + 1;
+      if ('connection_issue' in error && this.error < 5) {
+        this.logger.debug('Reconnecting, retries : ' + this.error);
         sleep(TWITTER_DELAY).then(() => {
           this.refreshStreams();
         });
