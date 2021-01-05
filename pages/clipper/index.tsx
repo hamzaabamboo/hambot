@@ -3,7 +3,9 @@ import { Range } from 'rc-slider';
 import { Slider } from './components/Slider';
 import axios from 'axios';
 import qs from 'querystring';
-import '../css/tailwind.css';
+import { NextPage } from 'next';
+
+const RangeC = (Range as any) as React.Component;
 
 const calculateFps = (w: number, h: number, fps: number, length: number) => {
   return (4 * (w * h * fps * length)) / 8;
@@ -20,7 +22,7 @@ interface Dimension {
   width: number;
   height: number;
 }
-export default () => {
+const ClipperPage: NextPage = () => {
   const [url, setUrl] = useState<string>(
     'https://www.youtube.com/watch?v=ebSce4xUjo0',
   );
@@ -229,9 +231,10 @@ export default () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     const target = event.nativeEvent.target as HTMLDivElement;
-    let shiftX =
+    const shiftX =
       event.nativeEvent.clientX - target.getBoundingClientRect().left;
-    let shiftY = event.nativeEvent.clientY - target.getBoundingClientRect().top;
+    const shiftY =
+      event.nativeEvent.clientY - target.getBoundingClientRect().top;
     event.nativeEvent.stopPropagation();
     event.nativeEvent.preventDefault();
     const t = playerRef.current as HTMLDivElement;
@@ -387,66 +390,67 @@ export default () => {
     f();
   };
   return (
-    <div className="flex justify-center flex-col items-center min-h-screen py-2">
-      <div className="flex justify-center flex-col items-center py-2">
-        <h1 className="text-6xl font-bold text-center">
-          Video Clipping Tool V1.2!
-        </h1>
-        <div ref={playerRef} className="m-2 relative">
+    <div className="flex justify-center flex-col items-center min-h-screen w-screen lg:w-80 py-2">
+      <h1 className="text-6xl font-bold text-center">
+        Video Clipping Tool V1.5!
+      </h1>
+      <div ref={playerRef} className="m-2 mb-3  relative">
+        <div
+          className="absolute z-20"
+          ref={cropperRef}
+          style={{
+            display: isCropping ? 'block' : 'none',
+          }}
+        >
           <div
-            className="absolute z-20"
-            ref={cropperRef}
-            style={{
-              display: isCropping ? 'block' : 'none',
+            className="bg-gray-500 w-full h-full opacity-25 z-30"
+            draggable
+            onMouseDown={handleDrag('all')}
+            onDragStart={() => {
+              return false;
             }}
-          >
-            <div
-              className="bg-gray-500 w-full h-full opacity-25 z-30"
-              draggable
-              onMouseDown={handleDrag('all')}
-              onDragStart={() => {
-                return false;
-              }}
-            ></div>
-            <div
-              className="w-8 h-8 rounded-full bg-red-600 opacity-75 absolute z-40"
-              style={{ top: '-1rem', left: '-1rem' }}
-              draggable
-              onMouseDown={handleDrag('pos')}
-              onDragStart={() => {
-                return false;
-              }}
-            ></div>
-            <div
-              className="w-8 h-8 rounded-full bg-red-600 opacity-75 absolute z-40"
-              style={{ bottom: '-1rem', right: '-1rem' }}
-              draggable
-              onMouseDown={handleDrag('size')}
-              onDragStart={() => {
-                return false;
-              }}
-            ></div>
-          </div>
-          <video
-            ref={videoRef}
-            src={video}
-            onVolumeChange={(e) => {
-              setVolume((e.target as HTMLVideoElement).volume * 100);
+          ></div>
+          <div
+            className="w-8 h-8 rounded-full bg-red-600 opacity-75 absolute z-40"
+            style={{ top: '-1rem', left: '-1rem' }}
+            draggable
+            onMouseDown={handleDrag('pos')}
+            onDragStart={() => {
+              return false;
             }}
-            onTimeUpdate={(e) => {
-              setProgress((e.target as HTMLVideoElement).currentTime);
+          ></div>
+          <div
+            className="w-8 h-8 rounded-full bg-red-600 opacity-75 absolute z-40"
+            style={{ bottom: '-1rem', right: '-1rem' }}
+            draggable
+            onMouseDown={handleDrag('size')}
+            onDragStart={() => {
+              return false;
             }}
-            onPlay={(e) => {
-              if ((e.target as HTMLVideoElement).currentTime >= clip[1]) {
-                setProgress(clip[0]);
-                (e.target as HTMLVideoElement).currentTime = clip[0];
-              }
-            }}
-            autoPlay
-            controls
-          ></video>
+          ></div>
         </div>
-        <div className="flex flex-col w-4/5 mx-auto">
+        <video
+          ref={videoRef}
+          src={video}
+          className="w-full"
+          onVolumeChange={(e) => {
+            setVolume((e.target as HTMLVideoElement).volume * 100);
+          }}
+          onTimeUpdate={(e) => {
+            setProgress((e.target as HTMLVideoElement).currentTime);
+          }}
+          onPlay={(e) => {
+            if ((e.target as HTMLVideoElement).currentTime >= clip[1]) {
+              setProgress(clip[0]);
+              (e.target as HTMLVideoElement).currentTime = clip[0];
+            }
+          }}
+          autoPlay
+          controls
+        ></video>
+      </div>
+      <div className="flex justify-center flex-col items-start  px-4 grid grid-cols-6 gap-2">
+        <div className="flex flex-col w-full mx-auto col-span-6 md:col-span-3">
           <div>
             <input
               type="text"
@@ -488,7 +492,7 @@ export default () => {
               }}
             />
             <div className="px-4 w-100 flex-grow">
-              {/* <Range
+              <RangeC
                 allowCross={false}
                 step={0.01}
                 min={0}
@@ -511,7 +515,7 @@ export default () => {
                   }
                   setClip(r as [number, number]);
                 }}
-              /> */}
+              />
             </div>
             <input
               type="number"
@@ -567,6 +571,8 @@ export default () => {
               className="p-2"
             />
           </div>
+        </div>
+        <div className="col-span-6 md:col-span-3">
           <div className="flex flex-col">
             <span className="text-lg font-bold mb-2">Fps</span>
             <div>
@@ -730,11 +736,13 @@ export default () => {
               </>
             )}
           </div>
-        </div>
-        <div className="p-2">
-          {res && <img alt="result gif" src={'/clipper/' + res} />}
+          <div className="p-2">
+            {res && <img alt="result gif" src={'/clipper/' + res} />}
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
+export default ClipperPage;

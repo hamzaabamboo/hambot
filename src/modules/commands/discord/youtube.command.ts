@@ -32,8 +32,8 @@ export class YoutubeCommand extends BaseCommand {
         const vidUrl = /^http(s)?:\/\/(.*)/.test(url)
           ? url
           : ((await ytsr(url)).items.find(
-              e => e.type === 'video',
-            ) as ytsr.Video).link;
+              (e) => e.type === 'video',
+            ) as ytsr.Video).url;
         const meta = await ytdl.getInfo(vidUrl);
         if (!meta) {
           return {

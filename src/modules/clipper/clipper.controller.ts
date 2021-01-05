@@ -15,7 +15,9 @@ import rimraf from 'rimraf';
 import path from 'path';
 import { Writable } from 'stream';
 import { AppLogger } from '../logger/logger';
-import { createWriteStream, existsSync } from 'fs';
+import { createWriteStream, existsSync, fstat } from 'fs';
+import { fetchFile } from '@ffmpeg/ffmpeg';
+import { ClipperService } from './clipper.service';
 
 const round = (n) => Math.round(n * 100) / 100;
 @Controller('clipper')
@@ -23,16 +25,9 @@ export class ClipperController implements OnApplicationShutdown {
   private streams: Writable[] = [];
   private preloadMap = new Map<string, number>();
 
-  constructor(private logger: AppLogger) {
+  constructor(private logger: AppLogger, private clipper: ClipperService) {
     this.logger.setContext('ClipperController');
     rimraf.sync(path.join(__dirname, '../../../files/tmp'));
-  }
-
-  @Get()
-  @Render('clipper/index') // this will render `views/index.tsx`
-  public showHome() {
-    const user = { name: 'World' };
-    return { user };
   }
 
   @Get('vid')
@@ -57,6 +52,8 @@ export class ClipperController implements OnApplicationShutdown {
       return new HttpException(error, 400);
     }
   }
+
+  //TODO: Remove This Part + Refactor
   @Get('preload')
   public async preload(
     @Query('url') url: string,
@@ -178,25 +175,53 @@ export class ClipperController implements OnApplicationShutdown {
           options,
         },
       });
-      const vidStream = ytdl(vid, options);
+
       const preload = `tmp/preload-${info.videoDetails.title}${
         max ? '-max' : ''
       }.mp4`;
-      let resStream;
+
+      let filename = `${encodeURIComponent(
+        info.videoDetails.title,
+      )}_${start}_${end}`;
+
+      const tmpname = `tmp/tmp-${filename}-${scale}-${x}-${y}-${width}-${height}${
+        max ? '-max' : ''
+      }.mp4`;
+
+      let resStream: ffmpeg.FfmpegCommand;
       if (this.preloadMap.get(preload) === 100) {
         this.logger.verbose('[clipper] using preloaded video');
-        resStream = ffmpeg(path.join(__dirname, '../../../files', preload));
+        this.clipper.ffmpeg.FS(
+          'writeFile',
+          `${tmpname}`,
+          path.join(__dirname, '../../../files', preload),
+        );
       } else {
         this.logger.verbose('[clipper] downloaded info');
-        console.log(info.formats[0]);
+        // console.log(info.formats[0]);
         // vidStream.on('progress', (_, downloaded, total) => {
         //   this.logger.verbose(
         //     `[ytdl] ${Math.round((downloaded * 100) / total)}% of ${total}`,
         //   );
         // });
-        resStream = ffmpeg(vidStream);
+        this.clipper.ffmpeg.FS(
+          'writeFile',
+          `${tmpname}`,
+          await fetchFile(
+            info.formats
+              .filter((f) => !f.isHLS && !f.isDashMPD && !f.isLive)
+              .find((t) => t.itag === 18).url,
+          ),
+        );
       }
-      resStream = resStream.setDuration(dur);
+
+      const args = ['-i', `${tmpname}`];
+
+      if (Number(start ?? 0) > 0)
+        args.push('-ss', Number(start ?? 0).toString());
+
+      args.push('-t', dur.toString());
+
       if (type !== 'mp3') {
         const filters = [];
         if (
@@ -213,122 +238,77 @@ export class ClipperController implements OnApplicationShutdown {
         }
 
         filters.push(`scale=${scale}*in_w:-2`);
-        resStream = resStream.videoFilters(filters);
+        args.push('-vf', filters.join(','));
       }
-
-      if (Number(start ?? 0) > 0)
-        resStream = resStream.seekInput(Number(start ?? 0));
-
-      let filename = `${info.videoDetails.title}_${start}_${end}`;
 
       switch (type) {
         case 'mp4':
-          resStream = resStream
-            .format('mp4')
-            .outputOptions('-movflags frag_keyframe+empty_moov');
-          res.setHeader('content-type', 'video/mp4');
+          res.type('mp4');
           filename += '.mp4';
+          args.push('-movflags', 'frag_keyframe+empty_moov');
           break;
         case 'flv':
-          resStream = resStream.format('flv');
-          res.setHeader('content-type', 'video/flv');
+          res.type('flv');
           filename += '.flv';
           break;
         case 'mov':
-          resStream = resStream.format('mov');
-          res.setHeader('content-type', 'video/mov');
+          res.type('mov');
           filename += '.mov';
           break;
         case 'webp':
-          resStream = resStream.format('webp');
-          res.setHeader('content-type', 'video/webp');
+          res.type('webp');
           filename += '.webp';
           break;
         case 'mp3':
-          resStream = resStream.format('mp3');
-          res.setHeader('content-type', 'audio/mp3');
+          res.type('mp3');
           filename += '.mp3';
           break;
         case 'wav':
-          resStream = resStream.format('wav');
-          res.setHeader('content-type', 'audio/wav');
+          res.type('wav');
           filename += '.wav';
           break;
         default:
           this.logger.verbose(
             `Saving temp file for ${info.videoDetails.title}`,
           );
-          const tmpname = `tmp/tmp-${filename}-${scale}-${x}-${y}-${width}-${height}${
-            max ? '-max' : ''
-          }.mp4`;
-          await mkdirp(path.join(__dirname, '../../../files/tmp'));
-          if (!existsSync(path.join(__dirname, '../../../files', tmpname)))
-            await new Promise((resolve, reject) =>
-              resStream
-                .saveToFile(path.join(__dirname, '../../../files', tmpname))
-                .on('progress', (progress) => {
-                  this.logger.verbose(`[download] ${JSON.stringify(progress)}`);
-                })
-                .on('end', () => {
-                  this.logger.verbose(`[download] saved temp file`);
-                  resolve(null);
-                })
-                .on('error', (err) => {
-                  this.logger.debug(`[download] error: ${err.message}`);
-                  reject();
-                }),
-            );
+          args.push(`tmp-${filename}.mp4`);
+          await this.clipper.ffmpeg.run(...args);
 
           this.logger.verbose(`Creating GIF for ${info.videoDetails.title}`);
-          resStream = ffmpeg(path.join(__dirname, '../../../files', tmpname))
-            .format('gif')
-            .outputFPS(Number(fps))
-            .videoFilter(
-              `fps=${fps},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse`,
-            );
+          args.splice(0, args.length);
+          args.push(
+            '-i',
+            `tmp-${filename}.mp4`,
+            '-vf',
+            `fps=${fps},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse`,
+          );
+          res.type('gif');
           filename += '.gif';
-          res.setHeader('content-type', 'image/gif');
           break;
       }
 
       if (download) {
-        res.setHeader(
-          'content-disposition',
-          `attachment; filename=${encodeURIComponent(filename)}`,
-        );
+        res.header('content-disposition', `attachment; filename=${filename}`);
       } else {
-        res.setHeader(
-          'content-disposition',
-          `inline; filename=${encodeURIComponent(filename)}`,
-        );
+        res.header('content-disposition', `inline; filename=${filename}`);
       }
 
-      // console.log(filename);
-      this.streams.push(
-        resStream
-          .on('progress', (progress) => {
-            this.logger.verbose(`[conversion] ${JSON.stringify(progress)}`);
-          })
-          .on('error', (err) => {
-            this.logger.debug(`[conversion] error: ${err.message}`);
-            vidStream.destroy();
-            resStream.removeAllListeners();
-          })
-          .on('end', () => {
-            this.logger.verbose('[conversion] finished');
-          })
-          .pipe(res),
-      );
+      args.push(`${filename}`);
+
+      await this.clipper.ffmpeg.run(...args);
+      const file = this.clipper.ffmpeg.FS('readFile', filename) as Uint8Array;
+
+      res.send(Buffer.from(file));
     } catch (error) {
       return new HttpException('Oops', 400);
     }
   }
 
   onApplicationShutdown() {
-    this.streams.forEach((s) => {
-      s.destroy();
-    });
-    this.logger.debug('Cleared ' + this.streams.length + ' streams.');
-    this.streams = [];
+    // this.streams.forEach((s) => {
+    //   s.destroy();
+    // });
+    // this.logger.debug('Cleared ' + this.streams.length + ' streams.');
+    // this.streams = [];
   }
 }
