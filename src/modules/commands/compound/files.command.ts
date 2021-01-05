@@ -8,7 +8,7 @@ import { ModuleRef } from '@nestjs/core';
 import mkdirp from 'mkdirp';
 import { createWriteStream } from 'fs';
 import { ConfigService } from '@nestjs/config';
-import path = require('path');
+import path from 'path';
 
 export class FileCommand extends BaseCompoundHandler {
   public static startCommand = /^files?(?: (list|get|add)(?: (\d+))?)?/;
@@ -45,13 +45,13 @@ export class FileCommand extends BaseCompoundHandler {
   async getFiles() {
     if (!this._files) {
       const board = (await this.trello.getBoards()).find(
-        b => b.name === 'HamBot',
+        (b) => b.name === 'HamBot',
       );
       const list = (await this.trello.getLists(board.id)).find(
-        l => l.name === 'files',
+        (l) => l.name === 'files',
       );
       const cards = await this.trello.getCards(list.id);
-      this._files = cards.map(c => ({
+      this._files = cards.map((c) => ({
         name: c.name,
         url: c.desc,
       }));
@@ -149,9 +149,9 @@ export class FileCommand extends BaseCompoundHandler {
     const files = await Promise.all(
       messages
         .slice(1)
-        .filter(e => e.files)
-        .flatMap(e => [...e.files, ...(e.image ?? [])])
-        .map(async f => {
+        .filter((e) => e.files)
+        .flatMap((e) => [...e.files, ...(e.image ?? [])])
+        .map(async (f) => {
           if ('stream' in f) {
             const url = path.join(tmpPath, f.name);
             await new Promise((resolve, reject) => {
@@ -171,13 +171,13 @@ export class FileCommand extends BaseCompoundHandler {
     );
     const msg = files.map((e, i) => `${i + 1} - ${e.name}`).join('\n');
     const board = (await this.trello.getBoards()).find(
-      b => b.name === 'HamBot',
+      (b) => b.name === 'HamBot',
     );
     const list = (await this.trello.getLists(board.id)).find(
-      l => l.name === 'files',
+      (l) => l.name === 'files',
     );
     await Promise.all(
-      files.map(f => this.trello.addCard(list.id, f.name, f.url)),
+      files.map((f) => this.trello.addCard(list.id, f.name, f.url)),
     );
     return {
       isCompounding: false,

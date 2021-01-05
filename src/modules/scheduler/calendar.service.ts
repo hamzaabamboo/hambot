@@ -4,7 +4,7 @@ import { TrelloService } from '../trello/trello.service';
 import { AppLogger } from '../logger/logger';
 import { PushService } from '../push/push.service';
 import { IcalService } from '../ical/ical.service';
-import moment = require('moment');
+import moment from 'moment';
 import { CalendarEvent } from '../ical/events.model';
 
 @Injectable()

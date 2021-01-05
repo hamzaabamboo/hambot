@@ -11,7 +11,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { AppLogger } from '../logger/logger';
 import { MessagesService } from '../messages/messages.service';
-import path = require('path');
+import path from 'path';
 
 interface FacebookEvent {
   messaging: {
@@ -47,21 +47,21 @@ export class FacebookController {
         // will only ever contain one message, so we get index 0
         const msgs = entry.messaging;
 
-        msgs.forEach(m => {
+        msgs.forEach((m) => {
           this.message.handleMessage({
             senderId: m.sender.id,
             channelId: m.sender.id,
             channel: 'facebook',
             message: m.message.text,
             image: m.message.attachments
-              ?.filter(e => e.type === 'image')
-              .map(e => ({
+              ?.filter((e) => e.type === 'image')
+              .map((e) => ({
                 name: path.basename(e.payload.url).split('?')[0],
                 url: e.payload.url,
               })),
             files: m.message.attachments
-              ?.filter(e => e.type !== 'image')
-              .map(e => ({
+              ?.filter((e) => e.type !== 'image')
+              .map((e) => ({
                 name: path.basename(e.payload.url).split('?')[0],
                 url: e.payload.url,
               })),

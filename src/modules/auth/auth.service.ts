@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TrelloService } from '../trello/trello.service';
-import moment = require('moment');
+import moment from 'moment';
 import { AppLogger } from '../logger/logger';
 
 @Injectable()
@@ -17,10 +17,10 @@ export class AuthService {
   async getList() {
     if (this._userList) return this._userList;
     const board = (await this.trello.getBoards()).find(
-      b => b.name === 'HamBot',
+      (b) => b.name === 'HamBot',
     );
     const list = (await this.trello.getLists(board.id)).find(
-      l => l.name === 'users',
+      (l) => l.name === 'users',
     );
     this._userList = list;
     return this._userList;
@@ -28,7 +28,7 @@ export class AuthService {
 
   async getAuthenticationData() {
     const list = await this.getList();
-    const users = (await this.trello.getCards(list.id)).map(e => e.name);
+    const users = (await this.trello.getCards(list.id)).map((e) => e.name);
     this._cache = { timestamp: new Date().valueOf(), data: users };
   }
 

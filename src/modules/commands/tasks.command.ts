@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { BaseCommand } from './command.base';
 import { Message } from '../messages/messages.model';
 import { TrelloService } from '../trello/trello.service';
-import moment = require('moment');
+import moment from 'moment';
 
 @Injectable()
 export class TasksCommand extends BaseCommand {
@@ -15,7 +15,7 @@ export class TasksCommand extends BaseCommand {
 
   async handle(message: Message, query: string) {
     const board = (await this.trello.getBoards()).find(
-      b => b.name === "Ham's Stuff",
+      (b) => b.name === "Ham's Stuff",
     );
 
     const allLists = await this.trello.getLists(board.id);
@@ -24,17 +24,18 @@ export class TasksCommand extends BaseCommand {
         return {
           files: [],
           message:
-            'Available Lists \n' + allLists.map(l => '- ' + l.name).join('\n'),
+            'Available Lists \n' +
+            allLists.map((l) => '- ' + l.name).join('\n'),
         };
       default:
-        const lists = allLists.filter(list =>
+        const lists = allLists.filter((list) =>
           query && query !== ''
             ? list.name.toLowerCase().includes(query.toLowerCase())
             : list.name === 'To Do' || list.name === 'Doing',
         );
         const cards = (
           await Promise.all<any>(
-            lists.map(async e => ({
+            lists.map(async (e) => ({
               list: e,
               cards: await this.trello.getCards(e.id),
             })),
@@ -46,10 +47,10 @@ export class TasksCommand extends BaseCommand {
 
         const res = cards
           .map(
-            l =>
+            (l) =>
               `${l.list.name}:\n${l.cards
                 .map(
-                  c =>
+                  (c) =>
                     `${c.name} ${
                       c.due
                         ? 'due ' +

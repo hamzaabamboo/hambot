@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build --webpack",
+    "build": "nest build --webpack && next build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "NODE_OPTIONS='--max-old-space-size=1024' nest start",
     "start:dev": "nest start --watch -e 'node --experimental-wasm-threads --experimental-wasm-bulk-memory'",

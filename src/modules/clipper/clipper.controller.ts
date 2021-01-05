@@ -23,7 +23,6 @@ const round = (n) => Math.round(n * 100) / 100;
 @Controller('clipper')
 export class ClipperController implements OnApplicationShutdown {
   private streams: Writable[] = [];
-  private preloadMap = new Map<string, number>();
 
   constructor(private logger: AppLogger, private clipper: ClipperService) {
     this.logger.setContext('ClipperController');
@@ -54,84 +53,6 @@ export class ClipperController implements OnApplicationShutdown {
   }
 
   //TODO: Remove This Part + Refactor
-  @Get('preload')
-  public async preload(
-    @Query('url') url: string,
-    @Query('type') type: string,
-    @Query('max') maxStr = 'false',
-    @Res() res: Response,
-  ) {
-    try {
-      const vid = url;
-      const max = maxStr === 'true';
-      const options = max
-        ? { quality: 'highestvideo' }
-        : {
-            quality: !type || type === 'gif' ? 18 : 'highest',
-          };
-      const info = await ytdl.getInfo(vid, {
-        requestOptions: {
-          ...options,
-          highWaterMark: 1024 * 256,
-        },
-      });
-      const vidStream = ytdl(vid, options);
-      const tmpname = `tmp/preload-${info.videoDetails.title}${
-        max ? '-max' : ''
-      }.mp4`;
-
-      if (this.preloadMap.get(tmpname) >= 100) {
-        res.send({
-          message: 'Downloaded',
-          progress: 100,
-        });
-        return;
-      }
-      if (this.preloadMap.get(tmpname) < 0) {
-        res.send({
-          message: 'Failed',
-          progress: -1,
-        });
-        return;
-      }
-      if (this.preloadMap.get(tmpname) < 100) {
-        res.send({
-          message: 'Downloading',
-          progress: this.preloadMap.get(tmpname),
-        });
-        return;
-      }
-      vidStream.on('progress', (_, downloaded, total) => {
-        const percent = Math.round((downloaded * 100) / total);
-        this.preloadMap.set(tmpname, percent);
-        // this.logger.verbose('[preload] downloading ' + tmpname + ' ' + percent);
-      });
-      await mkdirp(path.join(__dirname, '../../../files/tmp'));
-      const resStream = vidStream
-        .pipe(
-          createWriteStream(path.join(__dirname, '../../../files', tmpname), {
-            highWaterMark: 1024 * 64,
-          }),
-        )
-        .on('error', (e) => {
-          this.preloadMap.set(tmpname, -1);
-          this.logger.verbose('[preload] something went wrong ' + e);
-        })
-        .on('end', () => {
-          this.preloadMap.set(tmpname, 1);
-          this.logger.verbose('[preload] downloaded ' + tmpname);
-        });
-      this.streams.push(resStream);
-
-      this.preloadMap.set(tmpname, 0);
-      this.logger.verbose('[preload] downloading ' + tmpname);
-      res.send({
-        message: 'Started',
-        progress: 0,
-      });
-    } catch {}
-  }
-
   @Get('clip')
   public async clipStream(
     @Query('url') url: string,
@@ -176,26 +97,15 @@ export class ClipperController implements OnApplicationShutdown {
         },
       });
 
-      const preload = `tmp/preload-${info.videoDetails.title}${
-        max ? '-max' : ''
-      }.mp4`;
-
       let filename = `${encodeURIComponent(
         info.videoDetails.title,
       )}_${start}_${end}`;
 
-      const tmpname = `tmp/tmp-${filename}-${scale}-${x}-${y}-${width}-${height}${
-        max ? '-max' : ''
-      }.mp4`;
+      const tmpname = `tmp/tmp-${filename}.mp4`;
 
-      let resStream: ffmpeg.FfmpegCommand;
-      if (this.preloadMap.get(preload) === 100) {
+      if (this.clipper.ffmpeg.FS('stat', tmpname)) {
         this.logger.verbose('[clipper] using preloaded video');
-        this.clipper.ffmpeg.FS(
-          'writeFile',
-          `${tmpname}`,
-          path.join(__dirname, '../../../files', preload),
-        );
+        this.clipper.ffmpeg.FS('readFile', tmpname);
       } else {
         this.logger.verbose('[clipper] downloaded info');
         // console.log(info.formats[0]);

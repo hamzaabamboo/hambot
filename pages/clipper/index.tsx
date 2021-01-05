@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Range } from 'rc-slider';
-import { Slider } from './components/Slider';
+import { Slider } from '../../components/Slider';
 import axios from 'axios';
 import qs from 'querystring';
 import { NextPage } from 'next';
 
-const RangeC = (Range as any) as React.Component;
+const RangeC = (Range as any) as React.ComponentType<any>;
 
 const calculateFps = (w: number, h: number, fps: number, length: number) => {
   return (4 * (w * h * fps * length)) / 8;
