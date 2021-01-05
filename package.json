@@ -8,7 +8,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build --webpack && next build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "NODE_OPTIONS='--max-old-space-size=1024' nest start",
+    "start": "NODE_OPTIONS='--max-old-space-size=1024' nest start -e 'node --experimental-wasm-threads --experimental-wasm-bulk-memory'",
     "start:dev": "nest start --watch -e 'node --experimental-wasm-threads --experimental-wasm-bulk-memory'",
     "start:debug": "nest start --debug --watch  -e 'node --experimental-wasm-threads --experimental-wasm-bulk-memory'",
     "start:prod": "NODE_OPTIONS='--max-old-space-size=1024' node --experimental-wasm-threads --experimental-wasm-bulk-memory dist/main",
