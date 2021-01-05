@@ -17,6 +17,7 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter({
       pluginTimeout: 30000,
+      // logger: true,
     }),
   );
   const configService = app.get(ConfigService);
@@ -31,7 +32,7 @@ async function bootstrap() {
   fastify.next('/clipper');
 
   logger.verbose('SSR Server Started');
-  await app.listen(port ?? 3000);
+  await app.listen(port ?? 3000, '0.0.0.0');
   logger.verbose('Listening to ' + (port ?? 3000));
 }
 bootstrap();
