@@ -383,9 +383,9 @@ const ClipperPage: NextPage = () => {
 
   const preload = () => {
     const f = async () => {
-      const res = await fetchProgress();
-      await sleep(2000);
-      if (!res) await f();
+      if (!isPreloading) {
+        const res = await fetchProgress();
+      }
     };
     f();
   };

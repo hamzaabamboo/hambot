@@ -2362,8 +2362,8 @@
         "affectsGlobalScope": false
       },
       "./src/modules/clipper/clipper.controller.ts": {
-        "version": "ccbb43084ae4ea90569a78fefde49ef5ea7587c5b2a8fbf56b68be3881c4da4f",
-        "signature": "24545ca4c6131dd673982665384ab8d94862cae79931f43558d4a954b0c98acb",
+        "version": "e242dc8ad7c285bb11199dce2287aa183850b92fab206517fab44dd39a10212c",
+        "signature": "ebf6747e17a92fcfe92cf6c1ee945fb6b63b4e315cebfc5d27d62c87635d2416",
         "affectsGlobalScope": false
       },
       "./src/modules/clipper/clipper.module.ts": {

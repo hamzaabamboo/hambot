@@ -53,6 +53,64 @@ export class ClipperController implements OnApplicationShutdown {
   }
 
   //TODO: Remove This Part + Refactor
+  @Get('preload')
+  public async preload(
+    @Query('url') url: string,
+    @Query('type') type: string,
+    @Query('max') maxStr = 'false',
+    @Res() res: Response,
+  ) {
+    try {
+      const vid = url;
+      const max = maxStr === 'true';
+      const options = max
+        ? { quality: 'highestvideo' }
+        : {
+            quality: !type || type === 'gif' ? 18 : 'highest',
+          };
+      const info = await ytdl.getInfo(vid, {
+        requestOptions: {
+          ...options,
+          highWaterMark: 1024 * 256,
+        },
+      });
+
+      const filenameInternal = `${encodeURIComponent(info.videoDetails.title)}`;
+
+      const tmpname = `tmp/tmp-${filenameInternal}.mp4`;
+
+      this.logger.verbose('[clipper] downloaded info');
+      try {
+        console.log(this.clipper.ffmpeg.FS('stat', tmpname));
+        res.send({
+          message: 'Video Already Downloaded',
+          progress: 100,
+        });
+        return;
+      } catch (e) {
+        // console.log(info.formats[0]);
+        // vidStream.on('progress', (_, downloaded, total) => {
+        //   this.logger.verbose(
+        //     `[ytdl] ${Math.round((downloaded * 100) / total)}% of ${total}`,
+        //   );
+        // });
+        this.clipper.ffmpeg.FS(
+          'writeFile',
+          `${tmpname}`,
+          await fetchFile(
+            info.formats
+              .filter((f) => !f.isHLS && !f.isDashMPD && !f.isLive)
+              .find((t) => t.itag === 18).url,
+          ),
+        );
+        res.send({
+          message: 'Done',
+          progress: 100,
+        });
+      }
+    } catch {}
+  }
+
   @Get('clip')
   public async clipStream(
     @Query('url') url: string,
@@ -60,6 +118,7 @@ export class ClipperController implements OnApplicationShutdown {
     @Query('end') end: string,
     @Query('download') download: string,
     @Query('type') type: string,
+    @Query('filename') filename: string,
     @Query('fps') fps = 30,
     @Query('scale') scale = 1,
     @Query('x') x = 0,
@@ -97,17 +156,16 @@ export class ClipperController implements OnApplicationShutdown {
         },
       });
 
-      let filename = `${encodeURIComponent(
-        info.videoDetails.title,
-      )}_${start}_${end}`;
+      const filenameInternal = `${encodeURIComponent(info.videoDetails.title)}`;
 
-      const tmpname = `tmp/tmp-${filename}.mp4`;
+      const tmpname = `tmp/tmp-${filenameInternal}.mp4`;
 
-      if (this.clipper.ffmpeg.FS('stat', tmpname)) {
+      this.logger.verbose('[clipper] downloaded info');
+      try {
+        console.log(this.clipper.ffmpeg.FS('stat', tmpname));
         this.logger.verbose('[clipper] using preloaded video');
         this.clipper.ffmpeg.FS('readFile', tmpname);
-      } else {
-        this.logger.verbose('[clipper] downloaded info');
+      } catch (e) {
         // console.log(info.formats[0]);
         // vidStream.on('progress', (_, downloaded, total) => {
         //   this.logger.verbose(
@@ -198,9 +256,15 @@ export class ClipperController implements OnApplicationShutdown {
       }
 
       if (download) {
-        res.header('content-disposition', `attachment; filename=${filename}`);
+        res.header(
+          'content-disposition',
+          `attachment; filename=${filename || filenameInternal}`,
+        );
       } else {
-        res.header('content-disposition', `inline; filename=${filename}`);
+        res.header(
+          'content-disposition',
+          `inline; filename=${filename || filenameInternal}`,
+        );
       }
 
       args.push(`${filename}`);
