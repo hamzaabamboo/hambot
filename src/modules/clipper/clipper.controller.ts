@@ -137,7 +137,7 @@ export class ClipperController implements OnApplicationShutdown {
       return new HttpException('Invalid start/end time', 400);
     }
 
-    if (dur > 600) {
+    if (dur > 60 && type === 'gif') {
       return new HttpException('Video clip too long', 400);
     }
     try {
@@ -209,68 +209,67 @@ export class ClipperController implements OnApplicationShutdown {
         args.push('-vf', filters.join(','));
       }
 
+      let extension: string;
       switch (type) {
         case 'mp4':
-          res.type('mp4');
-          filename += '.mp4';
+          extension = 'mp4';
           args.push('-movflags', 'frag_keyframe+empty_moov');
           break;
         case 'flv':
-          res.type('flv');
-          filename += '.flv';
+          extension = 'flv';
           break;
         case 'mov':
-          res.type('mov');
-          filename += '.mov';
+          extension = 'mov';
           break;
         case 'webp':
-          res.type('webp');
-          filename += '.webp';
+          extension = 'webp';
           break;
         case 'mp3':
-          res.type('mp3');
-          filename += '.mp3';
+          extension = 'mp3';
           break;
         case 'wav':
-          res.type('wav');
-          filename += '.wav';
+          extension = 'wav';
           break;
         default:
           this.logger.verbose(
             `Saving temp file for ${info.videoDetails.title}`,
           );
-          args.push(`tmp-${filename}.mp4`);
+          args.push(`tmp/gif-${filenameInternal}.mp4`);
           await this.clipper.ffmpeg.run(...args);
 
           this.logger.verbose(`Creating GIF for ${info.videoDetails.title}`);
           args.splice(0, args.length);
           args.push(
             '-i',
-            `tmp-${filename}.mp4`,
+            `tmp/gif-${filenameInternal}.mp4`,
             '-vf',
             `fps=${fps},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse`,
           );
-          res.type('gif');
-          filename += '.gif';
+          extension = 'gif';
           break;
       }
+
+      res.type(extension);
 
       if (download) {
         res.header(
           'content-disposition',
-          `attachment; filename=${filename || filenameInternal}`,
+          `attachment; filename=${filename ?? filenameInternal}.${extension}`,
         );
       } else {
         res.header(
           'content-disposition',
-          `inline; filename=${filename || filenameInternal}`,
+          `inline; filename=${filename ?? filenameInternal}.${extension}`,
         );
       }
 
-      args.push(`${filename}`);
+      args.push(`out-${filenameInternal}.${extension}`);
 
       await this.clipper.ffmpeg.run(...args);
-      const file = this.clipper.ffmpeg.FS('readFile', filename) as Uint8Array;
+      const file = this.clipper.ffmpeg.FS(
+        'readFile',
+        `out-${filenameInternal}.${extension}`,
+      ) as Uint8Array;
 
       res.send(Buffer.from(file));
     } catch (error) {

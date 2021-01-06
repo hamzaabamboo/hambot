@@ -2362,7 +2362,7 @@
         "affectsGlobalScope": false
       },
       "./src/modules/clipper/clipper.controller.ts": {
-        "version": "e242dc8ad7c285bb11199dce2287aa183850b92fab206517fab44dd39a10212c",
+        "version": "508c4b5d5f6efa8db2049ca79faeddd5bb00c44055818160d47430fd8a3a0b5a",
         "signature": "ebf6747e17a92fcfe92cf6c1ee945fb6b63b4e315cebfc5d27d62c87635d2416",
         "affectsGlobalScope": false
       },
@@ -2782,7 +2782,7 @@
         "affectsGlobalScope": false
       },
       "./src/main.ts": {
-        "version": "210a4cf01c32f134ff98b8e3835b4d84371ea14714d57b4ff02de23767fdeefd",
+        "version": "1fd9ee0c1967caf244fdef642b4fdbedf1693d3b0a10bf97e20f95ecf950f882",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
         "affectsGlobalScope": false
       },

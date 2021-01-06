@@ -16,7 +16,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter({
-      pluginTimeout: 30000,
+      pluginTimeout: 60000,
       // logger: true,
     }),
   );
@@ -27,12 +27,21 @@ async function bootstrap() {
 
   app.enableShutdownHooks();
 
-  await fastify.register(import('fastify-nextjs'));
-  fastify.next('/');
-  fastify.next('/clipper');
+  try {
+    await fastify.register(import('fastify-nextjs'));
+    fastify.next('/');
+    fastify.next('/clipper');
+  } catch (e) {
+    console.log(e);
+  }
 
   logger.verbose('SSR Server Started');
   await app.listen(port ?? 3000, '0.0.0.0');
   logger.verbose('Listening to ' + (port ?? 3000));
+
+  // if (module.hot) {
+  //   module.hot.accept();
+  //   module.hot.dispose(() => app.close());
+  // }
 }
 bootstrap();
