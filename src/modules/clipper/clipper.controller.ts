@@ -166,12 +166,6 @@ export class ClipperController implements OnApplicationShutdown {
         this.logger.verbose('[clipper] using preloaded video');
         this.clipper.ffmpeg.FS('readFile', tmpname);
       } catch (e) {
-        // console.log(info.formats[0]);
-        // vidStream.on('progress', (_, downloaded, total) => {
-        //   this.logger.verbose(
-        //     `[ytdl] ${Math.round((downloaded * 100) / total)}% of ${total}`,
-        //   );
-        // });
         this.clipper.ffmpeg.FS(
           'writeFile',
           `${tmpname}`,

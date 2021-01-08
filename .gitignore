@@ -39,3 +39,5 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 .next
+
+true
