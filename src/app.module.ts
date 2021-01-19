@@ -14,7 +14,6 @@ import { TwitterModule } from './modules/twitter/twitter.module';
 import { FacebookModule } from './modules/facebook/facebook.module';
 import { RssModule } from './modules/rss/rss.module';
 import { IcalModule } from './modules/ical/ical.module';
-import { ClipperModule } from './modules/clipper/clipper.module';
 
 @Module({
   imports: [
@@ -33,7 +32,6 @@ import { ClipperModule } from './modules/clipper/clipper.module';
     AudioModule,
     RssModule,
     IcalModule,
-    ClipperModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],
