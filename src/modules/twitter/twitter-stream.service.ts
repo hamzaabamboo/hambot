@@ -49,7 +49,10 @@ export class TwitterStreamService implements OnApplicationShutdown {
     private push: PushService,
   ) {
     this.logger.setContext('TwitterStreamService');
-    this.init();
+
+    if (this.config.get('NODE_ENV')) {
+      this.init();
+    }
   }
 
   init() {
@@ -230,6 +233,8 @@ export class TwitterStreamService implements OnApplicationShutdown {
   }
 
   onApplicationShutdown() {
-    this.stream.destroy();
+    try {
+      this.stream.destroy();
+    } catch {}
   }
 }

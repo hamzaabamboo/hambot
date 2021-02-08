@@ -8,7 +8,13 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   providers: [PushService],
-  imports: [forwardRef(() => MessagesModule), TrelloModule, DiscordModule, LoggerModule, ConfigModule],
+  imports: [
+    forwardRef(() => MessagesModule),
+    TrelloModule,
+    DiscordModule,
+    LoggerModule,
+    ConfigModule,
+  ],
   exports: [PushService],
 })
 export class PushModule {}

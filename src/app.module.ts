@@ -14,6 +14,7 @@ import { TwitterModule } from './modules/twitter/twitter.module';
 import { FacebookModule } from './modules/facebook/facebook.module';
 import { RssModule } from './modules/rss/rss.module';
 import { IcalModule } from './modules/ical/ical.module';
+import { WanikaniModule } from './modules/wanikani/wanikani.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { IcalModule } from './modules/ical/ical.module';
     AudioModule,
     RssModule,
     IcalModule,
+    WanikaniModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],

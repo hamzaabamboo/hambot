@@ -26,9 +26,12 @@ export class TwitterService {
     private push: PushService,
     private stream: TwitterStreamService,
   ) {
-    this.initStreams();
-    this.listen();
     this.logger.setContext('TwitterService');
+    this.initStreams();
+
+    if (this.config.get('NODE_ENV')) {
+      this.listen();
+    }
   }
 
   listen() {
