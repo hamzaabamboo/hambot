@@ -48,7 +48,7 @@ export class WanikaniService {
     await this.push.push(
       {
         channel: '*',
-        message: `Daily Wanikani Reminder !
+        message: `Daily Wanikani Reminder ! ${moment().format('DD/MM/YYYY')}
 You have ${data.total_count} reviews today. (${getAssignmentTypeCount(
           data.data,
           'radical',
