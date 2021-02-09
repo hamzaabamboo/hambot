@@ -3,12 +3,17 @@
 Personal cross-platform bot to help keep up with tasks and lots more stuff. Built with scalability and least pain to add new features.
 
 ## Integrations
-
+### Messaging Platform
 - [x] Line Messaging API
 - [x] Discord Bot
 - [x] Trello
 - [x] Messenger
 - [ ] Github
+
+### External APIs
+- [x] ical calendars
+- [x] Wanikani
+- [x] Twitter Stream
 
 ## Features
 
@@ -65,8 +70,18 @@ DISCORD_TOKEN=<Discord bot token>
 PUBLIC_URL=<Url of the bot>
 FACEBOOK_VERIFY_TOKEN=<A random string for verifying webhook>
 FACEBOOK_PAGE_ACCESS_TOKEN=<Facebook page access token>
+WANIKANI_API_KEY=<wanikani api key>
+TWITTER_BEARER_TOKEN=<twitter bearer token>
 ```
 
+### Roadmap
+
+This is a short plan for making this repository more configurable and easier to work with.
+
+- [ ] Abstract Data Source For More Compatability
+- [ ] Auto-enable modules when corresponding .env is inserted
+- [ ] Auto register command modules ()
+- [ ] Refactor Important modules (Push/ Logging/ Data)
 ### Development
 
 ```shell
