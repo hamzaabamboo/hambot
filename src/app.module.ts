@@ -15,6 +15,7 @@ import { FacebookModule } from './modules/facebook/facebook.module';
 import { RssModule } from './modules/rss/rss.module';
 import { IcalModule } from './modules/ical/ical.module';
 import { WanikaniModule } from './modules/wanikani/wanikani.module';
+import { D4DJModule } from './modules/d4dj/d4dj.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { WanikaniModule } from './modules/wanikani/wanikani.module';
     RssModule,
     IcalModule,
     WanikaniModule,
+    D4DJModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],
