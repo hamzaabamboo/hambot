@@ -3,6 +3,7 @@ import {
   Get,
   Header,
   HttpService,
+  Post,
   Query,
   Req,
 } from '@nestjs/common';
@@ -23,6 +24,7 @@ export class D4DJController {
   }
 
   @Get('/d4db')
+  @Post('/d4db')
   @Header('Access-Control-Allow-Origin', 'https://hamzaabamboo.github.io')
   @Header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
   @Header('Access-Control-Allow-Headers', 'Content-Type')
