@@ -8,8 +8,18 @@ export class D4DJController {
   @Header('Access-Control-Allow-Origin', 'https://hamzaabamboo.github.io')
   @Header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
   @Header('Access-Control-Allow-Headers', 'Content-Type')
-  async getHello(@Query('url') url: string) {
+  async proxySig(@Query('url') url: string) {
     if (!url || !url.match('projectdivar')) return ':P';
+    const res = await this.http.get(url).toPromise();
+    return res.data;
+  }
+
+  @Get('/d4db')
+  @Header('Access-Control-Allow-Origin', 'https://hamzaabamboo.github.io')
+  @Header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+  @Header('Access-Control-Allow-Headers', 'Content-Type')
+  async proxyD4DB(@Query('url') url: string) {
+    if (!url || !url.match('d4-db')) return ':P';
     const res = await this.http.get(url).toPromise();
     return res.data;
   }
