@@ -20,6 +20,9 @@ async function bootstrap() {
       // logger: true,
     }),
   );
+  app.enableCors({
+    origin: 'https://hamzaabamboo.github.io',
+  });
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
   const logger = await app.resolve(AppLogger);
