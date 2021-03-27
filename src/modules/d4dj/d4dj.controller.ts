@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Header,
@@ -24,15 +25,22 @@ export class D4DJController {
   }
 
   @Get('/d4db')
+  @Header('Access-Control-Allow-Origin', 'https://hamzaabamboo.github.io')
+  @Header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  @Header('Access-Control-Allow-Headers', 'Content-Type')
+  async getD4DB(@Query('url') url: string) {
+    if (!url || !url.match('d4-dj')) return ':P';
+    const res = await this.http.get(url).toPromise();
+    return res.data;
+  }
+
   @Post('/d4db')
   @Header('Access-Control-Allow-Origin', 'https://hamzaabamboo.github.io')
   @Header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
   @Header('Access-Control-Allow-Headers', 'Content-Type')
-  async proxyD4DB(@Query('url') url: string, @Req() req: Request) {
+  async postD4DB(@Query('url') url: string, @Body() body: any) {
     if (!url || !url.match('d4-dj')) return ':P';
-    const res = await this.http
-      .request({ url, method: req.method as any })
-      .toPromise();
+    const res = await this.http.post(url, body).toPromise();
     return res.data;
   }
 }
