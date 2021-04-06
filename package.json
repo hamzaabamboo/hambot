@@ -36,6 +36,7 @@
     "fast-xml-parser": "^3.18.0",
     "fastify-nextjs": "^5.1.0",
     "fb": "^2.0.0",
+    "gaxios": "^4.2.0",
     "he": "^1.2.0",
     "lodash": "^4.17.19",
     "mkdirp": "^1.0.4",
