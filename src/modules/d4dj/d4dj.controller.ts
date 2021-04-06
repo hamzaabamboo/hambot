@@ -28,7 +28,6 @@ export class D4DJController {
     @Req() req: Request<any>,
   ) {
     if (!url || !url.match('projectdivar')) return ':P';
-    console.log(url);
     const a = await request<Readable>({
       url: url as string,
       method: req.method ?? ('GET' as any),
