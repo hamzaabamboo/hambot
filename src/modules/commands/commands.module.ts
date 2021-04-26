@@ -28,6 +28,8 @@ import { SchedulerModule } from '../scheduler/scheduler.module';
 import { RecurringCommand } from './recurring.command';
 import { TwitterModule } from '../twitter/twitter.module';
 import { TwitterCommand } from './twitter.command';
+import { CovidCommand } from './covid.command';
+import { CovidModule } from '../covid/covid.module';
 
 @Module({
   providers: [
@@ -51,6 +53,7 @@ import { TwitterCommand } from './twitter.command';
     NyaaCommand,
     RecurringCommand,
     TwitterCommand,
+    CovidCommand,
   ],
   imports: [
     DiscordModule,
@@ -62,6 +65,7 @@ import { TwitterCommand } from './twitter.command';
     LoggerModule,
     TwitterModule,
     RssModule,
+    CovidModule,
     forwardRef(() => SchedulerModule),
   ],
   exports: [CommandsService],

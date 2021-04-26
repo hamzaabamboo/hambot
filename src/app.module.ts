@@ -16,6 +16,7 @@ import { RssModule } from './modules/rss/rss.module';
 import { IcalModule } from './modules/ical/ical.module';
 import { WanikaniModule } from './modules/wanikani/wanikani.module';
 import { D4DJModule } from './modules/d4dj/d4dj.module';
+import { CovidModule } from './modules/covid/covid.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { D4DJModule } from './modules/d4dj/d4dj.module';
     IcalModule,
     WanikaniModule,
     D4DJModule,
+    CovidModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],

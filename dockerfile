@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN yarn global add @nestjs/cli
 
-RUN apk add  --no-cache ffmpeg
+RUN apk add  --no-cache ffmpeg cairo pango
 
 COPY package.json yarn.lock ./
 

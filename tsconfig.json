@@ -8,9 +8,7 @@
     "esModuleInterop": true,
     "target": "es6",
     "jsx": "preserve",
-    "lib": [
-      "esnext"
-    ],
+    "lib": ["esnext"],
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
@@ -23,16 +21,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": false,
-    "tsBuildInfoFile": "true"
+    "tsBuildInfoFile": ".tsbuildinfo"
   },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ],
-  "include": [
-    "src",
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "exclude": ["node_modules", "dist", ".next"],
+  "include": ["src", "next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }

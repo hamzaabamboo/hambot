@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Res, Header } from '@nestjs/common';
 import qr from 'qr-image';
-import { Response } from 'express';
+import { FastifyReply } from 'fastify';
 
 @Controller('qrcode')
 export class QrcodeController {
@@ -10,9 +10,9 @@ export class QrcodeController {
   @Header('content-disposition', 'attachment; filename=qrcode.png')
   async generateQRCode(
     @Param('payload') payload: string,
-    @Res() res: Response,
+    @Res() res: FastifyReply,
   ) {
     const qrImg = qr.image(payload, { type: 'png' });
-    qrImg.pipe(res);
+    res.send(qrImg);
   }
 }
