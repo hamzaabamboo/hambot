@@ -4,7 +4,18 @@ WORKDIR /app
 
 RUN yarn global add @nestjs/cli
 
-RUN apk add && apk --no-cache add --virtual native-deps g++ gcc libgcc libstdc++ linux-headers make python libpcap-dev ffmpeg cairo pango
+RUN apk add && apk --no-cache add \
+    sudo \
+    curl \
+    build-base \
+    g++ \
+    libpng \
+    libpng-dev \
+    jpeg-dev \
+    pango-dev \
+    cairo-dev \
+    giflib-dev \
+    python
 
 COPY package.json yarn.lock ./
 
