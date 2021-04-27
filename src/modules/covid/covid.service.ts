@@ -42,7 +42,6 @@ export class CovidService {
 หายแล้ว: ${data.Recovered} (+${data.NewRecovered})
 รักษาอยู่ในรพ.: ${data.Hospitalized} (+${data.NewHospitalized})
 เสียชีวิต: ${data.Deaths} (+${data.NewDeaths})
-https://hambot.ham-san.net/covid/summary
       `;
     });
     return this.push.push(msg, 'covid');
