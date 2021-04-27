@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BaseCommand } from './command.base';
-import { Message } from '../messages/messages.model';
+import { DiscordMessage, Message } from '../messages/messages.model';
 import { CovidService } from '../covid/covid.service';
 import { ModuleRef } from '@nestjs/core';
 import moment from 'moment';
@@ -12,13 +12,13 @@ export class CovidCommand extends BaseCommand {
     super();
   }
 
-  async handle(message: Message) {
+  async handle(message: Message): Promise<Partial<Message>> {
     const data = await this.covid.getCovidData();
     const msg = this.covid.generateCovidMessageToScarePeople(data, (data) => {
       return `สถานการณ์ COVID-19 ${moment(
         data.UpdateDate,
         'DD/MM/yyyy HH:mm',
-      ).format('DD/MM/yyyy')}
+      ).format('DD/MM/yyyy HH:mm')}
 ผู้ติดเชื่อ: ${data.Confirmed} (+${data.NewConfirmed})
 หายแล้ว: ${data.Recovered} (+${data.NewRecovered})
 รักษาอยู่ในรพ.: ${data.Hospitalized} (+${data.NewHospitalized})

@@ -36,12 +36,13 @@ export class CovidService {
     this.lastUpdated = date;
     const msg = this.generateCovidMessageToScarePeople(data, (data) => {
       return `แถลงสถานการณ์ COVID-19 โดย ศบค. ประจำวันที่ ${date.format(
-        'DD/MM/yyyy',
-      )}
+        'DD/MM/yyyy HH:mm',
+      )} 
 ผู้ติดเชื่อ: ${data.Confirmed} (+${data.NewConfirmed})
 หายแล้ว: ${data.Recovered} (+${data.NewRecovered})
 รักษาอยู่ในรพ.: ${data.Hospitalized} (+${data.NewHospitalized})
 เสียชีวิต: ${data.Deaths} (+${data.NewDeaths})
+https://hambot.ham-san.net/covid/summary
       `;
     });
     return this.push.push(msg, 'covid');
@@ -63,8 +64,8 @@ export class CovidService {
       message: getMessage(data),
       image: [
         {
-          name: 'Summary ' + moment().format('DD/MM/yyyy, HH:mm'),
-          url: join(this.config.get('PUBLIC_URL') + 'covid/summary'),
+          name: 'Summary ' + moment().format('DD/MM/yyyy, HH:mm') + '.png',
+          url: this.config.get('PUBLIC_URL') + 'covid/summary',
         },
       ],
     };

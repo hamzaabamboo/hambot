@@ -4,6 +4,8 @@ WORKDIR /app
 
 RUN yarn global add @nestjs/cli
 
+RUN apk add --update  --repository http://dl-3.alpinelinux.org/alpine/edge/testing libmount ttf-dejavu ttf-droid ttf-freefont ttf-liberation ttf-ubuntu-font-family fontconfig
+
 RUN apk add && apk --no-cache add \
     sudo \
     curl \
@@ -15,7 +17,7 @@ RUN apk add && apk --no-cache add \
     pango-dev \
     cairo-dev \
     giflib-dev \
-    python
+    python3
 
 COPY package.json yarn.lock ./
 

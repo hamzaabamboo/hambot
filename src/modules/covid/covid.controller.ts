@@ -12,7 +12,7 @@ export class CovidController {
   constructor(private covid: CovidService) {}
   @Get('summary')
   @Header('content-type', 'image/png')
-  @Header('content-disposition', 'inline; filename=qrcode.png')
+  @Header('content-disposition', 'attachment; filename=qrcode.png')
   async getCovidSummary(@Res() res: FastifyReply) {
     const data = await this.covid.getCovidData();
     const canvas = createCanvas(WIDTH, HEIGHT);
@@ -26,11 +26,11 @@ export class CovidController {
       WIDTH - 2 * PADDING,
       currentHeight - 2 * PADDING,
     );
-    ctx.font = 'bold 40px Comic Sans';
+    ctx.font = 'bold 40px Noto';
     printTextInTheMiddle(WIDTH / 2, HEIGHT / 4, String(data.Confirmed), ctx);
-    ctx.font = '24px Comic Sans';
+    ctx.font = '24px Noto';
     printTextInTheMiddle(WIDTH / 2, HEIGHT / 8, `Total Cases`, ctx);
-    ctx.font = '30px Comic Sans';
+    ctx.font = '30px Noto';
     printTextInTheMiddle(
       WIDTH / 2,
       (3 * HEIGHT) / 8,
@@ -44,16 +44,16 @@ export class CovidController {
       WIDTH / 3 - 2 * PADDING,
       HEIGHT / 2 - 2 * PADDING,
     );
-    ctx.font = '24px Comic Sans';
+    ctx.font = '24px Noto';
     printTextInTheMiddle(WIDTH / 6, (5 * HEIGHT) / 8, `Recovered`, ctx);
-    ctx.font = 'bold 40px Comic Sans';
+    ctx.font = 'bold 40px Noto';
     printTextInTheMiddle(
       WIDTH / 6,
       (3 * HEIGHT) / 4,
       String(data.Recovered),
       ctx,
     );
-    ctx.font = '30px Comic Sans';
+    ctx.font = '30px Noto';
     printTextInTheMiddle(
       WIDTH / 6,
       (7 * HEIGHT) / 8,
@@ -67,16 +67,16 @@ export class CovidController {
       WIDTH / 3 - 2 * PADDING,
       HEIGHT / 2 - 2 * PADDING,
     );
-    ctx.font = '24px Comic Sans';
+    ctx.font = '24px Noto';
     printTextInTheMiddle(WIDTH / 2, (5 * HEIGHT) / 8, `Hospitalized`, ctx);
-    ctx.font = 'bold 40px Comic Sans';
+    ctx.font = 'bold 40px Noto';
     printTextInTheMiddle(
       WIDTH / 2,
       (3 * HEIGHT) / 4,
       String(data.Hospitalized),
       ctx,
     );
-    ctx.font = '30px Comic Sans';
+    ctx.font = '30px Noto';
     printTextInTheMiddle(
       WIDTH / 2,
       (7 * HEIGHT) / 8,
@@ -90,16 +90,16 @@ export class CovidController {
       WIDTH / 3 - 2 * PADDING,
       HEIGHT / 2 - 2 * PADDING,
     );
-    ctx.font = '24px Comic Sans';
+    ctx.font = '24px Noto';
     printTextInTheMiddle((5 * WIDTH) / 6, (5 * HEIGHT) / 8, `Death`, ctx);
-    ctx.font = 'bold 40px Comic Sans';
+    ctx.font = 'bold 40px Noto';
     printTextInTheMiddle(
       (5 * WIDTH) / 6,
       (3 * HEIGHT) / 4,
       String(data.Deaths),
       ctx,
     );
-    ctx.font = '30px Comic Sans';
+    ctx.font = '30px Noto';
     printTextInTheMiddle(
       (5 * WIDTH) / 6,
       (7 * HEIGHT) / 8,

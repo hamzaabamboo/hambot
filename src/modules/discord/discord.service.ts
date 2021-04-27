@@ -57,7 +57,7 @@ export class DiscordService {
         },
       });
     });
-    this.client.on('message', message => {
+    this.client.on('message', (message) => {
       if (message.author.id === this.client.user.id || message.author.bot)
         return;
       if (message.author.username.includes('YamaKJ') && Math.random() < 0.1) {
@@ -73,7 +73,7 @@ export class DiscordService {
           channelId: message.channel.id,
           message: message.content,
           messageChannel: message.channel,
-          files: message.attachments.array().map(m => ({
+          files: message.attachments.array().map((m) => ({
             name: m.name,
             url: m.url,
           })),
@@ -92,7 +92,7 @@ export class DiscordService {
           message:
             cmd && message.attachments.array().length === 0 ? cmd[1] : '',
           messageChannel: message.channel,
-          files: message.attachments.array().map(m => ({
+          files: message.attachments.array().map((m) => ({
             name: m.name,
             url: m.url,
           })),

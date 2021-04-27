@@ -70,7 +70,7 @@ export class MessagesService {
       }
     }
     switch (message.channel) {
-      case 'line':
+      case 'line': {
         let lineMsg: Parameters<Client['replyMessage']>[1] = {
           type: 'text',
           text: message.message + (embed?.url ? ' ' + embed.url : ''),
@@ -95,50 +95,54 @@ export class MessagesService {
         if (message.pushTo) {
           return this.lineService
             .sendPushMessage(lineMsg, message.pushTo)
-            .catch(e => {
+            .catch((e) => {
               this.logger.error('Line error: ' + e.statusMessage);
             });
         }
         return this.lineService
           .sendReplyMessage(lineMsg, message.replyToken)
-          .catch(e => {
+          .catch((e) => {
             this.logger.error('Line error: ' + e.statusMessage);
           });
-      case 'discord':
+      }
+      case 'discord': {
         const m = message;
+        console.log(m);
         return this.discordService
           .sendMessage(m.messageChannel, {
             content: m.message,
             files: [
               ...(m.files
                 ?.filter((m): m is FileWithUrl => 'url' in m)
-                .map(m => ({
+                .map((m) => ({
                   attachment: m.url,
                   name: m.name,
                 })) ?? []),
-              ...(m.files
+              ...(m.image
                 ?.filter((m): m is FileWithUrl => 'url' in m)
-                .map(m => ({
+                .map((m) => ({
                   attachment: m.url,
                   name: m.name,
                 })) ?? []),
-            ].filter(e => e),
+            ].filter((e) => e),
             embed,
           })
           .catch((e: DiscordAPIError) => {
             this.logger.error('Discord error: ' + e.message);
           });
-      case 'facebook':
+      }
+      case 'facebook': {
         message.message = message.message + (embed?.url ? ' ' + embed.url : '');
         if (message.senderId) {
-          return this.facebookService.sendReplyMessage(message).catch(e => {
+          return this.facebookService.sendReplyMessage(message).catch((e) => {
             this.logger.error(e.data);
           });
         } else {
-          return this.facebookService.sendPushMessage(message).catch(e => {
+          return this.facebookService.sendPushMessage(message).catch((e) => {
             this.logger.error(e.data);
           });
         }
+      }
     }
   }
 }
