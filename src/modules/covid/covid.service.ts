@@ -18,7 +18,8 @@ interface COVIDAPIResult {
   UpdateDate: string;
 }
 
-const GET_COVID_URL = 'https://covid19.th-stat.com/api/open/today';
+const GET_COVID_URL =
+  'https://covid19.th-stat.com/json/covid19v2/getTodayCases.json';
 @Injectable()
 export class CovidService {
   lastUpdated: Moment;
