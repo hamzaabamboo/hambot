@@ -19,7 +19,7 @@ interface COVIDAPIResult {
 }
 
 const GET_COVID_URL =
-  'https://covid19.th-stat.com/json/covid19v2/getTodayCases.json';
+  'https://static.easysunday.com/covid-19/getTodayCases.json';
 @Injectable()
 export class CovidService {
   lastUpdated: Moment;
