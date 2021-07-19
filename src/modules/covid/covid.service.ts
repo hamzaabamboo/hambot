@@ -23,6 +23,7 @@ const GET_COVID_URL =
 @Injectable()
 export class CovidService {
   lastUpdated: Moment;
+  lastCases: number;
   constructor(
     private http: HttpService,
     private push: PushService,
@@ -33,8 +34,13 @@ export class CovidService {
   async checkCovidData() {
     const data = await this.getCovidData();
     const date = moment(data.UpdateDate, 'DD/MM/yyyy HH:mm');
-    if (this.lastUpdated && !date.isAfter(this.lastUpdated)) return false;
+    if (
+      (this.lastUpdated && !date.isAfter(this.lastUpdated)) ||
+      (this.lastCases && data.Confirmed === this.lastCases)
+    )
+      return false;
     this.lastUpdated = date;
+    this.lastCases = data.Confirmed;
     const msg = this.generateCovidMessageToScarePeople(data, (data) => {
       return `แถลงสถานการณ์ COVID-19 โดย ศบค. ประจำวันที่ ${date.format(
         'DD/MM/yyyy HH:mm',
