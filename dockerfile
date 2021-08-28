@@ -1,10 +1,10 @@
-FROM node:16-alpine3.14 As development
+FROM node:16-alpine As development
 
 WORKDIR /app
 
 RUN yarn global add @nestjs/cli
 
-RUN apk add --update  --repository http://dl-3.alpinelinux.org/alpine/edge/testing libmount ttf-dejavu ttf-droid ttf-freefont ttf-liberation ttf-ubuntu-font-family fontconfig
+RUN apk add --update  --repository http://dl-3.alpinelinux.org/alpine/edge/testing libmount ttf-dejavu ttf-droid ttf-freefont ttf-liberation fontconfig
 
 RUN apk add && apk --no-cache add \
     sudo \
