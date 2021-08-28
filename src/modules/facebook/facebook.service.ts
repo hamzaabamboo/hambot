@@ -1,4 +1,5 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { Message, FileWithUrl } from '../messages/messages.model';
 import { AppLogger } from '../logger/logger';
@@ -6,7 +7,11 @@ import { AppLogger } from '../logger/logger';
 const SEND_API_URL = 'https://graph.facebook.com/v7.0/me/messages';
 @Injectable()
 export class FacebookService {
-  constructor(private http: HttpService, private config: ConfigService, private logger: AppLogger) {}
+  constructor(
+    private http: HttpService,
+    private config: ConfigService,
+    private logger: AppLogger,
+  ) {}
 
   async sendReplyMessage(message: Message) {
     const msg = {
@@ -18,7 +23,7 @@ export class FacebookService {
         text: message.message,
       },
       attachment: [
-        ...(message.image ?? []).map(m => ({
+        ...(message.image ?? []).map((m) => ({
           type: 'image',
           payload: { url: m.url },
         })),
@@ -49,7 +54,7 @@ export class FacebookService {
       },
       tag: 'CONFIRMED_EVENT_UPDATE',
       attachment: [
-        ...(message.image ?? []).map(m => ({
+        ...(message.image ?? []).map((m) => ({
           type: 'image',
           payload: { url: m.url },
         })),
@@ -69,7 +74,7 @@ export class FacebookService {
         )
         .toPromise();
     } catch (e) {
-      this.logger.error(e.response)
+      this.logger.error(e.response);
     }
   }
 }

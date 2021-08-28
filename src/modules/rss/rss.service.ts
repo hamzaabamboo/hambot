@@ -1,4 +1,5 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { Injectable } from '@nestjs/common';
 import parser from 'fast-xml-parser';
 
 @Injectable()

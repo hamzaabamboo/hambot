@@ -5,6 +5,8 @@ import {
   DMChannel,
   TextChannel,
   MessageOptions,
+  TextBasedChannels,
+  Intents,
 } from 'discord.js';
 import { ConfigService } from '@nestjs/config';
 import { MessagesService } from '../messages/messages.service';
@@ -25,7 +27,18 @@ export class DiscordService {
     private message: MessagesService,
     private logger: AppLogger,
   ) {
-    this.client = new Client();
+    this.client = new Client({
+      intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.DIRECT_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_VOICE_STATES,
+      ],
+      presence: {
+        status: 'online',
+      },
+    });
     this.logger.setContext('DiscordService');
     this.login();
   }
@@ -38,8 +51,10 @@ export class DiscordService {
     try {
       await this.client.login(this.config.get('DISCORD_TOKEN'));
       this.listen();
-    } catch {
-      this.logger.error('Login failed, tries: ' + tries);
+    } catch (m) {
+      this.logger.error(
+        'Login failed, tries: ' + tries + ' error message: ' + m,
+      );
       await sleep(1000);
       this.login(tries + 1);
     }
@@ -51,13 +66,16 @@ export class DiscordService {
       this.logger.verbose('Discord Ready');
       this.client.user.setPresence({
         status: 'online',
-        activity: {
-          name: 'simps',
-          type: 'WATCHING',
-        },
+        activities: [
+          {
+            name: 'simps',
+            type: 'WATCHING',
+          },
+        ],
       });
     });
-    this.client.on('message', (message) => {
+
+    this.client.on('messageCreate', (message) => {
       if (message.author.id === this.client.user.id || message.author.bot)
         return;
       if (message.author.username.includes('YamaKJ') && Math.random() < 0.1) {
@@ -66,22 +84,23 @@ export class DiscordService {
         });
         return;
       }
-      if (message.channel.type === 'dm') {
+      if (message.channel.type === 'DM') {
         this.message.handleMessage({
           channel: 'discord',
           senderId: message.author.id,
           channelId: message.channel.id,
+          discordMessage: message,
           message: message.content,
           messageChannel: message.channel,
-          files: message.attachments.array().map((m) => ({
+          files: message.attachments.toJSON().map((m) => ({
             name: m.name,
             url: m.url,
           })),
         });
       }
       if (
-        message.channel.type === 'text' &&
-        (message.attachments.array().length > 0 ||
+        message.channel.type === 'GUILD_TEXT' &&
+        (message.attachments.toJSON().length > 0 ||
           this.prefix.test(message.content))
       ) {
         const cmd = this.prefix.exec(message.content);
@@ -89,10 +108,11 @@ export class DiscordService {
           channel: 'discord',
           senderId: message.author.id,
           channelId: message.channel.id,
+          discordMessage: message,
           message:
-            cmd && message.attachments.array().length === 0 ? cmd[1] : '',
+            cmd && message.attachments.toJSON().length === 0 ? cmd[1] : '',
           messageChannel: message.channel,
-          files: message.attachments.array().map((m) => ({
+          files: message.attachments.toJSON().map((m) => ({
             name: m.name,
             url: m.url,
           })),
@@ -138,13 +158,13 @@ export class DiscordService {
     }
   }
 
-  async sendMessage(channel: Channel, message: MessageOptions) {
+  async sendMessage(channel: TextBasedChannels, message: MessageOptions) {
     const c = await this.client.channels.fetch(channel.id);
     switch (c.type) {
-      case 'dm':
+      case 'DM':
         await (c as DMChannel).send(message);
         break;
-      case 'text':
+      case 'GUILD_TEXT':
         await (c as TextChannel).send(message);
         break;
     }

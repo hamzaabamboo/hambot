@@ -6,6 +6,7 @@ import { MessagesService } from '../messages/messages.service';
 import { AppLogger } from '../logger/logger';
 import moment from 'moment';
 import { ConfigService } from '@nestjs/config';
+import { TextChannel } from 'discord.js';
 @Injectable()
 export class PushService {
   private _cache: {
@@ -81,9 +82,9 @@ export class PushService {
                 ...message,
                 senderId: '',
                 channel: 'discord',
-                messageChannel: await this.discord.getClient.channels.fetch(
+                messageChannel: (await this.discord.getClient.channels.fetch(
                   d.id,
-                ),
+                )) as TextChannel,
               });
               break;
             case 'line':

@@ -21,7 +21,7 @@ export class StreamCommand extends BaseCommand {
         try {
           const key = await this.stream.startServer(message.senderId);
           if (message.channel === 'discord') {
-            const guild = (message.messageChannel as VoiceChannel).guild;
+            const guild = message.discordMessage.guild;
             if (!guild) break;
             const dm = await (
               await guild.members.fetch(message.senderId)

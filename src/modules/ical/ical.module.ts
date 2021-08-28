@@ -1,6 +1,6 @@
-import { Module, HttpModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { IcalService } from './ical.service';
-
+import { HttpModule } from '@nestjs/axios';
 @Module({
   providers: [IcalService],
   exports: [IcalService],

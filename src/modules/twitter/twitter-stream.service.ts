@@ -1,4 +1,5 @@
-import { Injectable, HttpService, OnApplicationShutdown } from '@nestjs/common';
+import { Injectable, OnApplicationShutdown } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { AppLogger } from '../logger/logger';
 import { PushService } from '../push/push.service';

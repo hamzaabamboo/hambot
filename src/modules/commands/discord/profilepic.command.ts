@@ -1,4 +1,4 @@
-import { HttpService } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
 import {
   Message,
   DiscordMessage,
@@ -56,10 +56,10 @@ export class ProfilePicCommand extends BaseCompoundHandler {
     }
     if (message.files.length > 0) {
       const file = message.files[0] as FileWithUrl;
-      const stream = await this.http
-        .get(file.url, { responseType: 'stream' })
-        .toPromise();
-      stream.data.pipe(createWriteStream(path.join(this.path, file.name)));
+      const stream = await this.http.get(file.url, { responseType: 'stream' });
+      (stream as any).data.pipe(
+        createWriteStream(path.join(this.path, file.name)),
+      );
       return {
         isCompounding: false,
         message: {

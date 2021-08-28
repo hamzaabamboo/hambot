@@ -1,4 +1,9 @@
-import { Channel, MessageEmbed } from 'discord.js';
+import {
+  Channel,
+  MessageEmbed,
+  Message as RawDiscordMessage,
+  TextBasedChannels,
+} from 'discord.js';
 import { Readable } from 'stream';
 
 export interface FileWithUrl {
@@ -30,7 +35,8 @@ export interface LineMessage extends BaseMessage {
 
 export interface DiscordMessage extends BaseMessage {
   channel: 'discord';
-  messageChannel?: Channel;
+  discordMessage?: RawDiscordMessage;
+  messageChannel?: TextBasedChannels;
   destination?: Channel;
   embeds?: MessageEmbed;
 }

@@ -119,5 +119,5 @@ const printTextInTheMiddle = (
 ) => {
   const dim = ctx.measureText(text);
   ctx.fillStyle = 'white';
-  ctx.fillText(text, w - dim.width / 2, h + dim.emHeightAscent / 2);
+  ctx.fillText(text, w - dim.width / 2, h + dim.actualBoundingBoxAscent / 2);
 };

@@ -107,7 +107,6 @@ export class MessagesService {
       }
       case 'discord': {
         const m = message;
-        console.log(m);
         return this.discordService
           .sendMessage(m.messageChannel, {
             content: m.message,
@@ -125,7 +124,7 @@ export class MessagesService {
                   name: m.name,
                 })) ?? []),
             ].filter((e) => e),
-            embed,
+            embeds: [embed].filter((f) => !!f),
           })
           .catch((e: DiscordAPIError) => {
             this.logger.error('Discord error: ' + e.message);

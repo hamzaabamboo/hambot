@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Message, DiscordMessage } from '../../messages/messages.model';
 import { BaseCommand } from '../command.base';
 import { DiscordService } from 'src/modules/discord/discord.service';
-import { TextChannel } from 'discord.js';
+import { TextChannel, VoiceChannel } from 'discord.js';
 import { matchUser } from 'src/modules/discord/discord.utils';
 import { sleep } from 'src/utils/sleep';
 
@@ -16,20 +16,30 @@ export class ShakeCommand extends BaseCommand {
   }
   async handle(message: DiscordMessage, command: string, intensity = '10') {
     const guild = (message.messageChannel as TextChannel).guild;
-    const channels = guild.channels.cache
-      .filter(
-        c =>
-          c.type === 'voice' &&
-          c.permissionsFor(this.discord.getClient.user).has('MOVE_MEMBERS') &&
-          !c.permissionsLocked &&
-          c.id !== guild.afkChannelID,
-      )
-      .array();
+    if (
+      !(
+        await guild.members.fetch({
+          user: message.discordMessage,
+        })
+      ).permissions.has('MOVE_MEMBERS')
+    ) {
+      return {
+        files: [],
+        message: `Sorry bro, you can't shake`,
+      };
+    }
+    const channels = (await guild.channels.fetch()).filter(
+      (c) =>
+        c.type === 'GUILD_VOICE' &&
+        c.permissionsFor(this.discord.getClient.user).has('CONNECT') &&
+        c.id !== guild.afkChannelId,
+    );
+
     switch (command) {
       case 'list':
         return {
           files: [],
-          message: channels.map(c => `${c.id} - ${c.name}`).join('\n'),
+          message: channels.map((c) => `${c.id} - ${c.name}`).join('\n'),
         };
       default:
         const userId = matchUser(command);
@@ -39,28 +49,39 @@ export class ShakeCommand extends BaseCommand {
             message: `User not found`,
           };
         }
-        const user = await guild.members.fetch(userId);
-        if (!user.voice?.channelID)
+        const victim = await guild.members.fetch(userId);
+        if (!victim.voice?.channelId)
           return {
             files: [],
             message: `${command} is not in a voice channel!`,
           };
-        const origin = user.voice.channel;
+        const origin = victim.voice.channel;
+        if (origin.type === 'GUILD_STAGE_VOICE') {
+          return {
+            files: [],
+            message: `Can't shake ppl on stage sorry`,
+          };
+        }
         const I =
           isNaN(Number(intensity)) ||
           Number(intensity) < 0 ||
           Number(intensity) > 10
             ? 2
             : Math.round(Number(intensity));
+        const movableChannels = channels
+          .filter((f) => f.permissionsFor(userId).has('CONNECT'))
+          .toJSON() as VoiceChannel[];
+
         try {
           for (let i = 0; i < I; i++) {
-            await user.voice.setChannel(
-              channels[i % channels.length],
+            await victim.voice.setChannel(
+              movableChannels[i % movableChannels.length],
               'you got shaken',
             );
+
             await sleep(2000 / I);
           }
-          await user.voice.setChannel(origin, 'you got shaken');
+          await victim.voice.setChannel(origin, 'you got shaken');
           return {
             files: [],
             message: `<@!${message.senderId}> shook ${command} ${I} times`,

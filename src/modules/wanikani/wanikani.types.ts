@@ -1,6 +1,3 @@
-import { IntegrationEditData } from 'discord.js';
-import { isInteger } from 'lodash';
-
 export type WanikaniObjectTypes =
   | WanikaniSingularResource
   | WanikaniCollectionResource;

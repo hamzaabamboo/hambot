@@ -1,7 +1,8 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import ical from 'node-ical';
 import moment from 'moment';
 import { CalendarEvent } from './events.model';
+import { HttpService } from '@nestjs/axios';
 @Injectable()
 export class IcalService {
   constructor(private http: HttpService) {}

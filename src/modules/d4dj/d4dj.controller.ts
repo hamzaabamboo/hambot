@@ -3,12 +3,12 @@ import {
   Controller,
   Get,
   Header,
-  HttpService,
   Post,
   Query,
   Req,
   Res,
 } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
 import { Request, Response } from 'express';
 import { request } from 'gaxios';
 import { Readable } from 'stream';

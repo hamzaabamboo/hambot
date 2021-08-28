@@ -1,66 +1,133 @@
 import { Injectable, BeforeApplicationShutdown } from '@nestjs/common';
 import { Readable } from 'stream';
 import { Message } from '../messages/messages.model';
-import { TextChannel, VoiceChannel, StreamDispatcher } from 'discord.js';
+import { TextChannel, VoiceChannel } from 'discord.js';
+import {
+  AudioPlayer,
+  AudioPlayerState,
+  AudioPlayerStatus,
+  AudioResource,
+  createAudioPlayer,
+  createAudioResource,
+  joinVoiceChannel,
+  VoiceConnection,
+} from '@discordjs/voice';
 
-const TIMEOUT_INTERVAL = 10000;
+const TIMEOUT_INTERVAL = 30000;
 const DEFAULT_VOLUME = 0.2;
 @Injectable()
 export class AudioService implements BeforeApplicationShutdown {
-  private _audioConnections = new Map<string, any>();
+  private _audioConnections = new Map<string, AudioResource>();
   private _leaveTimer = new Map<string, any>();
-  private _channels = new Map<string, any>();
+  private _channels = new Map<string, VoiceConnection>();
 
   async beforeApplicationShutdown() {
     [...this._channels.entries()].forEach(([, c]) => {
-      (c as VoiceChannel).leave();
+      c.destroy();
     });
   }
 
+  getPlayer(message: Message) {
+    switch (message.channel) {
+      case 'discord': {
+        const guild = (message.messageChannel as TextChannel).guild;
+        if (!guild) {
+          throw new Error('Not in a guild');
+        }
+        const key = `discord: ${guild.id}`;
+        return this._audioConnections.get(key);
+      }
+      default: {
+        return undefined;
+      }
+    }
+  }
+
   private _volumes = new Map<string, number>();
+
+  isPlaying(message: Message) {
+    switch (message.channel) {
+      case 'discord': {
+        const guild = (message.messageChannel as TextChannel).guild;
+        if (!guild) {
+          throw new Error('Not in a guild');
+        }
+        const key = `discord: ${guild.id}`;
+        return (
+          this._audioConnections.get(key)?.audioPlayer?.state.status ===
+          AudioPlayerStatus.Playing
+        );
+      }
+      default: {
+        return false;
+      }
+    }
+  }
+
   async playAudio(
     message: Message,
     stream: Readable | string,
     volume?: number,
     seek?: number,
     bitrate?: number,
-  ): Promise<any> {
+  ): Promise<AudioResource> {
     switch (message.channel) {
       case 'discord':
         const guild = (message.messageChannel as TextChannel).guild;
         if (!guild) {
           throw new Error('Not in a guild');
         }
-        if (this._leaveTimer.has(`discord: ${guild.id}`)) {
-          clearTimeout(this._leaveTimer.get(`discord: ${guild.id}`));
+        const key = `discord: ${guild.id}`;
+        if (this._leaveTimer.has(key)) {
+          clearTimeout(this._leaveTimer.get(key));
         }
-        if (this._audioConnections.get(`discord: ${guild.id}`)) {
-          throw new Error('PLAYING');
+        const vc = (await guild.members.fetch(message.senderId)).voice;
+        const conn = joinVoiceChannel({
+          channelId: vc.channelId,
+          guildId: vc.guild.id,
+          adapterCreator: vc.guild.voiceAdapterCreator,
+        });
+        this._channels.set(key, conn);
+        let resource = this._audioConnections.get(key);
+
+        resource = createAudioResource(stream, { inlineVolume: true });
+        if (!this.isPlaying(message)) {
+          const player = createAudioPlayer();
+
+          player.play(resource);
+          conn.subscribe(player);
+
+          this._audioConnections.set(key, resource);
+
+          player.on('stateChange', (_, { status }) => {
+            switch (status) {
+              case AudioPlayerStatus.Playing: {
+                resource.volume?.setVolume(
+                  this._volumes.has(key)
+                    ? this._volumes.get(key)
+                    : volume || DEFAULT_VOLUME,
+                );
+                break;
+              }
+              case AudioPlayerStatus.Idle: {
+                this._leaveTimer.set(
+                  key,
+                  setTimeout(() => {
+                    this._channels.delete(key);
+                    conn.destroy();
+                  }, TIMEOUT_INTERVAL),
+                );
+                break;
+              }
+            }
+          });
+          resource.playStream.on('end', () => {
+            this._audioConnections.delete(key);
+          });
         }
-        const vc = (await guild.members.fetch(message.senderId)).voice
-          .channelID;
-        const channel = guild.channels.cache.find(
-          c => c.id === vc,
-        ) as VoiceChannel;
-        const conn = await channel.join();
-        this._channels.set(`discord: ${guild.id}`, channel);
-        const player = conn.play(stream, {
-          volume: this._volumes.has(`discord: ${guild.id}`)
-            ? this._volumes.get(`discord: ${guild.id}`)
-            : volume || DEFAULT_VOLUME,
-          seek,
-          bitrate,
-        });
-        player.on('finish', () => {
-          this._audioConnections.delete(`discord: ${guild.id}`);
-          this._channels.delete(`discord: ${guild.id}`);
-          this._leaveTimer.set(
-            `discord: ${guild.id}`,
-            setTimeout(() => channel.leave(), TIMEOUT_INTERVAL),
-          );
-        });
-        this._audioConnections.set(`discord: ${guild.id}`, player);
-        return player;
+
+        return resource;
+
         break;
     }
   }
@@ -70,9 +137,9 @@ export class AudioService implements BeforeApplicationShutdown {
       case 'discord':
         const guild = (message.messageChannel as TextChannel).guild;
         if (this._audioConnections.has(`discord: ${guild.id}`)) {
-          (this._audioConnections.get(
-            `discord: ${guild.id}`,
-          ) as StreamDispatcher).setVolume(volume);
+          this._audioConnections
+            .get(`discord: ${guild.id}`)
+            .volume?.setVolume(volume);
         }
         this._volumes.set(`discord: ${guild.id}`, volume);
     }
@@ -83,9 +150,10 @@ export class AudioService implements BeforeApplicationShutdown {
       case 'discord':
         const guild = (message.messageChannel as TextChannel).guild;
         if (this._audioConnections.has(`discord: ${guild.id}`)) {
-          (this._audioConnections.get(
-            `discord: ${guild.id}`,
-          ) as StreamDispatcher).end();
+          this._audioConnections
+            .get(`discord: ${guild.id}`)
+            .audioPlayer?.stop(true);
+          this._audioConnections.delete(`discord: ${guild.id}`);
         }
     }
   }

@@ -1,4 +1,5 @@
-import { Module, forwardRef, HttpModule } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { HelloCommand } from './hello.command';
 import { BaseCommand } from './command.base';
 import { CommandsService } from './commands.service';
