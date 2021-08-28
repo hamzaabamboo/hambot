@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "NODE_OPTIONS='--max-old-space-size=1024' nest build --webpack && next build",
+    "build": "nest build --webpack && next build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "NODE_OPTIONS='--max-old-space-size=1024' nest start -e 'node --experimental-wasm-threads'",
     "start:dev": "nest start --watch -e 'node --experimental-wasm-threads'",
@@ -48,7 +48,7 @@
     "mkdirp": "^1.0.4",
     "moment": "^2.27.0",
     "needle": "^3.0.0",
-    "next": "^11.1.0",
+    "next": "^10.1.3",
     "node-ical": "^0.13.0",
     "promptpay-qr": "^0.4.4",
     "qr-image": "^3.2.0",
