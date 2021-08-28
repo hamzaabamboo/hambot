@@ -80,11 +80,10 @@ export class WanikaniClientService {
           params: options,
         },
       );
-      console.log(data);
 
       return data;
     } catch (e) {
-      console.log(e);
+      this.logger.error(JSON.stringify(e));
     }
   }
 }
