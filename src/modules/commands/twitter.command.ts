@@ -6,7 +6,8 @@ import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class TwitterCommand extends BaseCommand {
-  public command = /^twitter(?: (list|set|remove|refresh|status)(?: ([^\s]+))?(?: (.*))?)?/i;
+  public command =
+    /^twitter(?: (list|set|remove|refresh|status)(?: ([^\s]+))?(?: (.*))?)?/i;
   public requiresAuth = true;
   constructor(private twitter: TwitterService) {
     super();

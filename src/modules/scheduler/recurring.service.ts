@@ -25,7 +25,7 @@ export class RecurringService {
   }
 
   async registerEvents() {
-    this.getRecurringEvents().then(cards => {
+    this.getRecurringEvents().then((cards) => {
       cards.forEach(({ card, cronTab, message, tags }) => {
         try {
           const job = new CronJob(cronTab, () => {
@@ -49,7 +49,7 @@ export class RecurringService {
 
   async clearEvents() {
     if (this._jobs?.length > 0) {
-      this._jobs.forEach(j => this.scheduler.deleteCronJob(j));
+      this._jobs.forEach((j) => this.scheduler.deleteCronJob(j));
       this.logger.debug('Removed ' + this._jobs.length + ' jobs.');
       this._jobs = [];
     }
@@ -57,21 +57,25 @@ export class RecurringService {
 
   async getRecurringEvents() {
     const board = (await this.trello.getBoards()).find(
-      b => b.name === "Ham's Stuff",
+      (b) => b.name === "Ham's Stuff",
     );
 
-    const lists = (await this.trello.getLists(board.id)).filter(
-      list => list.name.includes('Recurring'),
+    const lists = (await this.trello.getLists(board.id)).filter((list) =>
+      list.name.includes('Recurring'),
     );
-    const cards = (await Promise.all<any[]>(lists.map(async list => {
-      return await this.trello.getCards(list.id);
-    }))).flatMap(c => c)
+    const cards = (
+      await Promise.all<any[]>(
+        lists.map(async (list) => {
+          return await this.trello.getCards(list.id);
+        }),
+      )
+    ).flatMap((c) => c);
 
     const pattern = /\[(.*)\]/;
     const tags = /<(.*)>/i;
     return cards
-      .filter(card => pattern.test(card.name))
-      .map(card => {
+      .filter((card) => pattern.test(card.name))
+      .map((card) => {
         const cronTab = (card.name as string).match(pattern)[1];
         return {
           card: card.name.replace(pattern, ''),

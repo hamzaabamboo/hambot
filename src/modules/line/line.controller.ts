@@ -36,7 +36,7 @@ export class LineController {
   ) {
     if (this.getBodySignature(message) !== lineSignature) return;
     Promise.all(
-      message.events.map(async evt => {
+      message.events.map(async (evt) => {
         switch (evt.type) {
           case 'message':
             const msg = evt.message;

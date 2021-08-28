@@ -50,7 +50,7 @@ export class BaseCompoundHandler {
         channel,
         message: messages
           .slice(1)
-          .map(e => e.message)
+          .map((e) => e.message)
           .join('\n'),
       },
     };

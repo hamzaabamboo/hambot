@@ -14,18 +14,20 @@ export class PushCommand extends BaseCommand {
 
   async handle(message: Message, command: string, tag: string) {
     const board = (await this.trello.getBoards()).find(
-      b => b.name === 'HamBot',
+      (b) => b.name === 'HamBot',
     );
 
     const list = (await this.trello.getLists(board.id)).find(
-      l => l.name === 'broadcast',
+      (l) => l.name === 'broadcast',
     );
 
     const cards = await this.trello.getCards(list.id);
     switch (command) {
       case 'register':
         if (
-          cards.find(c => c.name === `${message.channel}: ${message.channelId}`)
+          cards.find(
+            (c) => c.name === `${message.channel}: ${message.channelId}`,
+          )
         )
           return {
             files: [],
@@ -42,7 +44,7 @@ export class PushCommand extends BaseCommand {
         };
       case 'update':
         const id = cards.find(
-          c => c.name === `${message.channel}: ${message.channelId}`,
+          (c) => c.name === `${message.channel}: ${message.channelId}`,
         ).id;
         if (!id)
           return {
@@ -58,7 +60,7 @@ export class PushCommand extends BaseCommand {
         };
       case 'status':
         const currTag = cards.find(
-          c => c.name === `${message.channel}: ${message.channelId}`,
+          (c) => c.name === `${message.channel}: ${message.channelId}`,
         );
         if (!currTag)
           return {
@@ -73,7 +75,7 @@ export class PushCommand extends BaseCommand {
         };
       case 'remove':
         const toDel = cards.find(
-          c => c.name === `${message.channel}: ${message.channelId}`,
+          (c) => c.name === `${message.channel}: ${message.channelId}`,
         );
         if (!toDel)
           return {

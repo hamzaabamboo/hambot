@@ -39,7 +39,7 @@ export class NyaaCommand extends BaseCommand {
           }, page ${pageN}/${totalPage})\n ${rss.channel?.item
             .slice(pageN, pageN + PER_PAGE)
             .map(
-              e =>
+              (e) =>
                 `${he.decode(String(e.title))} (${he.decode(
                   String(e['nyaa:seeders']),
                 )}/${he.decode(String(e['nyaa:leechers']))}/${he.decode(

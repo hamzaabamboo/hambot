@@ -21,11 +21,11 @@ export class CompoundService {
     this._compoundingData = new Map<string, BaseCompoundHandler>([]);
   }
   canCompound(message: Message): boolean {
-    return this.handlers.some(h => h.startCommand.test(message.message));
+    return this.handlers.some((h) => h.startCommand.test(message.message));
   }
 
   async startCompound(message: Message): Promise<Partial<Message> | undefined> {
-    const handler = this.handlers.find(function(h) {
+    const handler = this.handlers.find(function (h) {
       return h.startCommand.test(message.message);
     });
     if (handler.requiresAuth) {
@@ -54,10 +54,7 @@ export class CompoundService {
       if (!res) {
         this.finishedCompounding(message.senderId);
       }
-      const {
-        isCompounding,
-        message: returnMsg,
-      }  = res;
+      const { isCompounding, message: returnMsg } = res;
       if (!isCompounding) {
         this.finishedCompounding(message.senderId);
       }

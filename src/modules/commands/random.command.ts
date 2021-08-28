@@ -29,7 +29,7 @@ export class RandomCommand extends BaseCommand {
         };
       case 'weighted':
         const names = stuff
-          .map(e => e.split(':'))
+          .map((e) => e.split(':'))
           .map(([name, weight]) => ({
             name,
             weight: !isNaN(Number(weight)) ? Number(weight) : 1,
@@ -42,7 +42,7 @@ export class RandomCommand extends BaseCommand {
               p.weight * Math.random() > c.weight * Math.random() ? p : c,
             acc[0],
           );
-          const idx = acc.findIndex(p => p.name === toDel.name);
+          const idx = acc.findIndex((p) => p.name === toDel.name);
           groups[group].push(acc.splice(idx, 1)[0].name);
           group = (group + 1) % groups.length;
         }
