@@ -31,7 +31,7 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   try {
-    if (configService.get('NO_NEXT') !== 'true') {
+    if (configService.get('NEXT') === 'true') {
       await fastify.register(import('fastify-nextjs'));
       fastify.next('/');
       fastify.next('/clipper');
