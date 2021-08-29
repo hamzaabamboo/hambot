@@ -17,7 +17,8 @@ RUN apk add && apk --no-cache add \
     pango-dev \
     cairo-dev \
     giflib-dev \
-    python3
+    python3 \
+    ffmpeg
 
 COPY package.json yarn.lock ./
 
