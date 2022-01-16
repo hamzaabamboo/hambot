@@ -5,6 +5,7 @@ import { clone } from 'lodash';
 
 @Injectable()
 export class RandomCommand extends BaseCommand {
+  public name = 'random';
   public command = /^random(?:(?: (group|weighted))?(?: (\d+))?(?: (.*))?)?/i;
 
   async handle(message: Message, command: string, n = '2', things: string) {

@@ -7,6 +7,7 @@ import he from 'he';
 const PER_PAGE = 10;
 @Injectable()
 export class NyaaCommand extends BaseCommand {
+  public name = 'nyaa';
   public command = /^nyaa(?: (\d+))?(?: (.*))?/i;
   public requiresAuth = true;
   clipboard: string;

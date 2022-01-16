@@ -6,6 +6,7 @@ import { AppLogger } from '../logger/logger';
 
 @Injectable()
 export class AuthCommand extends BaseCommand {
+  public name = 'auth';
   public command = /^auth(?: (token|register)(?: (.*))?)?/i;
 
   constructor(private auth: AuthService, private logger: AppLogger) {

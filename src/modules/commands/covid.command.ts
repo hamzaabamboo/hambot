@@ -7,6 +7,7 @@ import moment from 'moment';
 
 @Injectable()
 export class CovidCommand extends BaseCommand {
+  public name = 'covid';
   public command = /^(covid|cov)/i;
   constructor(private covid: CovidService) {
     super();

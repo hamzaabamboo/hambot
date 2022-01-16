@@ -3,6 +3,7 @@ import { Message } from '../messages/messages.model';
 
 @Injectable()
 export class BaseCommand {
+  public name: string;
   public command = /(.*?)/;
   public requiresAuth = false;
   public channels: string[] | undefined;

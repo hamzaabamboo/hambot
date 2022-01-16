@@ -5,6 +5,7 @@ import { RecurringService } from '../scheduler/recurring.service';
 
 @Injectable()
 export class RecurringCommand extends BaseCommand {
+  public name = 'recurring';
   public command = /^recurring(?: (stop|refresh))?/i;
   public requiresAuth = true;
   constructor(private recurring: RecurringService) {

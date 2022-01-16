@@ -85,7 +85,7 @@ export class AudioService implements BeforeApplicationShutdown {
         const conn = joinVoiceChannel({
           channelId: vc.channelId,
           guildId: vc.guild.id,
-          adapterCreator: vc.guild.voiceAdapterCreator,
+          adapterCreator: vc.guild.voiceAdapterCreator as any,
         });
         this._channels.set(key, conn);
         let resource = this._audioConnections.get(key);

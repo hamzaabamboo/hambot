@@ -4,6 +4,7 @@ import { Message } from '../messages/messages.model';
 import { TrelloService } from '../trello/trello.service';
 @Injectable()
 export class PushCommand extends BaseCommand {
+  public name = 'push';
   public command = /^push(?: (register|remove|status|update)(?: (.*))?)?/i;
   public requiresAuth = true;
   public platforms = ['discord'];

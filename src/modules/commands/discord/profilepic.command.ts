@@ -20,6 +20,7 @@ import { ModuleRef } from '@nestjs/core';
 import { TextChannel } from 'discord.js';
 
 export class ProfilePicCommand extends BaseCompoundHandler {
+  public name = 'profilepic';
   public static startCommand =
     /^profilepic(?: (list|add|set|remove)(?: (.*))?)?/i;
   public command = /^profilepic(?: (list|add|set|remove)(?: (.*))?)?/i;

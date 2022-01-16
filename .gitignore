@@ -42,3 +42,7 @@ lerna-debug.log*
 
 true
 .tsbuildinfo
+
+.env
+.env.example
+.env.prod

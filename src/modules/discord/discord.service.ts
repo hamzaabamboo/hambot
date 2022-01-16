@@ -5,9 +5,10 @@ import {
   DMChannel,
   TextChannel,
   MessageOptions,
-  TextBasedChannels,
+  TextBasedChannel,
   Intents,
 } from 'discord.js';
+import { REST } from '@discordjs/rest';
 import { ConfigService } from '@nestjs/config';
 import { MessagesService } from '../messages/messages.service';
 import { AppLogger } from '../logger/logger';
@@ -17,6 +18,7 @@ import { sleep } from 'src/utils/sleep';
 @Injectable()
 export class DiscordService {
   private client: Client;
+  private restClient: REST;
   public prefix = /^hamB (.*)$/;
   private isListening = false;
   private stopToken: string;
@@ -39,6 +41,9 @@ export class DiscordService {
         status: 'online',
       },
     });
+    this.prefix = config.get('BOT_PREFIX')
+      ? new RegExp(`^${config.get('BOT_PREFIX')} (.*)$`)
+      : /^hamB (.*)$/;
     this.logger.setContext('DiscordService');
     this.login();
   }
@@ -50,6 +55,9 @@ export class DiscordService {
     }
     try {
       await this.client.login(this.config.get('DISCORD_TOKEN'));
+      this.restClient = new REST({ version: '9' }).setToken(
+        this.config.get('DISCORD_TOKEN'),
+      );
       this.listen();
     } catch (m) {
       this.logger.error(
@@ -62,6 +70,7 @@ export class DiscordService {
 
   listen() {
     if (this.isListening) return;
+
     this.client.on('ready', () => {
       this.logger.verbose('Discord Ready');
       this.client.user.setPresence({
@@ -158,7 +167,7 @@ export class DiscordService {
     }
   }
 
-  async sendMessage(channel: TextBasedChannels, message: MessageOptions) {
+  async sendMessage(channel: TextBasedChannel, message: MessageOptions) {
     const c = await this.client.channels.fetch(channel.id);
     switch (c.type) {
       case 'DM':

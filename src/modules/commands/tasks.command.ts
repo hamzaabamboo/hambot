@@ -6,6 +6,7 @@ import moment from 'moment';
 
 @Injectable()
 export class TasksCommand extends BaseCommand {
+  public name = 'tasks';
   public command = /^tasks(?: (.*))?/i;
   public requiresAuth = true;
 

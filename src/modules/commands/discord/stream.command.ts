@@ -7,6 +7,7 @@ import { VoiceChannel } from 'discord.js';
 
 @Injectable()
 export class StreamCommand extends BaseCommand {
+  public name = 'stream';
   public command = /^stream(?: (start|stop))?/i;
   public requiresAuth = true;
   public platforms = ['discord'];

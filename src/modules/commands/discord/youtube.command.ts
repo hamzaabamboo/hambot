@@ -12,6 +12,7 @@ import { AudioPlayer, AudioResource } from '@discordjs/voice';
 
 @Injectable()
 export class YoutubeCommand extends BaseCommand {
+  public name = 'youtube';
   public command =
     /^(?:youtube|yt)(?: (volume|play|stop|skip|queue)(?: (.*)?)?)?/i;
   public requiresAuth = false;

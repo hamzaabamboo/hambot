@@ -8,6 +8,7 @@ import { sleep } from 'src/utils/sleep';
 
 @Injectable()
 export class ShakeCommand extends BaseCommand {
+  public name = "shake";
   public command = /^shake(?: ([^\s]*)(?: (\d+)(?: (\d+)(?: (\d+)?))?)?)?/i;
   public platforms = ['discord'];
 

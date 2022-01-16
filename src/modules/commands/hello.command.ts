@@ -4,6 +4,7 @@ import { Message } from '../messages/messages.model';
 
 @Injectable()
 export class HelloCommand extends BaseCommand {
+  public name = 'hello';
   public command = /^(hello|hi)/i;
 
   async handle(message: Message) {

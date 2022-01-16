@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PromptPayCommand extends BaseCommand {
+  public name = 'promptpay';
   public command = /^(?:pp|promptpay)(?: (\d{9,10})(?: (\d+))?)?/;
 
   constructor(private config: ConfigService) {

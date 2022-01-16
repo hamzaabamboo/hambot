@@ -5,6 +5,7 @@ import { DiscordService } from '../discord/discord.service';
 
 @Injectable()
 export class ActivateCommand extends BaseCommand {
+  public name = 'activate';
   public command = /^(activate|deactivate)(?: (.*))?/i;
   public requiresAuth = true;
 

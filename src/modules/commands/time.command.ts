@@ -5,6 +5,7 @@ import moment from 'moment';
 
 @Injectable()
 export class TimeCommand extends BaseCommand {
+  public name = 'time';
   public command = /^(time)/i;
 
   async handle(message: Message) {
