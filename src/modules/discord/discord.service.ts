@@ -37,6 +37,7 @@ export class DiscordService {
         'GuildMessages',
         'GuildMembers',
         'GuildVoiceStates',
+        'MessageContent',
       ],
       presence: {
         status: 'online',
@@ -78,7 +79,7 @@ export class DiscordService {
         status: 'online',
         activities: [
           {
-            name: 'simps',
+            name: ':zanyface:',
             type: ActivityType.Watching,
           },
         ],
