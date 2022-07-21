@@ -62,35 +62,7 @@ ${availableNow.length} available now (${getAssignmentTypeCount(
         )} radical/${getAssignmentTypeCount(
           availableNow,
           'kanji',
-        )} kanji/${getAssignmentTypeCount(availableNow, 'vocabulary')} vocab)
-${
-  words.data.filter((d) => d.object === 'radical').length > 0
-    ? `Radicals: 
-${words.data
-  .filter((d) => d.object === 'kanji')
-  .map((d) => d.data.characters)
-  .join(', ')}`
-    : 'No Radicals'
-}
-${
-  words.data.filter((d) => d.object === 'kanji').length > 0
-    ? `Kanji:
-${words.data
-  .filter((d) => d.object === 'kanji')
-  .map((d) => d.data.characters)
-  .join(', ')}`
-    : 'No Kanji'
-}
-${
-  words.data.filter((d) => d.object === 'vocabulary').length > 0
-    ? `Vocab:
-${words.data
-  .filter((d) => d.object === 'vocabulary')
-  .map((d) => d.data.characters)
-  .join(', ')}`
-    : 'No Vocabulary'
-}
-
+        )} kanji/${getAssignmentTypeCount(availableNow, 'vocabulary')} vocab)\n
 Go do it ! https://www.wanikani.com/
         `,
       },
@@ -98,3 +70,31 @@ Go do it ! https://www.wanikani.com/
     );
   }
 }
+
+// ${
+//   words.data.filter((d) => d.object === 'radical').length > 0
+//     ? `Radicals:
+// ${words.data
+//   .filter((d) => d.object === 'kanji')
+//   .map((d) => d.data.characters)
+//   .join(', ')}`
+//     : 'No Radicals'
+// }
+// ${
+//   words.data.filter((d) => d.object === 'kanji').length > 0
+//     ? `Kanji:
+// ${words.data
+//   .filter((d) => d.object === 'kanji')
+//   .map((d) => d.data.characters)
+//   .join(', ')}`
+//     : 'No Kanji'
+// }
+// ${
+//   words.data.filter((d) => d.object === 'vocabulary').length > 0
+//     ? `Vocab:
+// ${words.data
+//   .filter((d) => d.object === 'vocabulary')
+//   .map((d) => d.data.characters)
+//   .join(', ')}`
+//     : 'No Vocabulary'
+// }
