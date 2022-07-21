@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { Message, DiscordMessage } from '../../messages/messages.model';
 import { BaseCommand } from '../command.base';
 import { DiscordService } from 'src/modules/discord/discord.service';
-import { TextChannel, VoiceChannel } from 'discord.js';
+import { ChannelType, TextChannel, VoiceChannel } from 'discord.js';
 import { matchUser } from 'src/modules/discord/discord.utils';
 import { sleep } from 'src/utils/sleep';
 
 @Injectable()
 export class ShakeCommand extends BaseCommand {
-  public name = "shake";
+  public name = 'shake';
   public command = /^shake(?: ([^\s]*)(?: (\d+)(?: (\d+)(?: (\d+)?))?)?)?/i;
   public platforms = ['discord'];
 
@@ -22,7 +22,7 @@ export class ShakeCommand extends BaseCommand {
         await guild.members.fetch({
           user: message.discordMessage,
         })
-      ).permissions.has('MOVE_MEMBERS')
+      ).permissions.has('MoveMembers')
     ) {
       return {
         files: [],
@@ -31,8 +31,8 @@ export class ShakeCommand extends BaseCommand {
     }
     const channels = (await guild.channels.fetch()).filter(
       (c) =>
-        c.type === 'GUILD_VOICE' &&
-        c.permissionsFor(this.discord.getClient.user).has('CONNECT') &&
+        c.type === ChannelType.GuildVoice &&
+        c.permissionsFor(this.discord.getClient.user).has('Connect') &&
         c.id !== guild.afkChannelId,
     );
 
@@ -57,7 +57,7 @@ export class ShakeCommand extends BaseCommand {
             message: `${command} is not in a voice channel!`,
           };
         const origin = victim.voice.channel;
-        if (origin.type === 'GUILD_STAGE_VOICE') {
+        if (origin.type === ChannelType.GuildStageVoice) {
           return {
             files: [],
             message: `Can't shake ppl on stage sorry`,
@@ -70,7 +70,7 @@ export class ShakeCommand extends BaseCommand {
             ? 2
             : Math.round(Number(intensity));
         const movableChannels = channels
-          .filter((f) => f.permissionsFor(userId).has('CONNECT'))
+          .filter((f) => f.permissionsFor(userId).has('Connect'))
           .toJSON() as VoiceChannel[];
 
         try {

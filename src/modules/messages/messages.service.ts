@@ -6,7 +6,7 @@ import { DiscordService } from '../discord/discord.service';
 import { AppLogger } from '../logger/logger';
 import { Client } from '@line/bot-sdk';
 import { FacebookService } from '../facebook/facebook.service';
-import { DiscordAPIError, MessageEmbed } from 'discord.js';
+import { DiscordAPIError, Embed } from 'discord.js';
 
 const EMBED_PATTERN = /<embed>(.*?)<\/embed>/s;
 
@@ -58,7 +58,7 @@ export class MessagesService {
   }
 
   sendMessage(message: Message) {
-    let embed: MessageEmbed | undefined;
+    let embed: Embed | undefined;
     if (EMBED_PATTERN.test(message.message)) {
       try {
         embed = JSON.parse(

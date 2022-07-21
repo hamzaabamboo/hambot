@@ -6,7 +6,8 @@ import {
   TextChannel,
   MessageOptions,
   TextBasedChannel,
-  Intents,
+  ActivityType,
+  ChannelType,
 } from 'discord.js';
 import { REST } from '@discordjs/rest';
 import { ConfigService } from '@nestjs/config';
@@ -31,11 +32,11 @@ export class DiscordService {
   ) {
     this.client = new Client({
       intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.DIRECT_MESSAGES,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MEMBERS,
-        Intents.FLAGS.GUILD_VOICE_STATES,
+        'Guilds',
+        'DirectMessages',
+        'GuildMessages',
+        'GuildMembers',
+        'GuildVoiceStates',
       ],
       presence: {
         status: 'online',
@@ -78,7 +79,7 @@ export class DiscordService {
         activities: [
           {
             name: 'simps',
-            type: 'WATCHING',
+            type: ActivityType.Watching,
           },
         ],
       });
@@ -93,7 +94,7 @@ export class DiscordService {
         });
         return;
       }
-      if (message.channel.type === 'DM') {
+      if (message.channel.type === ChannelType.DM) {
         this.message.handleMessage({
           channel: 'discord',
           senderId: message.author.id,
@@ -108,7 +109,7 @@ export class DiscordService {
         });
       }
       if (
-        message.channel.type === 'GUILD_TEXT' &&
+        message.channel.type === ChannelType.GuildText &&
         (message.attachments.toJSON().length > 0 ||
           this.prefix.test(message.content))
       ) {
@@ -170,10 +171,10 @@ export class DiscordService {
   async sendMessage(channel: TextBasedChannel, message: MessageOptions) {
     const c = await this.client.channels.fetch(channel.id);
     switch (c.type) {
-      case 'DM':
+      case ChannelType.DM:
         await (c as DMChannel).send(message);
         break;
-      case 'GUILD_TEXT':
+      case ChannelType.GuildText:
         await (c as TextChannel).send(message);
         break;
     }

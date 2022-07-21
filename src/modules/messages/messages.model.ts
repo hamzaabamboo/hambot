@@ -1,6 +1,6 @@
 import {
   Channel,
-  MessageEmbed,
+  Embed,
   Message as RawDiscordMessage,
   TextBasedChannel,
 } from 'discord.js';
@@ -38,7 +38,7 @@ export interface DiscordMessage extends BaseMessage {
   discordMessage?: RawDiscordMessage;
   messageChannel?: TextBasedChannel;
   destination?: Channel;
-  embeds?: MessageEmbed;
+  embeds?: Embed;
 }
 
 export interface FacebookMessage extends BaseMessage {
