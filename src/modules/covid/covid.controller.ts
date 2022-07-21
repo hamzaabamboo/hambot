@@ -13,7 +13,7 @@ export class CovidController {
   @Get('summary')
   @Header('content-type', 'image/png')
   @Header('content-disposition', 'attachment; filename=qrcode.png')
-  async getCovidSummary(@Res() res: FastifyReply) {
+  async getCovidSummary() {
     const data = await this.covid.getCovidData();
     const canvas = createCanvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
@@ -107,7 +107,7 @@ export class CovidController {
       ctx,
     );
 
-    res.send(canvas.createPNGStream());
+    return canvas.createPNGStream();
   }
 }
 

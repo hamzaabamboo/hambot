@@ -6,13 +6,9 @@ import { FastifyReply } from 'fastify';
 export class QrcodeController {
   //TODO: Add number below la
   @Get('/:payload')
-  @Header('content-type', 'image/png')
   @Header('content-disposition', 'attachment; filename=qrcode.png')
-  async generateQRCode(
-    @Param('payload') payload: string,
-    @Res() res: FastifyReply,
-  ) {
+  async generateQRCode(@Param('payload') payload: string) {
     const qrImg = qr.image(payload, { type: 'png' });
-    res.send(qrImg);
+    return qrImg;
   }
 }

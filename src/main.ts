@@ -32,7 +32,7 @@ async function bootstrap() {
 
   try {
     if (configService.get('NEXT') === 'true') {
-      await fastify.register(import('fastify-nextjs'));
+      await fastify.register(import('@fastify/nextjs'));
       fastify.next('/');
       fastify.next('/clipper');
     }

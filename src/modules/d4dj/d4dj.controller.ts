@@ -11,7 +11,8 @@ import {
 import { HttpService } from '@nestjs/axios';
 import { Request, Response } from 'express';
 import { request } from 'gaxios';
-import { Readable } from 'stream';
+import { PassThrough, Readable } from 'stream';
+import axios from 'axios';
 
 @Controller('/d4dj')
 export class D4DJController {
@@ -22,36 +23,10 @@ export class D4DJController {
   @Header('Access-Control-Allow-Origin', 'https://hamzaabamboo.github.io')
   @Header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
   @Header('Access-Control-Allow-Headers', 'Content-Type')
-  async proxySig(
-    @Query('url') url: string,
-    @Res() res: Response<any, any>,
-    @Req() req: Request<any>,
-  ) {
+  @Header('Content-Type', 'text/html; charset=utf-8')
+  async proxySig(@Query('url') url: string, @Req() req: Request<any>) {
     if (!url || !url.match('projectdivar')) return ':P';
-    const a = await request<Readable>({
-      url: url as string,
-      method: req.method ?? ('GET' as any),
-      data: req.body,
-      headers: {
-        'Cache-Control': 'no-cache',
-      },
-      responseType: 'stream',
-    });
-    res.send(a.data);
-  }
-
-  @Get('/d4db')
-  @Post('/d4db')
-  @Header('Access-Control-Allow-Origin', 'https://hamzaabamboo.github.io')
-  @Header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-  @Header('Access-Control-Allow-Headers', 'Content-Type')
-  async getD4DB(
-    @Query('url') url: string,
-    @Res() res: Response<any, any>,
-    @Req() req: Request<any>,
-  ) {
-    if (!url || !url.match('d4-dj')) return ':P';
-    const a = await request<Readable>({
+    const a = await axios({
       url: req.query.url as string,
       method: req.method ?? ('GET' as any),
       data: req.body,
@@ -60,6 +35,26 @@ export class D4DJController {
       },
       responseType: 'stream',
     });
-    res.send(a.data);
+    return a.data;
+  }
+
+  @Get('/d4db')
+  @Post('/d4db')
+  @Header('Access-Control-Allow-Origin', 'https://hamzaabamboo.github.io')
+  @Header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  @Header('Access-Control-Allow-Headers', 'Content-Type')
+  @Header('Content-Type', 'text/html; charset=utf-8')
+  async getD4DB(@Query('url') url: string, @Req() req: Request<any>) {
+    if (!url || !url.match('d4-dj')) return ':P';
+    const a = await axios({
+      url: req.query.url as string,
+      method: req.method ?? ('GET' as any),
+      data: req.body,
+      headers: {
+        'Cache-Control': 'no-cache',
+      },
+      responseType: 'stream',
+    });
+    return a.data;
   }
 }
