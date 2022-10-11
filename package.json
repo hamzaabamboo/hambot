@@ -42,7 +42,7 @@
     "discord-api-types": "^0.36.3",
     "discord.js": "^14.0.3",
     "fast-xml-parser": "^4.0.9",
-    "fastify": "^4.3.0",
+    "fastify": "^4.8.1",
     "fb": "^2.0.0",
     "gaxios": "^5.0.1",
     "he": "^1.2.0",
