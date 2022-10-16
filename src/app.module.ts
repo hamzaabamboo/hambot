@@ -17,6 +17,13 @@ import { IcalModule } from './modules/ical/ical.module';
 import { WanikaniModule } from './modules/wanikani/wanikani.module';
 import { D4DJModule } from './modules/d4dj/d4dj.module';
 import { CovidModule } from './modules/covid/covid.module';
+import {
+  AibouModule,
+  AibouSettings,
+  AibouTopic,
+  AibouTopicItem,
+} from './modules/aibou/aibou.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -38,6 +45,13 @@ import { CovidModule } from './modules/covid/covid.module';
     WanikaniModule,
     D4DJModule,
     CovidModule,
+    AibouModule,
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: '../files/database.db',
+      entities: [AibouTopic, AibouTopicItem, AibouSettings],
+      synchronize: true,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],
