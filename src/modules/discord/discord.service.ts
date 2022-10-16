@@ -4,7 +4,7 @@ import {
   Channel,
   DMChannel,
   TextChannel,
-  MessageOptions,
+  BaseMessageOptions,
   TextBasedChannel,
   ActivityType,
   ChannelType,
@@ -169,7 +169,7 @@ export class DiscordService {
     }
   }
 
-  async sendMessage(channel: TextBasedChannel, message: MessageOptions) {
+  async sendMessage(channel: TextBasedChannel, message: BaseMessageOptions) {
     const c = await this.client.channels.fetch(channel.id);
     switch (c.type) {
       case ChannelType.DM:
