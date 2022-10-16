@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import moment from 'moment';
+import { MoreThan, Repository } from 'typeorm';
 import { AibouTopic, AibouTopicItem } from './entities/Topic';
 
 @Injectable()
@@ -12,20 +13,30 @@ export class AibouService {
     private topicItemRepository: Repository<AibouTopicItem>,
   ) {}
 
-  async fetchEverything() {
+  async fetchNewData(date: number) {
     return {
-      topic: await this.topicRepository.find(),
-      topicItem: await this.topicItemRepository.find(),
+      topic: await this.topicRepository.find({
+        where: {
+          lastUpdatedAt: MoreThan(moment.unix(date).toDate()),
+        },
+      }),
+      topicItem: await this.topicItemRepository.find({
+        where: {
+          lastUpdatedAt: MoreThan(moment.unix(date).toDate()),
+        },
+      }),
     };
   }
 
   async saveNewData(data: {
     topics: AibouTopic[];
-    topicItem: AibouTopicItem[];
+    topicItem: (AibouTopicItem & { tags: string[] })[];
   }) {
     const { topics, topicItem } = data;
     await this.topicRepository.save(topics);
-    await this.topicItemRepository.save(topicItem);
+    await this.topicItemRepository.save(
+      topicItem.map(this.deserializeTopicItem),
+    );
   }
 
   serializeTopicItem(

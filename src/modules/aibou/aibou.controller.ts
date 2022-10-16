@@ -16,8 +16,10 @@ export class AibouController {
     }
     const { newData, lastUpdatedAt } = data;
 
+    const dataToReturn = await this.service.fetchNewData(lastUpdatedAt);
+
     await this.service.saveNewData(newData);
 
-    res.status(200).send(await this.service.fetchEverything());
+    res.status(200).send(dataToReturn);
   }
 }
