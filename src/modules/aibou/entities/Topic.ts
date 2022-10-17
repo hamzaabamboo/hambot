@@ -12,6 +12,8 @@ export class AibouTopic {
   createdAt: Date;
   @Column()
   lastUpdatedAt: Date;
+  @Column({ default: false })
+  isDeleted: boolean;
 }
 
 @Entity()
@@ -30,4 +32,6 @@ export class AibouTopicItem {
   createdAt: Date;
   @Column()
   lastUpdatedAt: Date;
+  @Column({ default: false })
+  isDeleted: boolean;
 }
