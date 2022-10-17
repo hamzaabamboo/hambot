@@ -31,6 +31,7 @@ import { TwitterModule } from '../twitter/twitter.module';
 import { TwitterCommand } from './twitter.command';
 import { CovidCommand } from './covid.command';
 import { CovidModule } from '../covid/covid.module';
+import { FriendCommand } from './friend.command';
 
 @Module({
   providers: [
@@ -55,6 +56,7 @@ import { CovidModule } from '../covid/covid.module';
     RecurringCommand,
     TwitterCommand,
     CovidCommand,
+    FriendCommand,
   ],
   imports: [
     DiscordModule,
