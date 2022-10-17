@@ -21,7 +21,8 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: 'https://hamzaabamboo.github.io',
+    origin: ['https://hamzaabamboo.github.io', 'http://localhost:3000'],
+    allowedHeaders: ['x-aibou-secret', 'content-type'],
   });
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
