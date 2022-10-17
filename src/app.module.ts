@@ -24,6 +24,7 @@ import {
   AibouTopicItem,
 } from './modules/aibou/aibou.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppConfigModule } from './config/app-config.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ConfigModule.forRoot({
       expandVariables: true,
     }),
+    AppConfigModule,
     FacebookModule,
     TwitterModule,
     AudioModule,
@@ -56,4 +58,4 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   controllers: [AppController],
   providers: [AppService, ConfigService],
 })
-export class AppModule {}
+export class AppModule { }

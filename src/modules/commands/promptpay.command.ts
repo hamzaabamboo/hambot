@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { BaseCommand } from './command.base';
 import { Message } from '../messages/messages.model';
 import generatePayload from 'promptpay-qr';
-import { ConfigService } from '@nestjs/config';
+import { AppConfigService } from 'src/config/app-config.service';
 
 @Injectable()
 export class PromptPayCommand extends BaseCommand {
   public name = 'promptpay';
   public command = /^(?:pp|promptpay)(?: (\d{9,10})(?: (\d+))?)?/;
 
-  constructor(private config: ConfigService) {
+  constructor(private config: AppConfigService) {
     super();
   }
 
@@ -22,7 +22,7 @@ export class PromptPayCommand extends BaseCommand {
         image: [
           {
             url:
-              this.config.get('PUBLIC_URL') +
+              this.config.PUBLIC_URL +
               'qrcode/' +
               generatePayload(id, { amount: amount }),
             name: 'qrcode.png',

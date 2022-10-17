@@ -4,9 +4,9 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 
-import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { AppLogger } from './modules/logger/logger';
+import { AppConfigService } from './config/app-config.service';
 
 type FastifyWithNextPlugin = FastifyAdapter & {
   next: (route: string) => void;
@@ -24,15 +24,15 @@ async function bootstrap() {
     origin: ['https://hamzaabamboo.github.io', 'http://localhost:3000'],
     allowedHeaders: ['x-aibou-secret', 'content-type'],
   });
-  const configService = app.get(ConfigService);
-  const port = configService.get('PORT');
+  const config = app.get(AppConfigService);
+  const port = config.PORT;
   const logger = await app.resolve(AppLogger);
   const fastify: FastifyWithNextPlugin = app.getHttpAdapter().getInstance();
 
   app.enableShutdownHooks();
 
   try {
-    if (configService.get('NEXT') === 'true') {
+    if (config.NEXT) {
       await fastify.register(import('@fastify/nextjs'));
       fastify.next('/');
       fastify.next('/clipper');
