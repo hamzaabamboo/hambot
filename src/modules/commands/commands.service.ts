@@ -22,6 +22,7 @@ import { RecurringCommand } from './recurring.command';
 import { ProfilePicCommand } from './discord/profilepic.command';
 import { TwitterCommand } from './twitter.command';
 import { CovidCommand } from './covid.command';
+import { FriendCommand } from './friend.command';
 
 @Injectable()
 export class CommandsService {
@@ -49,6 +50,7 @@ export class CommandsService {
     recurring: RecurringCommand,
     twitter: TwitterCommand,
     covid: CovidCommand,
+    friend: FriendCommand,
   ) {
     this.commands = [
       hello,
@@ -69,6 +71,7 @@ export class CommandsService {
       recurring,
       twitter,
       covid,
+      friend,
       //Always bottom
       base,
     ];
