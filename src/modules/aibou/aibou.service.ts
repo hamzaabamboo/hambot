@@ -15,16 +15,18 @@ export class AibouService {
 
   async fetchNewData(date: number) {
     return {
-      topic: await this.topicRepository.find({
+      topics: await this.topicRepository.find({
         where: {
           lastUpdatedAt: MoreThan(moment.unix(date).toDate()),
         },
       }),
-      topicItem: await this.topicItemRepository.find({
-        where: {
-          lastUpdatedAt: MoreThan(moment.unix(date).toDate()),
-        },
-      }),
+      topicItem: (
+        await this.topicItemRepository.find({
+          where: {
+            lastUpdatedAt: MoreThan(moment.unix(date).toDate()),
+          },
+        })
+      ).map(this.serializeTopicItem),
     };
   }
 
