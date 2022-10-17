@@ -10,6 +10,7 @@ export class FriendCommand extends BaseCommand {
     'ไม่ได้มึงนี่กูแย่เลย',
     'I am not a noodle guy',
     'Mr. {{NAME}}, I saw you at MBK. Are you still there?',
+    'นี่มันอะไรกันเนี่ย',
   ];
 
   async handle(message: Message) {
