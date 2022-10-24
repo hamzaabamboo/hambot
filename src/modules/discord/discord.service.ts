@@ -12,7 +12,7 @@ import { REST } from '@discordjs/rest';
 import { MessagesService } from '../messages/messages.service';
 import { AppLogger } from '../logger/logger';
 import { generateRandomKey } from 'src/utils';
-import { sleep } from 'src/utils/sleep';
+import { setTimeout as sleep } from 'timers/promises';
 import { AppConfigService } from 'src/config/app-config.service';
 
 @Injectable()
