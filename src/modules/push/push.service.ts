@@ -5,8 +5,8 @@ import { TrelloService } from '../trello/trello.service';
 import { MessagesService } from '../messages/messages.service';
 import { AppLogger } from '../logger/logger';
 import moment from 'moment';
-import { ConfigService } from '@nestjs/config';
 import { TextChannel } from 'discord.js';
+import { AppConfigService } from 'src/config/app-config.service';
 @Injectable()
 export class PushService {
   private _cache: {
@@ -23,17 +23,16 @@ export class PushService {
     private messageService: MessagesService,
     private discord: DiscordService,
     private logger: AppLogger,
-    private config: ConfigService,
+    private config: AppConfigService,
   ) {
     this.logger.setContext('PushService');
-    if (this.config.get('NODE_ENV')) {
+    if (this.config.NODE_ENV) {
       this.push(
         {
           channel: '*',
           senderId: '',
-          message: `HamBot Online! (${
-            this.config.get('NODE_ENV') ?? 'Development'
-          })`,
+          message: `HamBot Online! (${this.config.NODE_ENV ?? 'Development'
+            })`,
         },
         'debug',
       );

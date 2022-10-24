@@ -15,9 +15,9 @@ import {
   Group,
   Room,
 } from '@line/bot-sdk';
-import { ConfigService } from '@nestjs/config';
 import { MessagesService } from '../messages/messages.service';
 import { LineService } from './line.service';
+import { AppConfigService } from 'src/config/app-config.service';
 
 @Controller('line')
 export class LineController {
@@ -27,8 +27,8 @@ export class LineController {
     @Inject(forwardRef(() => MessagesService))
     private messageService: MessagesService,
     private lineService: LineService,
-    private config: ConfigService,
-  ) {}
+    private config: AppConfigService,
+  ) { }
   @Post()
   handleMessage(
     @Body() message: WebhookRequestBody,
@@ -135,7 +135,7 @@ export class LineController {
 
   getBodySignature(body: WebhookRequestBody) {
     return crypto
-      .createHmac('SHA256', this.config.get('LINE_CHANNEL_SECRET'))
+      .createHmac('SHA256', this.config.LINE_CHANNEL_SECRET)
       .update(JSON.stringify(body))
       .digest('base64');
   }

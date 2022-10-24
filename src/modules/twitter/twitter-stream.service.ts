@@ -1,12 +1,12 @@
 import { Injectable, OnApplicationShutdown } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { ConfigService } from '@nestjs/config';
 import { AppLogger } from '../logger/logger';
 import { PushService } from '../push/push.service';
 import needle from 'needle';
 import qs from 'querystring';
 import { Readable } from 'stream';
 import { sleep } from 'src/utils/sleep';
+import { AppConfigService } from 'src/config/app-config.service';
 
 export interface TwitterRule {
   id?: string;
@@ -44,14 +44,14 @@ export class TwitterStreamService implements OnApplicationShutdown {
   public stream: Readable | any;
   public isConnected = false;
   constructor(
-    private config: ConfigService,
+    private config: AppConfigService,
     private logger: AppLogger,
     private http: HttpService,
     private push: PushService,
   ) {
     this.logger.setContext('TwitterStreamService');
 
-    if (this.config.get('NODE_ENV')) {
+    if (this.config.NODE_ENV) {
       this.init();
     }
   }
@@ -73,7 +73,7 @@ export class TwitterStreamService implements OnApplicationShutdown {
     const response = await this.http
       .get(rulesURL, {
         headers: {
-          authorization: `Bearer ${this.config.get('TWITTER_BEARER_TOKEN')}`,
+          authorization: `Bearer ${this.config.TWITTER_BEARER_TOKEN}`,
         },
       })
       .toPromise();
@@ -102,7 +102,7 @@ export class TwitterStreamService implements OnApplicationShutdown {
       .post(rulesURL, data, {
         headers: {
           'content-type': 'application/json',
-          authorization: `Bearer ${this.config.get('TWITTER_BEARER_TOKEN')}`,
+          authorization: `Bearer ${this.config.TWITTER_BEARER_TOKEN}`,
         },
       })
       .toPromise();
@@ -125,7 +125,7 @@ export class TwitterStreamService implements OnApplicationShutdown {
       .post(rulesURL, data, {
         headers: {
           'content-type': 'application/json',
-          authorization: `Bearer ${this.config.get('TWITTER_BEARER_TOKEN')}`,
+          authorization: `Bearer ${this.config.TWITTER_BEARER_TOKEN}`,
         },
       })
       .toPromise();
@@ -146,7 +146,7 @@ export class TwitterStreamService implements OnApplicationShutdown {
       .post(rulesURL, data, {
         headers: {
           'content-type': 'application/json',
-          authorization: `Bearer ${this.config.get('TWITTER_BEARER_TOKEN')}`,
+          authorization: `Bearer ${this.config.TWITTER_BEARER_TOKEN}`,
         },
       })
       .toPromise();
@@ -167,16 +167,16 @@ export class TwitterStreamService implements OnApplicationShutdown {
     try {
       const stream = needle.get(
         streamURL +
-          '?' +
-          qs.stringify({
-            expansions: 'author_id,attachments.media_keys',
-            'user.fields': 'username,id,name',
-            'tweet.fields': 'public_metrics',
-            'media.fields': 'url',
-          }),
+        '?' +
+        qs.stringify({
+          expansions: 'author_id,attachments.media_keys',
+          'user.fields': 'username,id,name',
+          'tweet.fields': 'public_metrics',
+          'media.fields': 'url',
+        }),
         {
           headers: {
-            Authorization: `Bearer ${this.config.get('TWITTER_BEARER_TOKEN')}`,
+            Authorization: `Bearer ${this.config.TWITTER_BEARER_TOKEN}`,
           },
         },
       );
@@ -202,14 +202,14 @@ export class TwitterStreamService implements OnApplicationShutdown {
         try {
           const f = JSON.parse(e as string);
           if (!('data' in f)) this.logger.debug('Data: ' + JSON.stringify(f));
-        } catch {}
+        } catch { }
         if ('connection_issue' in e) {
           stream.emit('error', e);
         }
       });
 
       return stream;
-    } catch {}
+    } catch { }
   }
 
   async refresh() {
@@ -236,6 +236,6 @@ export class TwitterStreamService implements OnApplicationShutdown {
   onApplicationShutdown() {
     try {
       this.stream.destroy();
-    } catch {}
+    } catch { }
   }
 }

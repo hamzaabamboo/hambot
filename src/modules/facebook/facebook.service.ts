@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { ConfigService } from '@nestjs/config';
 import { Message, FileWithUrl } from '../messages/messages.model';
 import { AppLogger } from '../logger/logger';
+import { AppConfigService } from 'src/config/app-config.service';
 
 const SEND_API_URL = 'https://graph.facebook.com/v7.0/me/messages';
 @Injectable()
 export class FacebookService {
   constructor(
     private http: HttpService,
-    private config: ConfigService,
+    private config: AppConfigService,
     private logger: AppLogger,
-  ) {}
+  ) { }
 
   async sendReplyMessage(message: Message) {
     const msg = {
@@ -35,9 +35,7 @@ export class FacebookService {
     };
     await this.http
       .post(
-        `${SEND_API_URL}?access_token=${this.config.get(
-          'FACEBOOK_PAGE_ACCESS_TOKEN',
-        )}`,
+        `${SEND_API_URL}?access_token=${this.config.FACEBOOK_PAGE_ACCESS_TOKEN}`,
         msg,
       )
       .toPromise();
@@ -67,9 +65,7 @@ export class FacebookService {
     try {
       await this.http
         .post(
-          `${SEND_API_URL}?access_token=${this.config.get(
-            'FACEBOOK_PAGE_ACCESS_TOKEN',
-          )}`,
+          `${SEND_API_URL}?access_token=${this.config.FACEBOOK_PAGE_ACCESS_TOKEN}`,
           msg,
         )
         .toPromise();

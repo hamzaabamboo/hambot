@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { ConfigService } from '@nestjs/config';
 import { Cron } from '@nestjs/schedule';
 import moment, { Moment } from 'moment';
-import { join } from 'path';
 import { Message } from '../messages/messages.model';
 import { PushService } from '../push/push.service';
-import { firstValueFrom, lastValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
+import { AppConfigService } from 'src/config/app-config.service';
 
 interface COVIDAPIResult {
   Confirmed: number;
@@ -72,8 +71,8 @@ export class CovidService {
   constructor(
     private http: HttpService,
     private push: PushService,
-    private config: ConfigService,
-  ) {}
+    private config: AppConfigService,
+  ) { }
 
   @Cron('0 0 * * * *')
   async checkCovidData() {
@@ -92,10 +91,9 @@ export class CovidService {
       )} 
 ผู้ติดเชื่อ: ${data.Confirmed} (+${data.NewConfirmed})
 หายแล้ว: ${data.Recovered} (+${data.NewRecovered})
-${
-  data.Hospitalized &&
-  `รักษาอยู่ในรพ.: ${data.Hospitalized} (+${data.NewHospitalized})`
-}
+${data.Hospitalized &&
+        `รักษาอยู่ในรพ.: ${data.Hospitalized} (+${data.NewHospitalized})`
+        }
 เสียชีวิต: ${data.Deaths} (+${data.NewDeaths})
       `;
     });
@@ -119,7 +117,7 @@ ${
       image: [
         {
           name: 'Summary ' + moment().format('DD/MM/yyyy, HH:mm') + '.png',
-          url: this.config.get('PUBLIC_URL') + 'covid/summary',
+          url: this.config.PUBLIC_URL + 'covid/summary',
         },
       ],
     };

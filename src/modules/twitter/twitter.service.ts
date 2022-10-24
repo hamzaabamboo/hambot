@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { AppLogger } from '../logger/logger';
 import { PushService } from '../push/push.service';
 import {
@@ -10,6 +9,7 @@ import {
 } from './twitter-stream.service';
 import { Cron } from '@nestjs/schedule';
 import { sleep } from 'src/utils/sleep';
+import { AppConfigService } from 'src/config/app-config.service';
 @Injectable()
 export class TwitterService {
   rules: TwitterRule[] = [];
@@ -21,7 +21,7 @@ export class TwitterService {
   }
 
   constructor(
-    private config: ConfigService,
+    private config: AppConfigService,
     private logger: AppLogger,
     private push: PushService,
     private stream: TwitterStreamService,
@@ -29,7 +29,7 @@ export class TwitterService {
     this.logger.setContext('TwitterService');
     this.initStreams();
 
-    if (this.config.get('NODE_ENV')) {
+    if (this.config.NODE_ENV) {
       this.listen();
     }
   }

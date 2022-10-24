@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Client } from '@line/bot-sdk';
-import { ConfigService } from '@nestjs/config';
+import { AppConfigService } from 'src/config/app-config.service';
 
 @Injectable()
 export class LineService {
   private _lineClient = new Client({
-    channelAccessToken: this.config.get('LINE_CHANNEL_ACCESS_TOKEN'),
-    channelSecret: this.config.get('LINE_CHANNEL_SECRET'),
+    channelAccessToken: this.config.LINE_CHANNEL_ACCESS_TOKEN,
+    channelSecret: this.config.LINE_CHANNEL_SECRET,
   });
 
-  constructor(private config: ConfigService) {}
+  constructor(private config: AppConfigService) { }
   sendReplyMessage(
     message: Parameters<Client['replyMessage']>[1],
     token: string,
