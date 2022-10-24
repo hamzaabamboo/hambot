@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance } from 'axios';
 import { AppLogger } from '../logger/logger';
 import {
@@ -11,6 +10,7 @@ import {
   WanikaniUserResponse,
 } from './wanikani.types';
 import qs from 'qs';
+import { AppConfigService } from 'src/config/app-config.service';
 
 @Injectable()
 export class WanikaniClientService {
@@ -18,12 +18,12 @@ export class WanikaniClientService {
 
   private http: AxiosInstance;
 
-  constructor(config: ConfigService, private logger: AppLogger) {
+  constructor(config: AppConfigService, private logger: AppLogger) {
     logger.setContext('WanikaniClient');
 
     this.logger.verbose('Initializing Wanikani Client');
 
-    const token = config.get('WANIKANI_API_KEY');
+    const token = config.WANIKANI_API_KEY;
 
     if (!token) throw new Error('Wanikani API not found');
 

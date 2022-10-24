@@ -1,7 +1,6 @@
 import { Injectable, Inject, forwardRef, HttpException } from '@nestjs/common';
 import {
   Client,
-  Channel,
   DMChannel,
   TextChannel,
   BaseMessageOptions,
@@ -10,11 +9,11 @@ import {
   ChannelType,
 } from 'discord.js';
 import { REST } from '@discordjs/rest';
-import { ConfigService } from '@nestjs/config';
 import { MessagesService } from '../messages/messages.service';
 import { AppLogger } from '../logger/logger';
 import { generateRandomKey } from 'src/utils';
 import { sleep } from 'src/utils/sleep';
+import { AppConfigService } from 'src/config/app-config.service';
 
 @Injectable()
 export class DiscordService {
@@ -25,7 +24,7 @@ export class DiscordService {
   private stopToken: string;
 
   constructor(
-    private config: ConfigService,
+    private config: AppConfigService,
     @Inject(forwardRef(() => MessagesService))
     private message: MessagesService,
     private logger: AppLogger,
@@ -43,8 +42,8 @@ export class DiscordService {
         status: 'online',
       },
     });
-    this.prefix = config.get('BOT_PREFIX')
-      ? new RegExp(`^${config.get('BOT_PREFIX')} (.*)$`)
+    this.prefix = config.BOT_PREFIX
+      ? new RegExp(`^${config.BOT_PREFIX} (.*)$`)
       : /^hamB (.*)$/;
     this.logger.setContext('DiscordService');
     this.login();
@@ -56,9 +55,9 @@ export class DiscordService {
       return;
     }
     try {
-      await this.client.login(this.config.get('DISCORD_TOKEN'));
+      await this.client.login(this.config.DISCORD_TOKEN);
       this.restClient = new REST({ version: '9' }).setToken(
-        this.config.get('DISCORD_TOKEN'),
+        this.config.DISCORD_TOKEN,
       );
       this.listen();
     } catch (m) {
