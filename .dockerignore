@@ -1,2 +1,9 @@
 ./dist
 ./node_modules
+.github
+test
+architecture.drawio
+README.md
+.eslintrc
+.pretterrc
+dockerfile
