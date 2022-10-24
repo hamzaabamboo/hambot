@@ -63,4 +63,8 @@ export class AppConfigService {
   get WANIKANI_API_KEY() {
     return this.getEnv('WANIKANI_API_KEY', '<WANIKANI_API_KEY>');
   }
+
+  get AIBOU_SECRET() {
+    return this.getEnv('AIBOU_SECRET', '<AIBOU_SECRET>');
+  }
 }
