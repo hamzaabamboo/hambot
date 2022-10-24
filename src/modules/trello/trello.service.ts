@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { AppConfigService } from 'src/config/app-config.service';
 import Trello from 'trello';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class TrelloService {
   private client: Trello;
-  constructor(config: ConfigService) {
+  constructor(config: AppConfigService) {
     this.client = new Trello(
-      config.get('TRELLO_API_KEY'),
-      config.get('TRELLO_OAUTH_TOKEN'),
+      config.TRELLO_API_KEY,
+      config.TRELLO_OAUTH_TOKEN,
     );
   }
 

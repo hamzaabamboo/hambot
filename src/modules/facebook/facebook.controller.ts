@@ -8,10 +8,10 @@ import {
   Inject,
   forwardRef,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { AppLogger } from '../logger/logger';
 import { MessagesService } from '../messages/messages.service';
 import path from 'path';
+import { AppConfigService } from 'src/config/app-config.service';
 
 interface FacebookEvent {
   messaging: {
@@ -29,7 +29,7 @@ interface FacebookEvent {
 @Controller('facebook')
 export class FacebookController {
   constructor(
-    private config: ConfigService,
+    private config: AppConfigService,
     private logger: AppLogger,
     @Inject(forwardRef(() => MessagesService))
     private message: MessagesService,
@@ -88,7 +88,7 @@ export class FacebookController {
       // Checks the mode and token sent is correct
       if (
         mode === 'subscribe' &&
-        token === this.config.get('FACEBOOK_VERIFY_TOKEN')
+        token === this.config.FACEBOOK_VERIFY_TOKEN
       ) {
         // Responds with the challenge token from the request
         this.logger.debug('Webhook Verified');

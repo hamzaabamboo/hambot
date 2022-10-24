@@ -7,8 +7,8 @@ import { TrelloService } from 'src/modules/trello/trello.service';
 import { ModuleRef } from '@nestjs/core';
 import mkdirp from 'mkdirp';
 import { createWriteStream } from 'fs';
-import { ConfigService } from '@nestjs/config';
 import path from 'path';
+import { AppConfigService } from 'src/config/app-config.service';
 
 export class FileCommand extends BaseCompoundHandler {
   public static startCommand = /^files?(?: (list|get|add)(?: (\d+))?)?/;
@@ -17,13 +17,13 @@ export class FileCommand extends BaseCompoundHandler {
   public endCommand = /^(end)/;
 
   private trello: TrelloService;
-  private config: ConfigService;
+  private config: AppConfigService;
 
   private _files: { name: string; url: string }[];
   constructor(moduleRef: ModuleRef) {
     super(moduleRef);
     this.trello = moduleRef.get(TrelloService, { strict: false });
-    this.config = moduleRef.get(ConfigService, { strict: false });
+    this.config = moduleRef.get(AppConfigService, { strict: false });
   }
   matchStart(input: string): boolean {
     return this.command.test(input);
@@ -162,7 +162,7 @@ export class FileCommand extends BaseCompoundHandler {
             });
             return {
               name: f.name,
-              url: this.config.get('PUBLIC_URL') + 'files/' + f.name,
+              url: this.config.PUBLIC_URL + 'files/' + f.name,
             };
           } else {
             return f;
