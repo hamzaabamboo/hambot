@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Message, DiscordMessage } from '../../messages/messages.model';
+import { DiscordMessage } from '../../messages/messages.model';
 import { BaseCommand } from '../command.base';
 import { DiscordService } from 'src/modules/discord/discord.service';
 import { ChannelType, TextChannel, VoiceChannel } from 'discord.js';
 import { matchUser } from 'src/modules/discord/discord.utils';
-import { sleep } from 'src/utils/sleep';
+import { setTimeout as sleep } from 'timers/promises';
 
 @Injectable()
 export class ShakeCommand extends BaseCommand {
@@ -65,8 +65,8 @@ export class ShakeCommand extends BaseCommand {
         }
         const I =
           isNaN(Number(intensity)) ||
-          Number(intensity) < 0 ||
-          Number(intensity) > 10
+            Number(intensity) < 0 ||
+            Number(intensity) > 10
             ? 2
             : Math.round(Number(intensity));
         const movableChannels = channels

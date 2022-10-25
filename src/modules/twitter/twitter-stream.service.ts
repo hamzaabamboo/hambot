@@ -5,7 +5,7 @@ import { PushService } from '../push/push.service';
 import needle from 'needle';
 import qs from 'querystring';
 import { Readable } from 'stream';
-import { sleep } from 'src/utils/sleep';
+import { setTimeout as sleep } from 'timers/promises';
 import { AppConfigService } from 'src/config/app-config.service';
 
 export interface TwitterRule {
