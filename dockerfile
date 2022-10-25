@@ -27,6 +27,7 @@ RUN yarn
 COPY . .
 
 RUN yarn build
+RUN yarn build:next
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
