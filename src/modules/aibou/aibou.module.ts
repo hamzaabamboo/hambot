@@ -16,6 +16,6 @@ import { AppConfigService } from 'src/config/app-config.service';
   controllers: [AibouController],
   exports: [TypeOrmModule],
 })
-export class AibouModule {}
+export class AibouModule { }
 
 export { AibouTopic, AibouTopicItem, AibouSettings };
