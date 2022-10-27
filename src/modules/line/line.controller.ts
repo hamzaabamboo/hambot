@@ -7,7 +7,7 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import crypto from 'crypto';
-import {
+import type {
   WebhookRequestBody,
   FileEventMessage,
   TextEventMessage,
@@ -28,7 +28,7 @@ export class LineController {
     private messageService: MessagesService,
     private lineService: LineService,
     private config: AppConfigService,
-  ) { }
+  ) {}
   @Post()
   handleMessage(
     @Body() message: WebhookRequestBody,

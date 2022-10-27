@@ -8,7 +8,7 @@ import {
   TWITTER_DELAY,
 } from './twitter-stream.service';
 import { Cron } from '@nestjs/schedule';
-import { sleep } from 'src/utils/sleep';
+import { setTimeout as sleep } from 'timers/promises';
 import { AppConfigService } from 'src/config/app-config.service';
 @Injectable()
 export class TwitterService {

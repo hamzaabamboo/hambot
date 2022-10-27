@@ -9,7 +9,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { request } from 'gaxios';
 import { PassThrough, Readable } from 'stream';
 import axios from 'axios';

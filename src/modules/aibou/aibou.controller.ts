@@ -1,11 +1,14 @@
 import { Body, Controller, Post, Req, Res } from '@nestjs/common';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { AppConfigService } from 'src/config/app-config.service';
 import { AibouService } from './aibou.service';
 
 @Controller('aibou')
 export class AibouController {
-  constructor(private service: AibouService, private config: AppConfigService) { }
+  constructor(
+    private service: AibouService,
+    private config: AppConfigService,
+  ) { }
   @Post('/sync')
   async syncData(
     @Body() data: any,
