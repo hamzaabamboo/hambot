@@ -92,7 +92,6 @@ export class DiscordService {
         this.sendMessage(message.channel, {
           content: 'Buu buu desu wa :P',
         });
-        return;
       }
       if (message.channel.type === ChannelType.DM) {
         this.message.handleMessage({
