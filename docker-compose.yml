@@ -6,7 +6,7 @@ services:
       context: .
     ports:
       - 3000:3000
-    command: ['yarn', 'start']
+    command: ['node', '--experimental-wasm-threads', 'dist/main.js']
     volumes:
       - './storage:/app/files'
     env_file: '.env'
