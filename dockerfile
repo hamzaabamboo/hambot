@@ -37,4 +37,4 @@ ENV NODE_ENV=${NODE_ENV}
 ARG PORT=3000
 EXPOSE ${PORT}
 
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]

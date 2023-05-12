@@ -6,7 +6,7 @@ services:
       context: .
     ports:
       - 3000:3000
-    command: ['yarn', 'start']
+    command: ['pnpm', 'start']
     volumes:
       - './storage:/app/files'
     env_file: '.env'
