@@ -6,7 +6,7 @@ services:
       context: .
     ports:
       - 3000:3000
-    command: ['pnpm', 'start']
+    command: ['pnpm', 'start:prod']
     volumes:
       - './storage:/app/files'
     env_file: '.env'
