@@ -5,12 +5,14 @@ import { BaseCommand } from './command.base';
 @Injectable()
 export class FriendCommand extends BaseCommand {
   public command = /^(friend)/i;
-  public bestFriends = ['Ham-san', 'หิม', 'Yama'];
-  public quotes = [
+  private bestFriends = ['Ham-san', 'หิม', 'Yama', 'Samuraiwarm'];
+  private quotes = [
     'ไม่ได้มึงนี่กูแย่เลย',
     'I am not a noodle guy',
     'Mr. {{NAME}}, I saw you at MBK. Are you still there?',
     'นี่มันอะไรกันเนี่ย',
+    'Mata mata',
+    'วันหลังชวนไปกินหมาล่าด้วยนะ',
   ];
 
   async handle(message: Message) {
