@@ -2,8 +2,6 @@ FROM node:18-alpine As development
 
 WORKDIR /app
 
-RUN yarn global add @nestjs/cli
-
 RUN apk add --update  --repository http://dl-3.alpinelinux.org/alpine/edge/testing libmount ttf-dejavu ttf-droid ttf-freefont ttf-liberation fontconfig
 
 RUN apk add && apk --no-cache add \
@@ -20,14 +18,18 @@ RUN apk add && apk --no-cache add \
     python3 \
     ffmpeg
 
-COPY package.json yarn.lock ./
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-RUN yarn
+COPY package.json pnpm-lock.yaml ./
+RUN echo "Y" | pnpm install --shamefully-hoist --config.auto-install-peers=true --strict-peer-dependencies
 
-COPY . .
+COPY ./ .
 
-RUN yarn build
-RUN yarn build:next
+RUN pnpm build
+RUN pnpm build:next
+
+RUN pnpm prune --prod
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
