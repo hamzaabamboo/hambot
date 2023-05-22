@@ -12,7 +12,7 @@ import { PromptPayCommand } from './promptpay.command';
 import { BaseDiscordCommand } from './discord/base.discord.command';
 import { ShakeCommand } from './discord/shake.command';
 import { YoutubeCommand } from './discord/youtube.command';
-import { StreamCommand } from './discord/stream.command';
+// import { StreamCommand } from './deprecated/stream.command';
 import { ActivateCommand } from './activate.command';
 import { PushCommand } from './push.command';
 import { RandomCommand } from './random.command';
@@ -41,7 +41,7 @@ export class CommandsService {
     discord: BaseDiscordCommand,
     activate: ActivateCommand,
     youtube: YoutubeCommand,
-    stream: StreamCommand,
+    // stream: StreamCommand,
     push: PushCommand,
     authCmd: AuthCommand,
     random: RandomCommand,
@@ -63,7 +63,7 @@ export class CommandsService {
       activate,
       youtube,
       random,
-      stream,
+      // stream,
       push,
       discord,
       clipboard,

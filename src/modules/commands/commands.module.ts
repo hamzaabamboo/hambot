@@ -18,7 +18,7 @@ import { ShakeCommand } from './discord/shake.command';
 import { DiscordModule } from '../discord/discord.module';
 import { YoutubeCommand } from './discord/youtube.command';
 import { AudioModule } from '../audio/audio.module';
-import { StreamCommand } from './discord/stream.command';
+// import { StreamCommand } from './deprecated/stream.command';
 import { ActivateCommand } from './activate.command';
 import { PushCommand } from './push.command';
 import { RandomCommand } from './random.command';
@@ -48,7 +48,7 @@ import { FriendCommand } from './friend.command';
     BaseDiscordCommand,
     PromptPayCommand,
     YoutubeCommand,
-    StreamCommand,
+    // StreamCommand,
     PushCommand,
     RandomCommand,
     ClipboardCommand,

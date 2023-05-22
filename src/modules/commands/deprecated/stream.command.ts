@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Message, DiscordMessage } from '../../messages/messages.model';
 import { BaseCommand } from '../command.base';
 import { AudioService } from 'src/modules/audio/audio.service';
-import { StreamService } from 'src/modules/audio/stream/stream.service';
+import { StreamService } from 'src/modules/deprecated/stream/stream.service';
 import { VoiceChannel } from 'discord.js';
 
 @Injectable()
