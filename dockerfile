@@ -2,21 +2,17 @@ FROM node:18-alpine As development
 
 WORKDIR /app
 
-RUN apk add --update  --repository http://dl-3.alpinelinux.org/alpine/edge/testing libmount ttf-dejavu ttf-droid ttf-freefont ttf-liberation fontconfig
-
-RUN apk add && apk --no-cache add \
-    sudo \
-    curl \
-    build-base \
+RUN apk add --update --no-cache \
+    make \
     g++ \
-    libpng \
-    libpng-dev \
     jpeg-dev \
-    pango-dev \
     cairo-dev \
     giflib-dev \
-    python3 \
-    ffmpeg
+    pango-dev \
+    libtool \
+    autoconf \
+    automake \
+    ffmpeg && apk add --update  --repository http://dl-3.alpinelinux.org/alpine/edge/testing libmount ttf-freefont fontconfig
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
