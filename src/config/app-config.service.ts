@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AppConfigService {
-  constructor(private readonly config: ConfigService) { }
+  constructor(private readonly config: ConfigService) {}
   private getEnv<T>(key: string, defaultValue: T): T {
     return this.config.get<T>(key) ?? defaultValue;
   }
@@ -12,14 +12,14 @@ export class AppConfigService {
   }
   get NEXT() {
     const next = this.getEnv('NEXT', 'true');
-    return next === 'true'
+    return next === 'true';
   }
   get NODE_ENV() {
     return this.getEnv('NODE_ENV', 'Development');
   }
   get PORT() {
-    const port = this.getEnv('PORT', '3000')
-    return parseInt(port, 10)
+    const port = this.getEnv('PORT', '3000');
+    return parseInt(port, 10);
   }
 
   get DISCORD_TOKEN() {
@@ -33,7 +33,10 @@ export class AppConfigService {
     return this.getEnv('FACEBOOK_VERIFY_TOKEN', '<FACEBOOK_VERIFY_TOKEN>');
   }
   get FACEBOOK_PAGE_ACCESS_TOKEN() {
-    return this.getEnv('FACEBOOK_PAGE_ACCESS_TOKEN', '<FACEBOOK_PAGE_ACCESS_TOKEN>');
+    return this.getEnv(
+      'FACEBOOK_PAGE_ACCESS_TOKEN',
+      '<FACEBOOK_PAGE_ACCESS_TOKEN>',
+    );
   }
 
   get LINE_CHANNEL_SECRET() {

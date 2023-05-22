@@ -31,8 +31,7 @@ export class PushService {
         {
           channel: '*',
           senderId: '',
-          message: `HamBot Online! (${this.config.NODE_ENV ?? 'Development'
-            })`,
+          message: `HamBot Online! (${this.config.NODE_ENV ?? 'Development'})`,
         },
         'debug',
       );

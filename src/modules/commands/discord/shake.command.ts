@@ -65,8 +65,8 @@ export class ShakeCommand extends BaseCommand {
         }
         const I =
           isNaN(Number(intensity)) ||
-            Number(intensity) < 0 ||
-            Number(intensity) > 10
+          Number(intensity) < 0 ||
+          Number(intensity) > 10
             ? 2
             : Math.round(Number(intensity));
         const movableChannels = channels

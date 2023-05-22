@@ -1,11 +1,11 @@
-import {  HttpService } from '@nestjs/axios';
-import {  Injectable } from '@nestjs/common';
-import {  XMLParser } from 'fast-xml-parser';
-import {  firstValueFrom } from 'rxjs';
+import { HttpService } from '@nestjs/axios';
+import { Injectable } from '@nestjs/common';
+import { XMLParser } from 'fast-xml-parser';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class RssService {
-  constructor(private http: HttpService) { }
+  constructor(private http: HttpService) {}
 
   async getRssFeed(url: string): Promise<Partial<RSS>> {
     try {

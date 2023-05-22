@@ -8,7 +8,7 @@ export class AibouController {
   constructor(
     private service: AibouService,
     private config: AppConfigService,
-  ) { }
+  ) {}
   @Post('/sync')
   async syncData(
     @Body() data: any,

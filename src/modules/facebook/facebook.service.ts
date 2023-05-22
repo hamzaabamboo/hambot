@@ -11,7 +11,7 @@ export class FacebookService {
     private http: HttpService,
     private config: AppConfigService,
     private logger: AppLogger,
-  ) { }
+  ) {}
 
   async sendReplyMessage(message: Message) {
     const msg = {

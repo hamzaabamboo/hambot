@@ -9,7 +9,7 @@ export class LineService {
     channelSecret: this.config.LINE_CHANNEL_SECRET,
   });
 
-  constructor(private config: AppConfigService) { }
+  constructor(private config: AppConfigService) {}
   sendReplyMessage(
     message: Parameters<Client['replyMessage']>[1],
     token: string,

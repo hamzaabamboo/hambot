@@ -58,4 +58,4 @@ import { AppConfigModule } from './config/app-config.module';
   controllers: [AppController],
   providers: [AppService, ConfigService],
 })
-export class AppModule { }
+export class AppModule {}

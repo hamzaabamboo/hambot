@@ -86,10 +86,7 @@ export class FacebookController {
     // Checks if a token and mode is in the query string of the request
     if (mode && token) {
       // Checks the mode and token sent is correct
-      if (
-        mode === 'subscribe' &&
-        token === this.config.FACEBOOK_VERIFY_TOKEN
-      ) {
+      if (mode === 'subscribe' && token === this.config.FACEBOOK_VERIFY_TOKEN) {
         // Responds with the challenge token from the request
         this.logger.debug('Webhook Verified');
         return challenge;

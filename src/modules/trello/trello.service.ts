@@ -6,10 +6,7 @@ import Trello from 'trello';
 export class TrelloService {
   private client: Trello;
   constructor(config: AppConfigService) {
-    this.client = new Trello(
-      config.TRELLO_API_KEY,
-      config.TRELLO_OAUTH_TOKEN,
-    );
+    this.client = new Trello(config.TRELLO_API_KEY, config.TRELLO_OAUTH_TOKEN);
   }
 
   async getBoards() {

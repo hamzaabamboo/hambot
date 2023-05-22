@@ -34,11 +34,17 @@ export class AibouService {
   async saveNewData(data: {
     topics: AibouTopic[];
     topicItem: (AibouTopicItem & { tags: string[] })[];
+    timestamp: number;
   }) {
-    const { topics, topicItem } = data;
-    await this.topicRepository.save(topics);
+    const { topics, topicItem, timestamp } = data;
+    const lastUpdatedAt = moment.unix(Math.floor(timestamp / 1000)).toDate();
+    await this.topicRepository.save(
+      topics.map((t) => ({ ...t, lastUpdatedAt })),
+    );
     await this.topicItemRepository.save(
-      topicItem.map(this.deserializeTopicItem),
+      topicItem
+        .map(this.deserializeTopicItem)
+        .map((t) => ({ ...t, lastUpdatedAt })),
     );
   }
 

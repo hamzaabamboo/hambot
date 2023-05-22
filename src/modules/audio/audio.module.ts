@@ -4,10 +4,12 @@ import { AudioService } from './audio.service';
 import { LoggerModule } from '../logger/logger.module';
 
 @Module({
-  providers: [AudioService, 
+  providers: [
+    AudioService,
     // StreamService
   ],
-  exports: [AudioService, 
+  exports: [
+    AudioService,
     // StreamService
   ],
   imports: [LoggerModule],

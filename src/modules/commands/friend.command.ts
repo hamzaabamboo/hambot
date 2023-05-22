@@ -19,9 +19,8 @@ export class FriendCommand extends BaseCommand {
     const selectedIndex = Math.floor(Math.random() * this.quotes.length);
     let selectedQuote = this.quotes[selectedIndex];
     if (selectedIndex === 2) {
-      const realBestFriend = this.bestFriends[
-        Math.floor(Math.random() * this.bestFriends.length)
-      ];
+      const realBestFriend =
+        this.bestFriends[Math.floor(Math.random() * this.bestFriends.length)];
       selectedQuote = selectedQuote.replace('{{NAME}}', realBestFriend);
     }
     return {

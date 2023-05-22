@@ -72,7 +72,7 @@ export class CovidService {
     private http: HttpService,
     private push: PushService,
     private config: AppConfigService,
-  ) { }
+  ) {}
 
   @Cron('0 0 * * * *')
   async checkCovidData() {
@@ -91,9 +91,10 @@ export class CovidService {
       )} 
 ผู้ติดเชื่อ: ${data.Confirmed} (+${data.NewConfirmed})
 หายแล้ว: ${data.Recovered} (+${data.NewRecovered})
-${data.Hospitalized &&
-        `รักษาอยู่ในรพ.: ${data.Hospitalized} (+${data.NewHospitalized})`
-        }
+${
+  data.Hospitalized &&
+  `รักษาอยู่ในรพ.: ${data.Hospitalized} (+${data.NewHospitalized})`
+}
 เสียชีวิต: ${data.Deaths} (+${data.NewDeaths})
       `;
     });

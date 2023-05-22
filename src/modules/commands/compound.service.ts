@@ -11,7 +11,7 @@ import { ProfilePicCommand } from './discord/profilepic.command';
 })
 export class CompoundService {
   private _compoundingData: Map<string, BaseCompoundHandler>;
-  private handlers: typeof BaseCompoundHandler[] = [
+  private handlers: (typeof BaseCompoundHandler)[] = [
     ProfilePicCommand,
     FileCommand,
     BaseCompoundHandler,

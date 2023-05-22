@@ -167,13 +167,13 @@ export class TwitterStreamService implements OnApplicationShutdown {
     try {
       const stream = needle.get(
         streamURL +
-        '?' +
-        qs.stringify({
-          expansions: 'author_id,attachments.media_keys',
-          'user.fields': 'username,id,name',
-          'tweet.fields': 'public_metrics',
-          'media.fields': 'url',
-        }),
+          '?' +
+          qs.stringify({
+            expansions: 'author_id,attachments.media_keys',
+            'user.fields': 'username,id,name',
+            'tweet.fields': 'public_metrics',
+            'media.fields': 'url',
+          }),
         {
           headers: {
             Authorization: `Bearer ${this.config.TWITTER_BEARER_TOKEN}`,
@@ -202,14 +202,14 @@ export class TwitterStreamService implements OnApplicationShutdown {
         try {
           const f = JSON.parse(e as string);
           if (!('data' in f)) this.logger.debug('Data: ' + JSON.stringify(f));
-        } catch { }
+        } catch {}
         if ('connection_issue' in e) {
           stream.emit('error', e);
         }
       });
 
       return stream;
-    } catch { }
+    } catch {}
   }
 
   async refresh() {
@@ -236,6 +236,6 @@ export class TwitterStreamService implements OnApplicationShutdown {
   onApplicationShutdown() {
     try {
       this.stream.destroy();
-    } catch { }
+    } catch {}
   }
 }

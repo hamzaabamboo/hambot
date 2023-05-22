@@ -3,7 +3,7 @@ import { AppConfigService } from 'src/config/app-config.service';
 
 @Controller('twitter')
 export class TwitterController {
-  constructor(private config: AppConfigService) { }
+  constructor(private config: AppConfigService) {}
 
   // @Get('/')
   // challengeCRC(@Query('crc_token') token: string) {
