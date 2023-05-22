@@ -3,15 +3,13 @@ FROM node:18-alpine As development
 WORKDIR /app
 
 RUN apk add --update --no-cache \
-    make \
+   build-base \
     g++ \
     jpeg-dev \
     cairo-dev \
     giflib-dev \
     pango-dev \
     libtool \
-    autoconf \
-    automake \
     ffmpeg && apk add --update  --repository http://dl-3.alpinelinux.org/alpine/edge/testing libmount ttf-freefont fontconfig
 
 # Install pnpm
