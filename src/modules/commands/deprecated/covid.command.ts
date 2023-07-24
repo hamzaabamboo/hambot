@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { BaseCommand } from './command.base';
-import { DiscordMessage, Message } from '../messages/messages.model';
-import { CovidService } from '../covid/covid.service';
-import { ModuleRef } from '@nestjs/core';
 import moment from 'moment';
+import { CovidService } from '../../deprecated/covid/covid.service';
+import { Message } from '../../messages/messages.model';
+import { BaseCommand } from '../command.base';
 
 @Injectable()
 export class CovidCommand extends BaseCommand {

@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { BaseCommand } from './command.base';
-import { Message } from '../messages/messages.model';
-import { TwitterService } from '../twitter/twitter.service';
-import { Cron } from '@nestjs/schedule';
+import { TwitterService } from 'src/modules/deprecated/twitter/twitter.service';
+import { Message } from '../../messages/messages.model';
+import { BaseCommand } from '../command.base';
 
 @Injectable()
 export class TwitterCommand extends BaseCommand {

@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import moment, { Moment } from 'moment';
-import { Message } from '../messages/messages.model';
-import { PushService } from '../push/push.service';
 import { firstValueFrom } from 'rxjs';
 import { AppConfigService } from 'src/config/app-config.service';
+import { Message } from '../../messages/messages.model';
+import { PushService } from '../../push/push.service';
 
 interface COVIDAPIResult {
   Confirmed: number;

@@ -1,25 +1,26 @@
-import { Injectable, Inject, forwardRef, HttpException } from '@nestjs/common';
+import { REST } from '@discordjs/rest';
+import { HttpException, Inject, Injectable, forwardRef } from '@nestjs/common';
 import {
+  ActivityType,
+  BaseMessageOptions,
+  ChannelType,
   Client,
   DMChannel,
-  TextChannel,
-  BaseMessageOptions,
   TextBasedChannel,
-  ActivityType,
-  ChannelType,
+  TextChannel,
 } from 'discord.js';
-import { REST } from '@discordjs/rest';
-import { MessagesService } from '../messages/messages.service';
-import { AppLogger } from '../logger/logger';
+import { AppConfigService } from 'src/config/app-config.service';
 import { generateRandomKey } from 'src/utils';
 import { setTimeout as sleep } from 'timers/promises';
-import { AppConfigService } from 'src/config/app-config.service';
+import { AppLogger } from '../logger/logger';
+import { MessagesService } from '../messages/messages.service';
 
 @Injectable()
 export class DiscordService {
   private client: Client;
   private restClient: REST;
   public prefix = /^hamB (.*)$/;
+  public isReady: boolean | Promise<void> = false;
   private isListening = false;
   private stopToken: string;
 
@@ -69,22 +70,28 @@ export class DiscordService {
     }
   }
 
-  listen() {
+  async listen() {
     if (this.isListening) return;
 
-    this.client.on('ready', () => {
-      this.logger.verbose('Discord Ready');
-      this.client.user.setPresence({
-        status: 'online',
-        activities: [
-          {
-            name: ':zanyface:',
-            type: ActivityType.Watching,
-          },
-        ],
+    this.isReady = new Promise((resolve) => {
+      this.client.on('ready', () => {
+        this.logger.verbose('Discord Ready');
+        this.client.user.setPresence({
+          status: 'online',
+          activities: [
+            {
+              name: ':zanyface:',
+              type: ActivityType.Watching,
+            },
+          ],
+        });
+        resolve()
       });
-    });
+    })
 
+    await this.isReady;
+    this.isReady = true;
+    
     this.client.on('messageCreate', (message) => {
       if (message.author.id === this.client.user.id || message.author.bot)
         return;

@@ -1,30 +1,28 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MessagesModule } from './modules/messages/messages.module';
-import { LineModule } from './modules/line/line.module';
-import { DiscordModule } from './modules/discord/discord.module';
-import { QrcodeModule } from './modules/qrcode/qrcode.module';
-import { SchedulerModule } from './modules/scheduler/scheduler.module';
-import { AudioModule } from './modules/audio/audio.module';
-import { FileModule } from './modules/file/file.module';
-import { TwitterModule } from './modules/twitter/twitter.module';
-import { FacebookModule } from './modules/facebook/facebook.module';
-import { RssModule } from './modules/rss/rss.module';
-import { IcalModule } from './modules/ical/ical.module';
-import { WanikaniModule } from './modules/wanikani/wanikani.module';
-import { D4DJModule } from './modules/d4dj/d4dj.module';
-import { CovidModule } from './modules/covid/covid.module';
+import { AppConfigModule } from './config/app-config.module';
 import {
   AibouModule,
   AibouSettings,
   AibouTopic,
   AibouTopicItem,
 } from './modules/aibou/aibou.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppConfigModule } from './config/app-config.module';
+import { AudioModule } from './modules/audio/audio.module';
+import { D4DJModule } from './modules/d4dj/d4dj.module';
+import { DiscordModule } from './modules/discord/discord.module';
+import { FacebookModule } from './modules/facebook/facebook.module';
+import { FileModule } from './modules/file/file.module';
+import { IcalModule } from './modules/ical/ical.module';
+import { LineModule } from './modules/line/line.module';
+import { MessagesModule } from './modules/messages/messages.module';
+import { QrcodeModule } from './modules/qrcode/qrcode.module';
+import { RssModule } from './modules/rss/rss.module';
+import { SchedulerModule } from './modules/scheduler/scheduler.module';
+import { WanikaniModule } from './modules/wanikani/wanikani.module';
 
 @Module({
   imports: [
@@ -40,13 +38,11 @@ import { AppConfigModule } from './config/app-config.module';
     }),
     AppConfigModule,
     FacebookModule,
-    TwitterModule,
     AudioModule,
     RssModule,
     IcalModule,
     WanikaniModule,
     D4DJModule,
-    CovidModule,
     AibouModule,
     TypeOrmModule.forRoot({
       type: 'sqlite',

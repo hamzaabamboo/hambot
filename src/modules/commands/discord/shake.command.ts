@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { DiscordMessage } from '../../messages/messages.model';
-import { BaseCommand } from '../command.base';
-import { DiscordService } from 'src/modules/discord/discord.service';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ChannelType, TextChannel, VoiceChannel } from 'discord.js';
+import { DiscordService } from 'src/modules/discord/discord.service';
 import { matchUser } from 'src/modules/discord/discord.utils';
 import { setTimeout as sleep } from 'timers/promises';
+import { DiscordMessage } from '../../messages/messages.model';
+import { BaseCommand } from '../command.base';
 
 @Injectable()
 export class ShakeCommand extends BaseCommand {
@@ -12,7 +12,10 @@ export class ShakeCommand extends BaseCommand {
   public command = /^shake(?: ([^\s]*)(?: (\d+)(?: (\d+)(?: (\d+)?))?)?)?/i;
   public platforms = ['discord'];
 
-  constructor(private discord: DiscordService) {
+  constructor(
+    @Inject(forwardRef(() => DiscordService))
+    private discord: DiscordService
+    ) {
     super();
   }
   async handle(message: DiscordMessage, command: string, intensity = '10') {

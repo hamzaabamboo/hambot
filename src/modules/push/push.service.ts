@@ -1,12 +1,12 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
-import { DiscordService } from '../discord/discord.service';
-import { Message, MessageChannel } from '../messages/messages.model';
-import { TrelloService } from '../trello/trello.service';
-import { MessagesService } from '../messages/messages.service';
-import { AppLogger } from '../logger/logger';
-import moment from 'moment';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { TextChannel } from 'discord.js';
+import moment from 'moment';
 import { AppConfigService } from 'src/config/app-config.service';
+import { DiscordService } from '../discord/discord.service';
+import { AppLogger } from '../logger/logger';
+import { Message, MessageChannel } from '../messages/messages.model';
+import { MessagesService } from '../messages/messages.service';
+import { TrelloService } from '../trello/trello.service';
 @Injectable()
 export class PushService {
   private _cache: {
@@ -21,6 +21,7 @@ export class PushService {
     private trello: TrelloService,
     @Inject(forwardRef(() => MessagesService))
     private messageService: MessagesService,
+    @Inject(forwardRef(() => DiscordService))
     private discord: DiscordService,
     private logger: AppLogger,
     private config: AppConfigService,
@@ -67,7 +68,6 @@ export class PushService {
 
   async push(message: Message, tag?: string) {
     const destinations = await this.getDestinations();
-
     destinations
       .filter((d) =>
         tag ? d.tag?.toLowerCase().includes(tag.toLowerCase()) : true,
@@ -75,16 +75,22 @@ export class PushService {
       .forEach((d) => {
         const f = async () => {
           switch (d.channel) {
-            case 'discord':
-              await this.messageService.sendMessage({
-                ...message,
-                senderId: '',
-                channel: 'discord',
-                messageChannel: (await this.discord.getClient.channels.fetch(
-                  d.id,
-                )) as TextChannel,
-              });
+            case 'discord': {
+              if (this.discord.isReady !== true) await this.discord.isReady;
+              try {
+                await this.messageService.sendMessage({
+                  ...message,
+                  senderId: '',
+                  channel: 'discord',
+                  messageChannel: (await this.discord.getClient.channels.fetch(
+                    d.id,
+                  )) as TextChannel,
+                });
+              } catch {
+                
+              }
               break;
+            }
             case 'line':
               await this.messageService.sendMessage({
                 ...message,

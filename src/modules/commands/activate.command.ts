@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { BaseCommand } from './command.base';
-import { Message } from '../messages/messages.model';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { DiscordService } from '../discord/discord.service';
+import { Message } from '../messages/messages.model';
+import { BaseCommand } from './command.base';
 
 @Injectable()
 export class ActivateCommand extends BaseCommand {
@@ -9,7 +9,11 @@ export class ActivateCommand extends BaseCommand {
   public command = /^(activate|deactivate)(?: (.*))?/i;
   public requiresAuth = true;
 
-  constructor(private discordService: DiscordService) {
+
+  constructor(
+    @Inject(forwardRef(() => DiscordService))
+    private discordService: DiscordService
+    ) {
     super();
   }
 

@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { AppLogger } from '../logger/logger';
-import { PushService } from '../push/push.service';
+import { Cron } from '@nestjs/schedule';
+import { AppConfigService } from 'src/config/app-config.service';
+import { setTimeout as sleep } from 'timers/promises';
+import { AppLogger } from '../../logger/logger';
+import { PushService } from '../../push/push.service';
 import {
+  TWITTER_DELAY,
   Tweet,
   TwitterRule,
   TwitterStreamService,
-  TWITTER_DELAY,
 } from './twitter-stream.service';
-import { Cron } from '@nestjs/schedule';
-import { setTimeout as sleep } from 'timers/promises';
-import { AppConfigService } from 'src/config/app-config.service';
 @Injectable()
 export class TwitterService {
   rules: TwitterRule[] = [];

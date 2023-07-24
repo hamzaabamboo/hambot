@@ -1,28 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { Message } from '../messages/messages.model';
-import { BaseCommand } from './command.base';
-import { HelloCommand } from './hello.command';
-import { PingCommand } from './ping.command';
-import { TimeCommand } from './time.command';
-import { TasksCommand } from './tasks.command';
-import { CompoundService } from './compound.service';
 import { AuthService } from '../auth/auth.service';
+import { Message } from '../messages/messages.model';
 import { AuthCommand } from './auth.command';
-import { PromptPayCommand } from './promptpay.command';
+import { BaseCommand } from './command.base';
+import { CompoundService } from './compound.service';
 import { BaseDiscordCommand } from './discord/base.discord.command';
 import { ShakeCommand } from './discord/shake.command';
 import { YoutubeCommand } from './discord/youtube.command';
+import { HelloCommand } from './hello.command';
+import { PingCommand } from './ping.command';
+import { PromptPayCommand } from './promptpay.command';
+import { TasksCommand } from './tasks.command';
+import { TimeCommand } from './time.command';
 // import { StreamCommand } from './deprecated/stream.command';
 import { ActivateCommand } from './activate.command';
+import { ClipboardCommand } from './clipboard.command';
+import { FriendCommand } from './friend.command';
+import { NyaaCommand } from './nyaa.command';
 import { PushCommand } from './push.command';
 import { RandomCommand } from './random.command';
-import { ClipboardCommand } from './clipboard.command';
-import { NyaaCommand } from './nyaa.command';
 import { RecurringCommand } from './recurring.command';
-import { ProfilePicCommand } from './discord/profilepic.command';
-import { TwitterCommand } from './twitter.command';
-import { CovidCommand } from './covid.command';
-import { FriendCommand } from './friend.command';
 
 @Injectable()
 export class CommandsService {
@@ -48,8 +45,6 @@ export class CommandsService {
     clipboard: ClipboardCommand,
     nyaa: NyaaCommand,
     recurring: RecurringCommand,
-    twitter: TwitterCommand,
-    covid: CovidCommand,
     friend: FriendCommand,
   ) {
     this.commands = [
@@ -69,8 +64,6 @@ export class CommandsService {
       clipboard,
       nyaa,
       recurring,
-      twitter,
-      covid,
       friend,
       //Always bottom
       base,

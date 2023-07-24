@@ -1,12 +1,12 @@
-import { Injectable, OnApplicationShutdown } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { AppLogger } from '../logger/logger';
-import { PushService } from '../push/push.service';
+import { Injectable, OnApplicationShutdown } from '@nestjs/common';
 import needle from 'needle';
 import qs from 'querystring';
+import { AppConfigService } from 'src/config/app-config.service';
 import { Readable } from 'stream';
 import { setTimeout as sleep } from 'timers/promises';
-import { AppConfigService } from 'src/config/app-config.service';
+import { AppLogger } from '../../logger/logger';
+import { PushService } from '../../push/push.service';
 
 export interface TwitterRule {
   id?: string;
