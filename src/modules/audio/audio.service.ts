@@ -1,17 +1,15 @@
-import { Injectable, BeforeApplicationShutdown } from '@nestjs/common';
-import { Readable } from 'stream';
-import { Message } from '../messages/messages.model';
-import { TextChannel, VoiceChannel } from 'discord.js';
 import {
-  AudioPlayer,
-  AudioPlayerState,
   AudioPlayerStatus,
   AudioResource,
+  VoiceConnection,
   createAudioPlayer,
   createAudioResource,
-  joinVoiceChannel,
-  VoiceConnection,
+  joinVoiceChannel
 } from '@discordjs/voice';
+import { BeforeApplicationShutdown, Injectable } from '@nestjs/common';
+import { TextChannel } from 'discord.js';
+import { Readable } from 'stream';
+import { Message } from '../messages/messages.model';
 
 const TIMEOUT_INTERVAL = 30000;
 const DEFAULT_VOLUME = 0.2;
@@ -68,8 +66,7 @@ export class AudioService implements BeforeApplicationShutdown {
     message: Message,
     stream: Readable | string,
     volume?: number,
-    seek?: number,
-    bitrate?: number,
+    timeout = TIMEOUT_INTERVAL
   ): Promise<AudioResource> {
     switch (message.channel) {
       case 'discord':
@@ -115,7 +112,7 @@ export class AudioService implements BeforeApplicationShutdown {
                   setTimeout(() => {
                     this._channels.delete(key);
                     conn.destroy();
-                  }, TIMEOUT_INTERVAL),
+                  }, timeout),
                 );
                 break;
               }
@@ -128,7 +125,6 @@ export class AudioService implements BeforeApplicationShutdown {
 
         return resource;
 
-        break;
     }
   }
 

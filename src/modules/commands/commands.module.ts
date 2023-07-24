@@ -23,6 +23,7 @@ import { RssModule } from '../rss/rss.module';
 import { SchedulerModule } from '../scheduler/scheduler.module';
 import { ActivateCommand } from './activate.command';
 import { ClipboardCommand } from './clipboard.command';
+import { YomiageCommand } from './discord/yomiage.command';
 import { FriendCommand } from './friend.command';
 import { NyaaCommand } from './nyaa.command';
 import { PushCommand } from './push.command';
@@ -51,6 +52,7 @@ import { RecurringCommand } from './recurring.command';
     NyaaCommand,
     RecurringCommand,
     FriendCommand,
+    YomiageCommand
   ],
   imports: [
     forwardRef(() => DiscordModule),

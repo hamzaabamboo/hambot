@@ -1,12 +1,12 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
-import { Message, FileWithUrl } from './messages.model';
-import { LineService } from '../line/line.service';
+import { Client } from '@line/bot-sdk';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { DiscordAPIError, Embed } from 'discord.js';
 import { CommandsService } from '../commands/commands.service';
 import { DiscordService } from '../discord/discord.service';
-import { AppLogger } from '../logger/logger';
-import { Client } from '@line/bot-sdk';
 import { FacebookService } from '../facebook/facebook.service';
-import { DiscordAPIError, Embed } from 'discord.js';
+import { LineService } from '../line/line.service';
+import { AppLogger } from '../logger/logger';
+import { FileWithUrl, Message } from './messages.model';
 
 const EMBED_PATTERN = /<embed>(.*?)<\/embed>/s;
 
@@ -33,6 +33,7 @@ export class MessagesService {
     } else {
       return;
     }
+    if (!reply.message) return;
     switch (message.channel) {
       case 'line':
         this.sendMessage({

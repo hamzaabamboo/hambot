@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Message, DiscordMessage } from '../../messages/messages.model';
-import { BaseCommand } from '../command.base';
 import { AudioService } from 'src/modules/audio/audio.service';
 import { StreamService } from 'src/modules/deprecated/stream/stream.service';
-import { VoiceChannel } from 'discord.js';
+import { DiscordMessage } from '../../messages/messages.model';
+import { BaseCommand } from '../command.base';
 
 @Injectable()
 export class StreamCommand extends BaseCommand {
@@ -30,7 +29,7 @@ export class StreamCommand extends BaseCommand {
             dm.send({ content: 'Your stream key is ' + key });
           }
           await this.stream.listenToStream(message.senderId);
-          await this.audio.playAudio(message, this.stream.stream, 1, 5, 64);
+          // await this.audio.playAudio(message, this.stream.stream, 1, 5, 64);
           this.stream.stream.on('close', () => {
             this.stream.stopServer();
             this.audio.stopPlaying(message);

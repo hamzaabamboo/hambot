@@ -15,6 +15,7 @@ import { TimeCommand } from './time.command';
 // import { StreamCommand } from './deprecated/stream.command';
 import { ActivateCommand } from './activate.command';
 import { ClipboardCommand } from './clipboard.command';
+import { YomiageCommand } from './discord/yomiage.command';
 import { FriendCommand } from './friend.command';
 import { NyaaCommand } from './nyaa.command';
 import { PushCommand } from './push.command';
@@ -46,6 +47,7 @@ export class CommandsService {
     nyaa: NyaaCommand,
     recurring: RecurringCommand,
     friend: FriendCommand,
+    yomiage: YomiageCommand
   ) {
     this.commands = [
       hello,
@@ -65,6 +67,7 @@ export class CommandsService {
       nyaa,
       recurring,
       friend,
+      yomiage,
       //Always bottom
       base,
     ];
