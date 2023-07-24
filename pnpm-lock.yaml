@@ -127,6 +127,9 @@ dependencies:
   rtmp-server:
     specifier: ^0.2.0
     version: 0.2.0
+  run-script-webpack-plugin:
+    specifier: ^0.2.0
+    version: 0.2.0
   rxjs:
     specifier: ^7.8.1
     version: 7.8.1
@@ -6706,6 +6709,11 @@ packages:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
     dependencies:
       queue-microtask: 1.2.3
+
+  /run-script-webpack-plugin@0.2.0:
+    resolution: {integrity: sha512-SVNNq4jxzjfnaW+HkdTlyH1CWwCuSb/weYfic0D7Y/KnhY27YRYkzgybdzTDEPJlpQ73FDCRDbyBFwNsJMmwWQ==}
+    engines: {node: '>=14'}
+    dev: false
 
   /rxjs@7.8.1:
     resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}

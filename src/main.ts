@@ -8,6 +8,7 @@ import { AppModule } from './app.module';
 import { AppConfigService } from './config/app-config.service';
 import { AppLogger } from './modules/logger/logger';
 
+declare const module: any;
 type FastifyWithNextPlugin = FastifyAdapter & {
   next: (route: string) => void;
 };
@@ -62,9 +63,9 @@ async function bootstrap() {
   await app.listen(port ?? 3000, '0.0.0.0');
   logger.verbose('Listening to ' + (port ?? 3000));
 
-  // if (module.hot) {
-  //   module.hot.accept();
-  //   module.hot.dispose(() => app.close());
-  // }
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
 }
 bootstrap();
