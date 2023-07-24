@@ -1,5 +1,5 @@
 import { REST } from '@discordjs/rest';
-import { HttpException, Inject, Injectable, forwardRef } from '@nestjs/common';
+import { HttpException, Inject, Injectable, OnApplicationShutdown, forwardRef } from '@nestjs/common';
 import {
   ActivityType,
   BaseMessageOptions,
@@ -16,7 +16,7 @@ import { AppLogger } from '../logger/logger';
 import { MessagesService } from '../messages/messages.service';
 
 @Injectable()
-export class DiscordService {
+export class DiscordService implements OnApplicationShutdown {
   private client: Client;
   private restClient: REST;
   public prefix = /^hamB (.*)$/;
@@ -48,6 +48,9 @@ export class DiscordService {
       : /^hamB (.*)$/;
     this.logger.setContext('DiscordService');
     this.login();
+  }
+  onApplicationShutdown(signal?: string) {
+    this.client.destroy();
   }
 
   async login(tries = 0) {

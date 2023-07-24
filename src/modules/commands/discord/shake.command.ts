@@ -80,12 +80,11 @@ export class ShakeCommand extends BaseCommand {
           for (let i = 0; i < I; i++) {
             await victim.voice.setChannel(
               movableChannels[i % movableChannels.length],
-              'you got shaken',
+              `You got shaken (${i}/${I})`,
             );
-
             await sleep(2000 / I);
           }
-          await victim.voice.setChannel(origin, 'you got shaken');
+          await victim.voice.setChannel(origin, `Welcome back home`);
           return {
             files: [],
             message: `<@!${message.senderId}> shook ${command} ${I} times`,
