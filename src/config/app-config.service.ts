@@ -26,7 +26,7 @@ export class AppConfigService {
     return this.getEnv('DISCORD_TOKEN', '<DISCORD_TOKEN>');
   }
   get BOT_PREFIX() {
-    return this.getEnv('BOT_PREFIX', '<BOT_PREFIX>');
+    return this.getEnv('BOT_PREFIX', 'hamB');
   }
 
   get FACEBOOK_VERIFY_TOKEN() {
