@@ -1,14 +1,13 @@
 import {
-  Controller,
-  Get,
-  Param,
-  HttpException,
-  Res,
-  Response,
+    Controller,
+    Get,
+    HttpException,
+    Param,
+    Res
 } from '@nestjs/common';
+import { createReadStream, promises } from 'fs';
+import { mkdirp } from 'mkdirp';
 import { join } from 'path';
-import mkdirp from 'mkdirp';
-import { promises, createReadStream } from 'fs';
 
 @Controller('files')
 export class FileController {

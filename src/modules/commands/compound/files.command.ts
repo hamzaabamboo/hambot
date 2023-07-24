@@ -1,14 +1,14 @@
+import { ModuleRef } from '@nestjs/core';
+import { createWriteStream } from 'fs';
+import { mkdirp } from 'mkdirp';
+import path from 'path';
+import { AppConfigService } from 'src/config/app-config.service';
+import { TrelloService } from 'src/modules/trello/trello.service';
 import { Message } from '../../messages/messages.model';
 import {
   BaseCompoundHandler,
   CompoundResponse,
 } from '../compound.handler.base';
-import { TrelloService } from 'src/modules/trello/trello.service';
-import { ModuleRef } from '@nestjs/core';
-import mkdirp from 'mkdirp';
-import { createWriteStream } from 'fs';
-import path from 'path';
-import { AppConfigService } from 'src/config/app-config.service';
 
 export class FileCommand extends BaseCompoundHandler {
   public static startCommand = /^files?(?: (list|get|add)(?: (\d+))?)?/;

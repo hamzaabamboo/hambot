@@ -4,9 +4,10 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 
+import { SpelunkerModule } from 'nestjs-spelunker';
 import { AppModule } from './app.module';
-import { AppLogger } from './modules/logger/logger';
 import { AppConfigService } from './config/app-config.service';
+import { AppLogger } from './modules/logger/logger';
 
 type FastifyWithNextPlugin = FastifyAdapter & {
   next: (route: string) => void;
@@ -27,9 +28,26 @@ async function bootstrap() {
   const config = app.get(AppConfigService);
   const port = config.PORT;
   const logger = await app.resolve(AppLogger);
-  const fastify: FastifyWithNextPlugin = app.getHttpAdapter().getInstance();
+  const fastify = app.getHttpAdapter().getInstance();
 
   app.enableShutdownHooks();
+  
+  // 1. Generate the tree as text
+  const tree = SpelunkerModule.explore(app);
+  const root = SpelunkerModule.graph(tree);
+  const edges = SpelunkerModule.findGraphEdges(root);
+  const mermaidEdges = edges
+    .filter( // I'm just filtering some extra Modules out
+      ({ from, to }) =>
+        !(
+          from.module.name === 'ConfigHostModule' ||
+          from.module.name === 'LoggerModule' ||
+          to.module.name === 'ConfigHostModule' ||
+          to.module.name === 'LoggerModule'
+        ),
+    )
+    .map(({ from, to }) => `${from.module.name}-->${to.module.name}`);
+  console.log(`graph TD\n\t${mermaidEdges.join('\n\t')}`);
 
   try {
     if (config.NEXT) {
