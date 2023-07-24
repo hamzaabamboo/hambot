@@ -3,7 +3,10 @@ import { DiscordService } from './discord.service';
 import { AppLogger } from '../logger/logger';
 @Controller('discord')
 export class DiscordController {
-  constructor(private service: DiscordService, private logger: AppLogger) {
+  constructor(
+    private service: DiscordService,
+    private logger: AppLogger,
+  ) {
     this.logger.setContext('DiscordContext');
   }
 

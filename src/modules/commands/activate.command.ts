@@ -9,11 +9,10 @@ export class ActivateCommand extends BaseCommand {
   public command = /^(activate|deactivate)(?: (.*))?/i;
   public requiresAuth = true;
 
-
   constructor(
     @Inject(forwardRef(() => DiscordService))
-    private discordService: DiscordService
-    ) {
+    private discordService: DiscordService,
+  ) {
     super();
   }
 

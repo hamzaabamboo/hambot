@@ -14,8 +14,8 @@ export class ShakeCommand extends BaseCommand {
 
   constructor(
     @Inject(forwardRef(() => DiscordService))
-    private discord: DiscordService
-    ) {
+    private discord: DiscordService,
+  ) {
     super();
   }
   async handle(message: DiscordMessage, command: string, intensity = '10') {

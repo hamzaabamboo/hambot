@@ -1,10 +1,4 @@
-import {
-    Controller,
-    Get,
-    HttpException,
-    Param,
-    Res
-} from '@nestjs/common';
+import { Controller, Get, HttpException, Param, Res } from '@nestjs/common';
 import { createReadStream, promises } from 'fs';
 import { mkdirp } from 'mkdirp';
 import { join } from 'path';

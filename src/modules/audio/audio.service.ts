@@ -4,7 +4,7 @@ import {
   VoiceConnection,
   createAudioPlayer,
   createAudioResource,
-  joinVoiceChannel
+  joinVoiceChannel,
 } from '@discordjs/voice';
 import { BeforeApplicationShutdown, Injectable } from '@nestjs/common';
 import { TextChannel } from 'discord.js';
@@ -66,7 +66,7 @@ export class AudioService implements BeforeApplicationShutdown {
     message: Message,
     stream: Readable | string,
     volume?: number,
-    timeout = TIMEOUT_INTERVAL
+    timeout = TIMEOUT_INTERVAL,
   ): Promise<AudioResource> {
     switch (message.channel) {
       case 'discord':
@@ -124,7 +124,6 @@ export class AudioService implements BeforeApplicationShutdown {
         }
 
         return resource;
-
     }
   }
 

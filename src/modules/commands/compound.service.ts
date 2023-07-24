@@ -17,7 +17,10 @@ export class CompoundService {
     BaseCompoundHandler,
   ];
 
-  constructor(private auth: AuthService, private moduleRef: ModuleRef) {
+  constructor(
+    private auth: AuthService,
+    private moduleRef: ModuleRef,
+  ) {
     this._compoundingData = new Map<string, BaseCompoundHandler>([]);
   }
   canCompound(message: Message): boolean {

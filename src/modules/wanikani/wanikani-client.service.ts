@@ -18,7 +18,10 @@ export class WanikaniClientService {
 
   private http: AxiosInstance;
 
-  constructor(config: AppConfigService, private logger: AppLogger) {
+  constructor(
+    config: AppConfigService,
+    private logger: AppLogger,
+  ) {
     logger.setContext('WanikaniClient');
 
     this.logger.verbose('Initializing Wanikani Client');

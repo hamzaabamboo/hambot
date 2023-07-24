@@ -21,7 +21,10 @@ export class YoutubeCommand extends BaseCommand {
   private playState = new Map<string, boolean>();
   private message: MessagesService;
 
-  constructor(private audio: AudioService, moduleRef: ModuleRef) {
+  constructor(
+    private audio: AudioService,
+    moduleRef: ModuleRef,
+  ) {
     super();
     this.message = moduleRef.get(MessagesService, { strict: false });
   }

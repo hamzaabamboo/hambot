@@ -47,7 +47,7 @@ export class CommandsService {
     nyaa: NyaaCommand,
     recurring: RecurringCommand,
     friend: FriendCommand,
-    yomiage: YomiageCommand
+    yomiage: YomiageCommand,
   ) {
     this.commands = [
       hello,

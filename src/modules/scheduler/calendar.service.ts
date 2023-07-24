@@ -106,11 +106,11 @@ export class CalendarSchedule {
                     tags: c.tags,
                     calendar: c.calendar,
                     card: c.card,
-                  } as CalendarEvent & {
+                  }) as CalendarEvent & {
                     tags?: string;
                     calendar?: string;
                     card?: string;
-                  }),
+                  },
               );
           } catch (error) {
             this.logger.error(error.message);

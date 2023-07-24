@@ -9,7 +9,10 @@ export class AuthCommand extends BaseCommand {
   public name = 'auth';
   public command = /^auth(?: (token|register)(?: (.*))?)?/i;
 
-  constructor(private auth: AuthService, private logger: AppLogger) {
+  constructor(
+    private auth: AuthService,
+    private logger: AppLogger,
+  ) {
     super();
     this.logger.setContext('AuthCommand');
   }

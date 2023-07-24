@@ -31,7 +31,7 @@ async function bootstrap() {
   const fastify = app.getHttpAdapter().getInstance();
 
   app.enableShutdownHooks();
-  
+
   // // 1. Generate the tree as text
   // const tree = SpelunkerModule.explore(app);
   // const root = SpelunkerModule.graph(tree);

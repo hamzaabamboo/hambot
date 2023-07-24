@@ -86,9 +86,7 @@ export class PushService {
                     d.id,
                   )) as TextChannel,
                 });
-              } catch {
-                
-              }
+              } catch {}
               break;
             }
             case 'line':

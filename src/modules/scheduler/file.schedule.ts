@@ -9,7 +9,10 @@ import { TrelloService } from '../trello/trello.service';
 
 @Injectable()
 export class FileSchedule {
-  constructor(private logger: AppLogger, private trello: TrelloService) {
+  constructor(
+    private logger: AppLogger,
+    private trello: TrelloService,
+  ) {
     this.logger.setContext('FileSchedule');
   }
 

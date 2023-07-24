@@ -9,7 +9,10 @@ export class AuthService {
   private _userList: any;
   private _authenticating: Map<string, string> = new Map();
 
-  constructor(private trello: TrelloService, private logger: AppLogger) {
+  constructor(
+    private trello: TrelloService,
+    private logger: AppLogger,
+  ) {
     this.logger.setContext('AuthService');
     this.getAuthenticationData();
   }

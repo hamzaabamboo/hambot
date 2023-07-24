@@ -11,7 +11,10 @@ export class StreamCommand extends BaseCommand {
   public requiresAuth = true;
   public platforms = ['discord'];
 
-  constructor(private audio: AudioService, private stream: StreamService) {
+  constructor(
+    private audio: AudioService,
+    private stream: StreamService,
+  ) {
     super();
   }
 

@@ -52,7 +52,7 @@ import { RecurringCommand } from './recurring.command';
     NyaaCommand,
     RecurringCommand,
     FriendCommand,
-    YomiageCommand
+    YomiageCommand,
   ],
   imports: [
     forwardRef(() => DiscordModule),

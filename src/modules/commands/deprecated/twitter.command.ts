@@ -26,8 +26,8 @@ export class TwitterCommand extends BaseCommand {
           files: [],
           message: `
             Current Rules (total ${rules.length}):\n${rules
-            .map((r) => `${r.tag} - ${r.value}`)
-            .join('\n')}
+              .map((r) => `${r.tag} - ${r.value}`)
+              .join('\n')}
           `,
         };
       case 'set':

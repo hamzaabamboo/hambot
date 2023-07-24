@@ -1,5 +1,11 @@
 import { REST } from '@discordjs/rest';
-import { HttpException, Inject, Injectable, OnApplicationShutdown, forwardRef } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  OnApplicationShutdown,
+  forwardRef,
+} from '@nestjs/common';
 import {
   ActivityType,
   BaseMessageOptions,
@@ -88,13 +94,13 @@ export class DiscordService implements OnApplicationShutdown {
             },
           ],
         });
-        resolve()
+        resolve();
       });
-    })
+    });
 
     await this.isReady;
     this.isReady = true;
-    
+
     this.client.on('messageCreate', (message) => {
       if (message.author.id === this.client.user.id || message.author.bot)
         return;

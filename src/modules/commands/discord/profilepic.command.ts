@@ -2,21 +2,21 @@ import { HttpService } from '@nestjs/axios';
 import { ModuleRef } from '@nestjs/core';
 import { TextChannel } from 'discord.js';
 import {
-    createWriteStream,
-    existsSync,
-    promises as fs,
-    readFileSync,
+  createWriteStream,
+  existsSync,
+  promises as fs,
+  readFileSync,
 } from 'fs';
 import { mkdirp } from 'mkdirp';
 import path from 'path';
 import {
-    DiscordMessage,
-    FileWithUrl,
-    Message,
+  DiscordMessage,
+  FileWithUrl,
+  Message,
 } from '../../messages/messages.model';
 import {
-    BaseCompoundHandler,
-    CompoundResponse,
+  BaseCompoundHandler,
+  CompoundResponse,
 } from '../compound.handler.base';
 
 export class ProfilePicCommand extends BaseCompoundHandler {
