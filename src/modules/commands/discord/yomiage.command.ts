@@ -23,7 +23,7 @@ export class YomiageCommand extends BaseCompoundHandler {
   private http: HttpService
 
   private speakerId = '0';
-  private isStarted = true;
+  private isStarted = false;
 
   constructor(
     moduleRef: ModuleRef,
@@ -121,6 +121,12 @@ export class YomiageCommand extends BaseCompoundHandler {
     switch (command?.trim()) {
       case 'start':
         this.speakerId = speakerId;
+        await lastValueFrom(
+          this.http.post(
+            this.config.get('VOICEVOX_SERVER') +
+              `initialize_speaker?speaker=${speakerId}&skip_reinit=true`
+          ),
+        );
         await this.playAudio(message, 'こんにちは、ハム様のメイドです。よろしくお願いいたします');
         this.isStarted = true;
         return {
@@ -136,6 +142,12 @@ export class YomiageCommand extends BaseCompoundHandler {
             message: 'Not started yet, type "yomiage start" first',
           }
         };
+        await lastValueFrom(
+          this.http.post(
+            this.config.get('VOICEVOX_SERVER') +
+              `initialize_speaker?speaker=${speakerId}&skip_reinit=true`
+          ),
+        );
         this.speakerId = speakerId;
         await this.playAudio(message, '声の変更が完了いたしました、わたくしの新しい声はいかがでしょうか');
         return {
