@@ -133,15 +133,15 @@ export class YomiageCommand extends BaseCompoundHandler {
         if (!this.isStarted)   return {
           isCompounding: false,
           message: {
-            message: 'Not type yomiage start first',
+            message: 'Not started yet, type "yomiage start" first',
           }
         };
         this.speakerId = speakerId;
-        await this.playAudio(message, 'こんにちは、ハム様のメイドです。よろしくお願いいたします');
+        await this.playAudio(message, '声の変更が完了いたしました、わたくしの新しい声はいかがでしょうか');
         return {
           isCompounding: true,
           message: {
-            message: 'Yomiage Sutaato',
+            message: 'Voice Changed',
           }
         };
       case 'test':
@@ -152,7 +152,7 @@ export class YomiageCommand extends BaseCompoundHandler {
         return {
           isCompounding: false,
           message: {
-            message: 'Yomiage Sutaato',
+            message: 'Test phrase for ' + speakerId,
           }
         };
       default: 
