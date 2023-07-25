@@ -23,6 +23,9 @@ export class AudioService implements BeforeApplicationShutdown {
     [...this._channels.entries()].forEach(([, c]) => {
       c.destroy();
     });
+    [...this._leaveTimer.entries()].forEach(([,c]) => {
+      clearTimeout(c);
+    })
   }
 
   getPlayer(message: Message) {
@@ -111,7 +114,7 @@ export class AudioService implements BeforeApplicationShutdown {
                   key,
                   setTimeout(() => {
                     this._channels.delete(key);
-                    conn.destroy();
+                    conn.disconnect();
                   }, timeout),
                 );
                 break;
@@ -144,11 +147,17 @@ export class AudioService implements BeforeApplicationShutdown {
     switch (message.channel) {
       case 'discord':
         const guild = (message.messageChannel as TextChannel).guild;
-        if (this._audioConnections.has(`discord: ${guild.id}`)) {
+        const key = `discord: ${guild.id}`;
+        if (this._channels.has(key)) {
+          this._channels
+          .get(key).disconnect();
+          this._channels.delete(key);
+        }
+        if (this._audioConnections.has(key)) {
           this._audioConnections
-            .get(`discord: ${guild.id}`)
+            .get(key)
             .audioPlayer?.stop(true);
-          this._audioConnections.delete(`discord: ${guild.id}`);
+          this._audioConnections.delete(key);
         }
     }
   }

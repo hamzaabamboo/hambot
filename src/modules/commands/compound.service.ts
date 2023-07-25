@@ -1,10 +1,11 @@
 import { Injectable, Scope } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+import { AuthService } from '../auth/auth.service';
 import { Message } from '../messages/messages.model';
 import { BaseCompoundHandler } from './compound.handler.base';
-import { AuthService } from '../auth/auth.service';
 import { FileCommand } from './compound/files.command';
-import { ModuleRef } from '@nestjs/core';
 import { ProfilePicCommand } from './discord/profilepic.command';
+import { YomiageCommand } from './discord/yomiage.command';
 
 @Injectable({
   scope: Scope.DEFAULT,
@@ -14,6 +15,7 @@ export class CompoundService {
   private handlers: (typeof BaseCompoundHandler)[] = [
     ProfilePicCommand,
     FileCommand,
+    YomiageCommand,
     BaseCompoundHandler,
   ];
 
@@ -67,7 +69,7 @@ export class CompoundService {
   }
 
   isCompounding(senderId: string): boolean {
-    return this._compoundingData.has(senderId);
+    return this._compoundingData?.has(senderId) ?? false;
   }
 
   finishedCompounding(senderId: string) {

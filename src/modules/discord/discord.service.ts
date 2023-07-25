@@ -6,6 +6,7 @@ import {
   OnApplicationShutdown,
   forwardRef,
 } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import {
   ActivityType,
   BaseMessageOptions,
@@ -18,6 +19,7 @@ import {
 import { AppConfigService } from 'src/config/app-config.service';
 import { generateRandomKey } from 'src/utils';
 import { setTimeout as sleep } from 'timers/promises';
+import { CompoundService } from '../commands/compound.service';
 import { AppLogger } from '../logger/logger';
 import { MessagesService } from '../messages/messages.service';
 
@@ -29,12 +31,14 @@ export class DiscordService implements OnApplicationShutdown {
   public isReady: boolean | Promise<void> = false;
   private isListening = false;
   private stopToken: string;
+  private compound: CompoundService;
 
   constructor(
     private config: AppConfigService,
     @Inject(forwardRef(() => MessagesService))
     private message: MessagesService,
     private logger: AppLogger,
+    private moduleRef: ModuleRef
   ) {
     this.client = new Client({
       intents: [
@@ -53,6 +57,7 @@ export class DiscordService implements OnApplicationShutdown {
       ? new RegExp(`^${config.BOT_PREFIX} (.*)$`)
       : /^hamB (.*)$/;
     this.logger.setContext('DiscordService');
+    this.compound = moduleRef.get(CompoundService, {strict: false})
     this.login();
   }
   onApplicationShutdown(signal?: string) {
@@ -125,7 +130,7 @@ export class DiscordService implements OnApplicationShutdown {
       }
       if (
         message.channel.type === ChannelType.GuildText &&
-        (message.attachments.toJSON().length > 0 ||
+        (this.moduleRef.get(CompoundService,{strict:false})?.isCompounding(message.author.id) ||
           this.prefix.test(message.content))
       ) {
         const cmd = this.prefix.exec(message.content);
@@ -135,7 +140,7 @@ export class DiscordService implements OnApplicationShutdown {
           channelId: message.channel.id,
           discordMessage: message,
           message:
-            cmd && message.attachments.toJSON().length === 0 ? cmd[1] : '',
+            cmd && message.attachments.toJSON().length === 0 ? cmd[1] : message.content,
           messageChannel: message.channel,
           files: message.attachments.toJSON().map((m) => ({
             name: m.name,
