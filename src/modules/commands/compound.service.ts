@@ -5,6 +5,7 @@ import { Message } from '../messages/messages.model';
 import { BaseCompoundHandler } from './compound.handler.base';
 import { FileCommand } from './compound/files.command';
 import { ProfilePicCommand } from './discord/profilepic.command';
+import { RusubanCommand } from './discord/rusuban.command';
 import { YomiageCommand } from './discord/yomiage.command';
 
 @Injectable({
@@ -16,6 +17,7 @@ export class CompoundService {
     ProfilePicCommand,
     FileCommand,
     YomiageCommand,
+    RusubanCommand,
     BaseCompoundHandler,
   ];
 

@@ -31,7 +31,6 @@ export class DiscordService implements OnApplicationShutdown {
   public isReady: boolean | Promise<void> = false;
   private isListening = false;
   private stopToken: string;
-  private compound: CompoundService;
 
   constructor(
     private config: AppConfigService,
@@ -57,7 +56,6 @@ export class DiscordService implements OnApplicationShutdown {
       ? new RegExp(`^${config.BOT_PREFIX} (.*)$`)
       : /^hamB (.*)$/;
     this.logger.setContext('DiscordService');
-    this.compound = moduleRef.get(CompoundService, {strict: false})
     this.login();
   }
   onApplicationShutdown(signal?: string) {

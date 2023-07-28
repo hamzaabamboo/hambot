@@ -4,7 +4,7 @@ import {
   VoiceConnection,
   createAudioPlayer,
   createAudioResource,
-  joinVoiceChannel,
+  joinVoiceChannel
 } from '@discordjs/voice';
 import { BeforeApplicationShutdown, Injectable } from '@nestjs/common';
 import { TextChannel } from 'discord.js';
@@ -82,15 +82,20 @@ export class AudioService implements BeforeApplicationShutdown {
           clearTimeout(this._leaveTimer.get(key));
         }
         const vc = (await guild.members.fetch(message.senderId)).voice;
+        // let conn = getVoiceConnection(vc.guild.id);
+        // console.log(conn)
+        // if (!conn) {
         const conn = joinVoiceChannel({
-          channelId: vc.channelId,
-          guildId: vc.guild.id,
-          adapterCreator: vc.guild.voiceAdapterCreator as any,
-        });
-        this._channels.set(key, conn);
+            channelId: vc.channelId,
+            guildId: vc.guild.id,
+            adapterCreator: vc.guild.voiceAdapterCreator as any,
+          });
+          this._channels.set(key, conn);
+        // }
+        
         let resource = this._audioConnections.get(key);
-
         resource = createAudioResource(stream, { inlineVolume: true });
+
         if (!this.isPlaying(message)) {
           const player = createAudioPlayer();
 
@@ -99,7 +104,7 @@ export class AudioService implements BeforeApplicationShutdown {
 
           this._audioConnections.set(key, resource);
 
-          player.on('stateChange', (_, { status }) => {
+          const handleOnStateChange = (_, { status }) => {
             switch (status) {
               case AudioPlayerStatus.Playing: {
                 resource.volume?.setVolume(
@@ -110,17 +115,21 @@ export class AudioService implements BeforeApplicationShutdown {
                 break;
               }
               case AudioPlayerStatus.Idle: {
-                this._leaveTimer.set(
-                  key,
-                  setTimeout(() => {
-                    this._channels.delete(key);
-                    conn.disconnect();
-                  }, timeout),
-                );
+                if (timeout > 0) {
+                  this._leaveTimer.set(
+                    key,
+                    setTimeout(() => {
+                      this._channels.delete(key);
+                      conn.disconnect();
+                    }, timeout),
+                  );
+                }
                 break;
               }
             }
-          });
+            player.off('stateChange', handleOnStateChange)
+          }
+          player.on('stateChange', handleOnStateChange);
           resource.playStream.on('end', () => {
             this._audioConnections.delete(key);
           });

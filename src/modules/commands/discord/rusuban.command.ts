@@ -3,18 +3,19 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ModuleRef } from '@nestjs/core';
+import { VoiceState } from 'discord.js';
 import { lastValueFrom } from 'rxjs';
 import { AudioService } from 'src/modules/audio/audio.service';
 import { DiscordMessage, Message } from '../../messages/messages.model';
 import { BaseCompoundHandler, CompoundResponse } from '../compound.handler.base';
 
 @Injectable()
-export class YomiageCommand extends BaseCompoundHandler {
-  public name = 'yomiage';
-  public static startCommand = /^(?:yomiage)(?:(?: (start|change|test)(?: (\d+))?))?/i;
+export class RusubanCommand extends BaseCompoundHandler {
+  public name = 'rusuban';
+  public static startCommand = /^(?:rusuban)(?:(?: (start|change|test)(?: (\d+))?))?/i;
   public command = /(.*?)/;
   public endCommand = /^(end)/;
-  public requiresAuth = false;
+  public requiresAuth = true;
   public platforms = ['discord'];
   private queue = new Map<string, string[]>();
 
@@ -24,6 +25,9 @@ export class YomiageCommand extends BaseCompoundHandler {
 
   private speakerId = '0';
   private isStarted = false;
+
+  private guildData = new Map<string, any>();
+  private audioCache = new Map<string, any>();
 
   constructor(
     moduleRef: ModuleRef,
@@ -55,16 +59,20 @@ export class YomiageCommand extends BaseCompoundHandler {
 
   async getAudio(string: string, speakerId: string = this.speakerId) {
     try {
-      const data = await lastValueFrom(
-        this.http.post(
-          this.config.get('VOICEVOX_SERVER') +
-            `audio_query?speaker=${speakerId}&text=${encodeURIComponent(string)}`,
-        ),
-      );
+        let d = this.audioCache.get(string)
+        if (!d) {
+            d = await lastValueFrom(
+                this.http.post(
+                this.config.get('VOICEVOX_SERVER') +
+                    `audio_query?speaker=${speakerId}&text=${encodeURIComponent(string)}`,
+                ),
+            );
+            this.audioCache.set(string, d);
+        }
       const sound = await lastValueFrom(
         this.http.post(
           this.config.get('VOICEVOX_SERVER') + `synthesis?speaker=${speakerId}`,
-          data.data,
+          d.data,
           { responseType: 'stream' },
         ),
       );
@@ -87,7 +95,7 @@ export class YomiageCommand extends BaseCompoundHandler {
         message,
         await this.getAudio(string),
         1,
-        600000,
+        -1,
       );
       player.playStream.on('end', onAudioEnd || ( () => this.flushQueue(message, player)));
     }
@@ -97,42 +105,59 @@ export class YomiageCommand extends BaseCompoundHandler {
     if (this.endCommand.test(message.message)) {
       return this.handleEnd(message as DiscordMessage);
     }
-    if (YomiageCommand.startCommand.test(message.message)) {
-      const params = YomiageCommand.startCommand.exec(message.message).slice(1);
+    if (RusubanCommand.startCommand.test(message.message)) {
+      const params = RusubanCommand.startCommand.exec(message.message).slice(1);
       return this.handleStart(message as DiscordMessage, params[0], params[1]);
     }
     if (this.isStarted) {
-      return this.handleMessages(message as DiscordMessage);
-    }
+        return this.handleMessages(message as DiscordMessage);
+      }
   }
 
-  async handleMessages(message: DiscordMessage) {
-      await this.playAudio(message, message.message.trim());
-      return {
-        isCompounding: true,
-       message: {
-        files: [],
-        message: '',
-       }
-      };
+    async handleMessages(message: DiscordMessage) {
+        return {
+            isCompounding: true,
+            message: {
+            files: [],
+            message: '',
+            }
+        };
+    }
+  handleVoiceStateChange = async (oldState: VoiceState, newState: VoiceState) => {
+      if (!(this.guildData.has(newState.guild.id) || this.guildData.has(oldState.guild.id))) return;
+      if ( oldState.channelId === newState.channelId) return;
+
+      const msg = this.guildData.get(newState.guild.id) || this.guildData.get(oldState.guild.id) as DiscordMessage
+      const memberId = newState.member.id || oldState.member.id;
+
+      if (memberId === msg.discordMessage.client.user.id) return;
+
+      if (newState.channelId === (await msg.discordMessage.guild.members.fetch(msg.senderId)).voice.channelId) {
+        await this.playAudio(msg, 'いらっしゃいませ〜');
+      } else {
+        await this.playAudio(msg, 'いってらっしゃいませ〜');
+      }
   }
 
   async handleStart(message: DiscordMessage, command: string, speakerId: string = '0') {
     switch (command?.trim()) {
       case 'start':
         this.speakerId = speakerId;
+        const channelId = (await message.discordMessage.guild.members.fetch(message.senderId)).voice.channelId;
+        this.guildData.set(message.discordMessage.guild.id, message);
+        message.discordMessage.client.on("voiceStateUpdate", this.handleVoiceStateChange)
         await lastValueFrom(
           this.http.post(
             this.config.get('VOICEVOX_SERVER') +
               `initialize_speaker?speaker=${speakerId}&skip_reinit=true`
           ),
         );
-        await this.playAudio(message, 'こんにちは、ハム様のメイドです。読み上げます、よろしくお願いいたします');
+        await this.playAudio(message, 'こんにちは、ハム様のメイドです。よろしくお願いいたします');
         this.isStarted = true;
         return {
           isCompounding: true,
           message: {
-           message: 'Yomiage Sutaato',
+           message: 'Rusuban Sutaato',
           }
         };
       case 'change':
@@ -142,6 +167,7 @@ export class YomiageCommand extends BaseCompoundHandler {
             message: 'Not started yet, type "yomiage start" first',
           }
         };
+        this.audioCache.clear();
         await lastValueFrom(
           this.http.post(
             this.config.get('VOICEVOX_SERVER') +
@@ -156,17 +182,6 @@ export class YomiageCommand extends BaseCompoundHandler {
             message: 'Voice Changed',
           }
         };
-      case 'test':
-        const tmp = this.speakerId;
-        this.speakerId = speakerId;
-        await this.playAudio(message, 'これはテストです。あいうえお、かきくけこ、なんでやねん。', this.isStarted ? undefined: () => void this.audio.stopPlaying(message));
-        this.speakerId = tmp;
-        return {
-           isCompounding: this.isStarted,
-          message: {
-            message: 'Test phrase for ' + speakerId,
-          }
-        };
       default: 
         return {
           isCompounding: false,
@@ -178,7 +193,8 @@ export class YomiageCommand extends BaseCompoundHandler {
   }
 
   async handleEnd(message: DiscordMessage) {
-    await this.playAudio(message, 'バイバーイ', () => void this.audio.stopPlaying(message))
+    await this.playAudio(message, 'ご利用いただきありがとうございました。また会いましょう', () => void this.audio.stopPlaying(message))
+    message.discordMessage.client.off("voiceStateUpdate", this.handleVoiceStateChange)
     return {
       isCompounding: false,
       message: {
