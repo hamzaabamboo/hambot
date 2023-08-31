@@ -48,3 +48,5 @@ true
 .env.prod
 
 *.sql
+
+data/*

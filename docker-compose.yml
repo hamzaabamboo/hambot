@@ -12,4 +12,5 @@ services:
     command: ['pnpm', 'start:prod']
     volumes:
       - './storage:/app/files'
+      - './data:/app/data'
     env_file: '.env'

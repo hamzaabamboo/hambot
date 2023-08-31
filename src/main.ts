@@ -4,6 +4,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AppConfigService } from './config/app-config.service';
 import { AppLogger } from './modules/logger/logger';
@@ -59,6 +60,16 @@ async function bootstrap() {
     console.log(e);
   }
 
+   const documentConfig = new DocumentBuilder()
+    .setTitle('HamBot')
+    .setDescription('HamBot Apis and such')
+    .setVersion('1.0')
+    .addTag('cats')
+    .build();
+  const document = SwaggerModule.createDocument(app, documentConfig);
+  SwaggerModule.setup('api', app, document);
+
+  
   logger.verbose('SSR Server Started');
   await app.listen(port ?? 3000, '0.0.0.0');
   logger.verbose('Listening to ' + (port ?? 3000));

@@ -17,6 +17,7 @@ import { DiscordModule } from './modules/discord/discord.module';
 import { FacebookModule } from './modules/facebook/facebook.module';
 import { FileModule } from './modules/file/file.module';
 import { IcalModule } from './modules/ical/ical.module';
+import { JishoModule } from './modules/jisho/jisho.module';
 import { LineModule } from './modules/line/line.module';
 import { MessagesModule } from './modules/messages/messages.module';
 import { QrcodeModule } from './modules/qrcode/qrcode.module';
@@ -44,6 +45,7 @@ import { WanikaniModule } from './modules/wanikani/wanikani.module';
     WanikaniModule,
     D4DJModule,
     AibouModule,
+    JishoModule,
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: '../files/database.db',

@@ -1,7 +1,16 @@
 import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { ApiProperty } from '@nestjs/swagger';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { AppConfigService } from 'src/config/app-config.service';
 import { AibouService } from './aibou.service';
+import { AibouData } from './aibou.type';
+
+class SyncDataInput {
+  @ApiProperty()
+  newData: AibouData
+  @ApiProperty()
+  lastUpdated: number
+}
 
 @Controller('aibou')
 export class AibouController {
@@ -11,12 +20,12 @@ export class AibouController {
   ) {}
   @Post('/sync')
   async syncData(
-    @Body() data: any,
+    @Body() data: SyncDataInput,
     @Req() req: FastifyRequest,
     @Res() res: FastifyReply,
   ) {
     if (req.headers['x-aibou-secret'] !== this.config.AIBOU_SECRET) {
-      res.status(401).send('bye');
+      return res.status(401).send('bye');
     }
     const { newData, lastUpdated } = data;
 

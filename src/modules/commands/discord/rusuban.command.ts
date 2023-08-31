@@ -78,7 +78,7 @@ export class RusubanCommand extends BaseCompoundHandler {
       );
       return sound.data;
     } catch (error) {
-      console.log('fuck', error);
+      
       throw error;
     }
   }
