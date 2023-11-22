@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { AppConfigService } from 'src/config/app-config.service';
 import { setTimeout as sleep } from 'timers/promises';
-import { AppLogger } from '../../logger/logger';
-import { PushService } from '../../push/push.service';
+import { AppLogger } from '../../../src/modules/logger/logger';
+import { PushService } from '../../../src/modules/push/push.service';
 import {
   TWITTER_DELAY,
   Tweet,

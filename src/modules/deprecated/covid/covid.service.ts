@@ -4,8 +4,8 @@ import { Cron } from '@nestjs/schedule';
 import moment, { Moment } from 'moment';
 import { firstValueFrom } from 'rxjs';
 import { AppConfigService } from 'src/config/app-config.service';
-import { Message } from '../../messages/messages.model';
-import { PushService } from '../../push/push.service';
+import { Message } from '../../../src/modules/messages/messages.model';
+import { PushService } from '../../../src/modules/push/push.service';
 
 interface COVIDAPIResult {
   Confirmed: number;

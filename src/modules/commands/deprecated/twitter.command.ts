@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TwitterService } from 'src/modules/deprecated/twitter/twitter.service';
+import { TwitterService } from '__old__/deprecated/twitter/twitter.service';
 import { Message } from '../../messages/messages.model';
 import { BaseCommand } from '../command.base';
 
