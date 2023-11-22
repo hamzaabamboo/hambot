@@ -68,11 +68,7 @@ import { AppConfigService } from './config/app-config.service';
       imports: [AppConfigModule],
       useFactory: (configService: AppConfigService) => ({
         type: 'postgres',
-        host: configService.DATABASE_HOST,
-        port: +configService.DATABASE_PORT,
-        username: configService.DATABASE_USER,
-        password: configService.DATABASE_PASSWORD,
-        database: configService.DATABASE_NAME,
+        url: configService.DATABASE_CONNECTION_URL,
         entities: [AibouTopic, AibouTopicItem, AibouSettings],
         synchronize: true,
       }),
