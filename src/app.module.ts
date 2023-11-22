@@ -25,6 +25,7 @@ import { QrcodeModule } from './modules/qrcode/qrcode.module';
 import { RssModule } from './modules/rss/rss.module';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { WanikaniModule } from './modules/wanikani/wanikani.module';
+import { AppConfigService } from './config/app-config.service';
 
 
 @Module({
@@ -63,11 +64,19 @@ import { WanikaniModule } from './modules/wanikani/wanikani.module';
       ttl: 60000,
       limit: 100
     }]),
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: '../files/database.db',
-      entities: [AibouTopic, AibouTopicItem, AibouSettings],
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      imports: [AppConfigModule],
+      useFactory: (configService: AppConfigService) => ({
+        type: 'postgres',
+        host: configService.DATABASE_HOST,
+        port: +configService.DATABASE_PORT,
+        username: configService.DATABASE_USER,
+        password: configService.DATABASE_PASSWORD,
+        database: configService.DATABASE_NAME,
+        entities: [AibouTopic, AibouTopicItem, AibouSettings],
+        synchronize: true,
+      }),
+      inject: [AppConfigService],
     }),
   ],
   controllers: [AppController],

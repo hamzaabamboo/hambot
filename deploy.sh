@@ -1,4 +1,4 @@
 yes | docker system prune
-docker-compose build
-docker-compose up --no-deps -d --build
-docker-compose restart backend
+docker compose -f docker-compose.deploy.yml build
+docker compose -f docker-compose.deploy.yml up --no-deps -d --build
+docker compose -f docker-compose.deploy.yml restart backend

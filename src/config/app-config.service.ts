@@ -70,4 +70,21 @@ export class AppConfigService {
   get AIBOU_SECRET() {
     return this.getEnv('AIBOU_SECRET', '<AIBOU_SECRET>');
   }
+
+  get DATABASE_HOST() {
+    return this.getEnv('DATABASE_HOST', '<DATABASE_HOST>');
+  }
+  get DATABASE_PORT() {
+    return this.getEnv('DATABASE_PORT', '<DATABASE_PORT>');
+  }
+  get DATABASE_USER() {
+    return this.getEnv('DATABASE_USER', '<DATABASE_USER>');
+  }
+  get DATABASE_PASSWORD() {
+    return this.getEnv('DATABASE_PASSWORD', '<DATABASE_PASSWORD>');
+  }
+  get DATABASE_NAME() {
+    return this.getEnv('DATABASE_NAME', '<DATABASE_NAME>');
+  }
+
 }
