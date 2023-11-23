@@ -24,7 +24,7 @@ async function bootstrap() {
   );
   app.enableCors({
     origin: ['https://hamzaabamboo.github.io', 'https://aibou.ham-san.net'],
-    allowedHeaders: ['x-aibou-secret', 'content-type'],
+    allowedHeaders: ['x-aibou-secret', 'x-jisho-secret', 'content-type'],
   });
   const config = app.get(AppConfigService);
   const port = config.PORT;

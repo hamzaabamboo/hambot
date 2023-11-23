@@ -42,29 +42,18 @@ export class JishoController {
     if (query === undefined) {
       return res.status(400).send('query please');
     }
-    const exactMatch: any[] = await new Promise((resolve, reject) =>
-      this.service.db.all(
-        `select * from entry where ${
-          dictionaryId ? 'dictionary_id = $dictionary and' : ''
-        } heading = $term order by LENGTH(heading) limit 10`,
-        {
-          $term: query,
-          $dictionary: dictionaryId,
-        },
-        (err, row) => {
-          if (err) reject(err);
-          resolve(row);
-        },
-      ),
-    );
 
     const q: any[] = await new Promise((resolve, reject) =>
       this.service.db.all(
-        `select * from entry where ${
-          dictionaryId ? 'dictionary_id = $dictionary and' : ''
-        } heading != $term and heading like $term order by LENGTH(heading) limit $limit`,
+        `SELECT id, temp.word_id, dictionary_id, kanji, reading, entry."text" FROM (
+          SELECT DISTINCT word_id FROM entry WHERE ${
+            dictionaryId ? 'dictionary_id = $dictionary and' : ''
+          } instr(kanji, $term) OR instr(reading, $term) LIMIT $limit
+        ) as temp 
+        LEFT JOIN entry ON entry.word_id = temp.word_id
+        ORDER BY length(entry.kanji) ASC, length(entry.reading) ASC`,
         {
-          $term: `%${query}%`,
+          $term: `${query}`,
           $limit: 40,
           $dictionary: dictionaryId,
         },
@@ -75,6 +64,6 @@ export class JishoController {
       ),
     );
 
-    res.status(200).send([...exactMatch, ...q]);
+    res.status(200).send([...q]);
   }
 }
