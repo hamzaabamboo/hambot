@@ -48,7 +48,7 @@ export class JishoController {
         `SELECT id, temp.word_id, dictionary_id, kanji, reading, entry."text" FROM (
           SELECT DISTINCT word_id FROM entry WHERE ${
             dictionaryId ? 'dictionary_id = $dictionary and' : ''
-          } instr(kanji, $term) OR instr(reading, $term) LIMIT $limit
+          } instr(kanji, $term) OR instr(reading, $term) ORDER BY length(entry.kanji) ASC, length(entry.reading) ASC LIMIT $limit
         ) as temp 
         LEFT JOIN entry ON entry.word_id = temp.word_id
         ORDER BY length(entry.kanji) ASC, length(entry.reading) ASC`,
