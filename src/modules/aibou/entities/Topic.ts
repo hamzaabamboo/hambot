@@ -25,6 +25,8 @@ export class AibouTopicItem {
   @Column()
   word: string;
   @Column({ nullable: true })
+  reading: string;
+  @Column({ nullable: true })
   notes?: string;
   @Column()
   tags: string;
