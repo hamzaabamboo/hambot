@@ -9,9 +9,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import type { Request, Response } from 'express';
-import { request } from 'gaxios';
-import { PassThrough, Readable } from 'stream';
+import type { Request } from 'express';
 import axios from 'axios';
 
 @Controller('/d4dj')

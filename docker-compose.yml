@@ -1,16 +1,19 @@
 version: '3.3'
 services:
-  voicevox:
-    image: voicevox/voicevox_engine:cpu-ubuntu20.04-latest
+  # voicevox:
+  #   image: voicevox/voicevox_engine:cpu-ubuntu20.04-latest
+  #   restart: always
+  db:
+    image: postgres
     restart: always
-  backend:
-    restart: always
-    build:
-      context: .
     ports:
-      - 3000:3000
-    command: ['pnpm', 'start:prod']
+      - 5432:5432
+    environment:
+        POSTGRES_USER: ${DATABASE_USER}
+        POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+        POSTGRES_DB: ${DATABASE_NAME}
     volumes:
-      - './storage:/app/files'
-      - './data:/app/data'
-    env_file: '.env'
+        - postgres-data:/var/lib/postgresql/data
+        
+volumes:
+    postgres-data:

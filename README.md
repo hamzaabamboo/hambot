@@ -102,4 +102,4 @@ yarn build
 yarn start
 ```
 
-or clone the project into server and use `deploy.sh` script and let docker-compose do the work
+or clone the project into server and use `deploy.sh` script and let docker compose do the work

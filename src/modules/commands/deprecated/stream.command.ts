@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AudioService } from 'src/modules/audio/audio.service';
-import { StreamService } from 'src/modules/deprecated/stream/stream.service';
+import { StreamService } from '__old__/deprecated/stream/stream.service';
 import { DiscordMessage } from '../../messages/messages.model';
 import { BaseCommand } from '../command.base';
 

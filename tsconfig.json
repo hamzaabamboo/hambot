@@ -8,9 +8,7 @@
     "esModuleInterop": true,
     "target": "es6",
     "jsx": "preserve",
-    "lib": [
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
@@ -24,16 +22,6 @@
     "noEmit": true,
     "incremental": true
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".next",
-    "deprecated/**",
-  ],
-  "include": [
-    "src",
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "exclude": ["node_modules", "dist", ".next", "**/deprecated/*"],
+  "include": ["src", "next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }

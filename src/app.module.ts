@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -24,6 +25,8 @@ import { QrcodeModule } from './modules/qrcode/qrcode.module';
 import { RssModule } from './modules/rss/rss.module';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { WanikaniModule } from './modules/wanikani/wanikani.module';
+import { AppConfigService } from './config/app-config.service';
+
 
 @Module({
   imports: [
@@ -46,11 +49,30 @@ import { WanikaniModule } from './modules/wanikani/wanikani.module';
     D4DJModule,
     AibouModule,
     JishoModule,
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: '../files/database.db',
-      entities: [AibouTopic, AibouTopicItem, AibouSettings],
-      synchronize: true,
+    ThrottlerModule.forRoot([  {
+      name: 'short',
+      ttl: 1000,
+      limit: 3,
+    },
+    {
+      name: 'medium',
+      ttl: 10000,
+      limit: 20
+    },
+    {
+      name: 'long',
+      ttl: 60000,
+      limit: 100
+    }]),
+    TypeOrmModule.forRootAsync({
+      imports: [AppConfigModule],
+      useFactory: (configService: AppConfigService) => ({
+        type: 'postgres',
+        url: configService.DATABASE_CONNECTION_URL,
+        entities: [AibouTopic, AibouTopicItem, AibouSettings],
+        synchronize: true,
+      }),
+      inject: [AppConfigService],
     }),
   ],
   controllers: [AppController],

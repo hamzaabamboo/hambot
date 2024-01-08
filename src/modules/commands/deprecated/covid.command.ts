@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import moment from 'moment';
-import { CovidService } from '../../deprecated/covid/covid.service';
+import { CovidService } from '../../../../__old__/deprecated/covid/covid.service';
 import { Message } from '../../messages/messages.model';
 import { BaseCommand } from '../command.base';
 

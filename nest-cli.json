@@ -1,4 +1,13 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "builder": "swc"
+  },
+  "assets": [
+    {
+      "exclude": "**/deprecated/*",
+      "watchAssets": false
+    }
+  ]
 }

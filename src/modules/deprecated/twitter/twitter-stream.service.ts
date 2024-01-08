@@ -5,8 +5,8 @@ import qs from 'querystring';
 import { AppConfigService } from 'src/config/app-config.service';
 import { Readable } from 'stream';
 import { setTimeout as sleep } from 'timers/promises';
-import { AppLogger } from '../../logger/logger';
-import { PushService } from '../../push/push.service';
+import { AppLogger } from '../../../src/modules/logger/logger';
+import { PushService } from '../../../src/modules/push/push.service';
 
 export interface TwitterRule {
   id?: string;

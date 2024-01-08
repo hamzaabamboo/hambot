@@ -1,0 +1,23 @@
+version: '3.3'
+services:
+  voicevox:
+    image: voicevox/voicevox_engine:cpu-ubuntu20.04-latest
+    restart: always
+  backend:
+    restart: always
+    build:
+      context: .
+    ports:
+      - 3000:3000
+    command: ['pnpm', 'start:prod']
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    networks:
+      - internal-services
+    volumes:
+      - './storage:/app/files'
+      - './data:/app/data'
+    env_file: '.env'
+networks:
+  internal-services:
+    external: true

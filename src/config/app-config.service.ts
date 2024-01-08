@@ -70,4 +70,8 @@ export class AppConfigService {
   get AIBOU_SECRET() {
     return this.getEnv('AIBOU_SECRET', '<AIBOU_SECRET>');
   }
+
+  get DATABASE_CONNECTION_URL() {
+    return this.getEnv('DATABASE_CONNECTION_URL', '<DATABASE_CONNECTION_URL>');
+  }
 }

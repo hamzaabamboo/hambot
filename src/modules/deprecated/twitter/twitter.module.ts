@@ -1,8 +1,8 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { LoggerModule } from '../../logger/logger.module';
-import { PushModule } from '../../push/push.module';
+import { LoggerModule } from '../../../src/modules/logger/logger.module';
+import { PushModule } from '../../../src/modules/push/push.module';
 import { TwitterStreamService } from './twitter-stream.service';
 import { TwitterController } from './twitter.controller';
 import { TwitterService } from './twitter.service';
