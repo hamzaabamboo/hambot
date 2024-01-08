@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, SchedulerRegistry } from '@nestjs/schedule';
-import { TrelloService } from '../trello/trello.service';
+import moment from 'moment';
 import { AppLogger } from '../logger/logger';
 import { PushService } from '../push/push.service';
-import moment from 'moment';
+import { TrelloService } from '../trello/trello.service';
 
 @Injectable()
 export class TaskSchedule {

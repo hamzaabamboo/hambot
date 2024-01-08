@@ -1,15 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
-import { TrelloService } from '../trello/trello.service';
+import { Table, Text } from 'mdast';
+import { dynamicImport } from 'src/utils';
 import { AppLogger } from '../logger/logger';
+import { OutlineService } from '../outline/outline.service';
 import { PushService } from '../push/push.service';
+import { TrelloService } from '../trello/trello.service';
 
+interface JobInfo {
+  card: string;
+  cronTab: string;
+  message?: string;
+  tags: string;
+}
 @Injectable()
 export class RecurringService {
   private _jobs: string[] = [];
 
   constructor(
+    private outline: OutlineService,
     private trello: TrelloService,
     private scheduler: SchedulerRegistry,
     private push: PushService,
@@ -55,7 +65,7 @@ export class RecurringService {
     }
   }
 
-  async getRecurringEvents() {
+  private async getTrelloEvents(): Promise<JobInfo[]> {
     const board = (await this.trello.getBoards()).find(
       (b) => b.name === "Ham's Stuff",
     );
@@ -85,5 +95,37 @@ export class RecurringService {
           tags: card.name.match(tags)?.slice(1)[0],
         };
       });
+  }
+
+  private async getOutlineEvents(): Promise<JobInfo[]> {
+    const document = await this.outline.getSettingDocument('recurring');
+    const root = await OutlineService.parseMarkdown(document.data.text);
+    const { toString }: { toString: (input: unknown) => string } =
+      await dynamicImport('mdast-util-to-string');
+    return root.children
+      .filter((c): c is Table => c.type === 'table')
+      .flatMap((table: Table) => {
+        return table.children
+          .slice(1)
+          .filter((c) => {
+            const cronFormat =
+              /(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})/;
+            return cronFormat.test((c.children[0].children[0] as Text)?.value);
+          })
+          .map((c) => {
+            return {
+              cronTab: (c.children[0].children[0] as Text)?.value,
+              tags: (c.children[1].children[0] as Text)?.value,
+              card: (c.children[2].children[0] as Text)?.value,
+              message: toString(c.children[3]) || toString(c.children[2]),
+            };
+          });
+      });
+  }
+
+  async getRecurringEvents() {
+    const trelloEvents = await this.getTrelloEvents();
+    const outlineEvents = await this.getOutlineEvents();
+    return [...trelloEvents, ...outlineEvents];
   }
 }

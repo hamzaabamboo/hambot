@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common';
-import { FileSchedule } from './file.schedule';
-import { LoggerModule } from '../logger/logger.module';
-import { TrelloModule } from '../trello/trello.module';
-import { RecurringService } from './recurring.service';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import { PushModule } from '../push/push.module';
-import { TaskSchedule } from './tasks.service';
-import { CalendarSchedule } from './calendar.service';
 import { IcalModule } from '../ical/ical.module';
+import { LoggerModule } from '../logger/logger.module';
+import { OutlineModule } from '../outline/outline.module';
+import { PushModule } from '../push/push.module';
+import { TrelloModule } from '../trello/trello.module';
+import { CalendarSchedule } from './calendar.service';
+import { FileSchedule } from './file.schedule';
+import { RecurringService } from './recurring.service';
+import { TaskSchedule } from './tasks.service';
 
 @Module({
-  imports: [LoggerModule, TrelloModule, PushModule, IcalModule],
+  imports: [LoggerModule, TrelloModule, PushModule, IcalModule, OutlineModule],
   providers: [
     FileSchedule,
     RecurringService,

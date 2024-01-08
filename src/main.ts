@@ -52,15 +52,17 @@ async function bootstrap() {
 
   try {
     if (config.NEXT) {
-      await fastify.register(import('@fastify/nextjs'));
-      fastify.next('/');
-      fastify.next('/clipper');
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      fastify.register(require('@fastify/nextjs')).after(() => {
+        (fastify as any).next('/');
+        (fastify as any).next('/clipper');
+      });
     }
   } catch (e) {
     console.log(e);
   }
 
-   const documentConfig = new DocumentBuilder()
+  const documentConfig = new DocumentBuilder()
     .setTitle('HamBot')
     .setDescription('HamBot Apis and such')
     .setVersion('1.0')
@@ -69,7 +71,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, documentConfig);
   SwaggerModule.setup('api', app, document);
 
-  
   logger.verbose('SSR Server Started');
   await app.listen(port ?? 3000, '0.0.0.0');
   logger.verbose('Listening to ' + (port ?? 3000));

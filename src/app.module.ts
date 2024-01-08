@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppConfigModule } from './config/app-config.module';
+import { AppConfigService } from './config/app-config.service';
 import {
   AibouModule,
   AibouSettings,
@@ -21,11 +22,11 @@ import { IcalModule } from './modules/ical/ical.module';
 import { JishoModule } from './modules/jisho/jisho.module';
 import { LineModule } from './modules/line/line.module';
 import { MessagesModule } from './modules/messages/messages.module';
+import { OutlineModule } from './modules/outline/outline.module';
 import { QrcodeModule } from './modules/qrcode/qrcode.module';
 import { RssModule } from './modules/rss/rss.module';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { WanikaniModule } from './modules/wanikani/wanikani.module';
-import { AppConfigService } from './config/app-config.service';
 
 
 @Module({
@@ -46,6 +47,7 @@ import { AppConfigService } from './config/app-config.service';
     RssModule,
     IcalModule,
     WanikaniModule,
+    OutlineModule,
     D4DJModule,
     AibouModule,
     JishoModule,
@@ -74,6 +76,7 @@ import { AppConfigService } from './config/app-config.service';
       }),
       inject: [AppConfigService],
     }),
+    OutlineModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],

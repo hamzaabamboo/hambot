@@ -23,5 +23,11 @@
     "incremental": true
   },
   "exclude": ["node_modules", "dist", ".next", "**/deprecated/*"],
-  "include": ["src", "next-env.d.ts", "**/*.ts", "**/*.tsx"]
+  "include": [
+    "src",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "webpack-hmr.config.js"
+  ]
 }

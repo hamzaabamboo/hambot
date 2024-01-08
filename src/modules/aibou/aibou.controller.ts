@@ -3,13 +3,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { AppConfigService } from 'src/config/app-config.service';
 import { AibouService } from './aibou.service';
-import { AibouData } from './aibou.type';
+import type { AibouData } from './aibou.type';
 
 class SyncDataInput {
   @ApiProperty()
-  newData: AibouData
+  newData: AibouData;
   @ApiProperty()
-  lastUpdated: number
+  lastUpdated: number;
 }
 
 @Controller('aibou')

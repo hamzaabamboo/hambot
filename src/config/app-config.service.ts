@@ -74,4 +74,19 @@ export class AppConfigService {
   get DATABASE_CONNECTION_URL() {
     return this.getEnv('DATABASE_CONNECTION_URL', '<DATABASE_CONNECTION_URL>');
   }
+
+  get OUTLINE_URL() {
+    return this.getEnv('OUTLINE_URL', '<OUTLINE_URL>');
+  }
+
+  get OUTLINE_API_TOKEN() {
+    return this.getEnv('OUTLINE_API_TOKEN', '<OUTLINE_API_KEY>');
+  }
+
+  get OUTLINE_SETTINGS_DOCUMENT_ID() {
+    return this.getEnv(
+      'OUTLINE_SETTINGS_DOCUMENT_ID',
+      '<OUTLINE_SETTINGS_DOCUMENT_ID>',
+    );
+  }
 }
