@@ -37,7 +37,7 @@ export class DiscordService implements OnApplicationShutdown {
     @Inject(forwardRef(() => MessagesService))
     private message: MessagesService,
     private logger: AppLogger,
-    private moduleRef: ModuleRef
+    private moduleRef: ModuleRef,
   ) {
     this.client = new Client({
       intents: [
@@ -128,7 +128,9 @@ export class DiscordService implements OnApplicationShutdown {
       }
       if (
         message.channel.type === ChannelType.GuildText &&
-        (this.moduleRef.get(CompoundService,{strict:false})?.isCompounding(message.author.id) ||
+        (this.moduleRef
+          .get(CompoundService, { strict: false })
+          ?.isCompounding(message.author.id) ||
           this.prefix.test(message.content))
       ) {
         const cmd = this.prefix.exec(message.content);
@@ -138,7 +140,9 @@ export class DiscordService implements OnApplicationShutdown {
           channelId: message.channel.id,
           discordMessage: message,
           message:
-            cmd && message.attachments.toJSON().length === 0 ? cmd[1] : message.content,
+            cmd && message.attachments.toJSON().length === 0
+              ? cmd[1]
+              : message.content,
           messageChannel: message.channel,
           files: message.attachments.toJSON().map((m) => ({
             name: m.name,
@@ -187,14 +191,22 @@ export class DiscordService implements OnApplicationShutdown {
   }
 
   async sendMessage(channel: TextBasedChannel, message: BaseMessageOptions) {
+    const messageLength = message.content.length;
+    const chunks = Math.ceil(messageLength / 2000);
     const c = await this.client.channels.fetch(channel.id);
-    switch (c.type) {
-      case ChannelType.DM:
-        await (c as DMChannel).send(message);
-        break;
-      case ChannelType.GuildText:
-        await (c as TextChannel).send(message);
-        break;
+    for (let i = 0; i < chunks; i++) {
+      const chunk = {
+        ...message,
+        content: message.content?.substring(i * 2000, (i + 1) * 2000),
+      };
+      switch (c.type) {
+        case ChannelType.DM:
+          await (c as DMChannel).send(chunk);
+          break;
+        case ChannelType.GuildText:
+          await (c as TextChannel).send(chunk);
+          break;
+      }
     }
   }
 

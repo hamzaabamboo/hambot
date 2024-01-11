@@ -31,8 +31,8 @@ export class NyaaCommand extends BaseCommand {
     const pageN = isNaN(Number(page))
       ? 1
       : Number(page) > totalPage
-      ? totalPage
-      : Number(page);
+        ? totalPage
+        : Number(page);
     const res =
       rss.channel && rss.channel?.item?.length > 0
         ? `Results for ${he.decode(String(rss.channel?.title))} (total: ${

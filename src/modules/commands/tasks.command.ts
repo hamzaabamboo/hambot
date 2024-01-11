@@ -3,6 +3,8 @@ import { BaseCommand } from './command.base';
 import { Message } from '../messages/messages.model';
 import { TrelloService } from '../trello/trello.service';
 import moment from 'moment';
+import { TasksService } from '../scheduler/tasks.service';
+import { TaskList } from '../scheduler/task.type';
 
 @Injectable()
 export class TasksCommand extends BaseCommand {
@@ -10,58 +12,42 @@ export class TasksCommand extends BaseCommand {
   public command = /^tasks(?: (.*))?/i;
   public requiresAuth = true;
 
-  constructor(private trello: TrelloService) {
+  constructor(private tasks: TasksService) {
     super();
   }
 
   async handle(message: Message, query: string) {
-    const board = (await this.trello.getBoards()).find(
-      (b) => b.name === "Ham's Stuff",
-    );
+    const lists = await this.tasks.getTasks();
 
-    const allLists = await this.trello.getLists(board.id);
     switch (query) {
       case 'list':
         return {
           files: [],
           message:
-            'Available Lists \n' +
-            allLists.map((l) => '- ' + l.name).join('\n'),
+            'Available Lists \n' + lists.map((l) => '- ' + l.title).join('\n'),
         };
       default:
-        const lists = allLists.filter((list) =>
-          query && query !== ''
-            ? list.name.toLowerCase().includes(query.toLowerCase())
-            : list.name === 'To Do' || list.name === 'Doing',
-        );
-        const cards = (
-          await Promise.all<any>(
-            lists.map(async (e) => ({
-              list: e,
-              cards: await this.trello.getCards(e.id),
-            })),
-          )
-        ).map(({ list, cards }) => ({
-          list,
-          cards: cards.sort((a, b) => moment(a.due).diff(b.due)),
-        }));
-
-        const res = cards
+        const tasks = await this.tasks.getTasks({
+          getTaskInfo: true,
+          filter: query,
+        });
+        const res = tasks
           .map(
             (l) =>
-              `${l.list.name}:\n${l.cards
-                .map(
-                  (c) =>
-                    `${c.name} ${
-                      c.due
-                        ? 'due ' +
-                          `${moment(c.due).fromNow()} (${moment(c.due).format(
-                            'DD/MM/YYYY HH:mm',
-                          )})`
-                        : ''
-                    }`,
-                )
-                .join('\n')}`,
+              `${l.title}:
+${l.tasks
+  .map(
+    (c) =>
+      `${c.title}${
+        c.date
+          ? ' due ' +
+            `${moment(c.date).fromNow()} (${moment(c.date).format(
+              'DD/MM/YYYY HH:mm',
+            )})`
+          : ''
+      }`,
+  )
+  .join('\n')}`,
           )
           .join('\n');
         return {

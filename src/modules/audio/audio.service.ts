@@ -4,7 +4,7 @@ import {
   VoiceConnection,
   createAudioPlayer,
   createAudioResource,
-  joinVoiceChannel
+  joinVoiceChannel,
 } from '@discordjs/voice';
 import { BeforeApplicationShutdown, Injectable } from '@nestjs/common';
 import { TextChannel } from 'discord.js';
@@ -23,9 +23,9 @@ export class AudioService implements BeforeApplicationShutdown {
     [...this._channels.entries()].forEach(([, c]) => {
       c.destroy();
     });
-    [...this._leaveTimer.entries()].forEach(([,c]) => {
+    [...this._leaveTimer.entries()].forEach(([, c]) => {
       clearTimeout(c);
-    })
+    });
   }
 
   getPlayer(message: Message) {
@@ -86,13 +86,13 @@ export class AudioService implements BeforeApplicationShutdown {
         // console.log(conn)
         // if (!conn) {
         const conn = joinVoiceChannel({
-            channelId: vc.channelId,
-            guildId: vc.guild.id,
-            adapterCreator: vc.guild.voiceAdapterCreator as any,
-          });
-          this._channels.set(key, conn);
+          channelId: vc.channelId,
+          guildId: vc.guild.id,
+          adapterCreator: vc.guild.voiceAdapterCreator as any,
+        });
+        this._channels.set(key, conn);
         // }
-        
+
         let resource = this._audioConnections.get(key);
         resource = createAudioResource(stream, { inlineVolume: true });
 
@@ -127,8 +127,8 @@ export class AudioService implements BeforeApplicationShutdown {
                 break;
               }
             }
-            player.off('stateChange', handleOnStateChange)
-          }
+            player.off('stateChange', handleOnStateChange);
+          };
           player.on('stateChange', handleOnStateChange);
           resource.playStream.on('end', () => {
             this._audioConnections.delete(key);
@@ -158,14 +158,11 @@ export class AudioService implements BeforeApplicationShutdown {
         const guild = (message.messageChannel as TextChannel).guild;
         const key = `discord: ${guild.id}`;
         if (this._channels.has(key)) {
-          this._channels
-          .get(key).disconnect();
+          this._channels.get(key).disconnect();
           this._channels.delete(key);
         }
         if (this._audioConnections.has(key)) {
-          this._audioConnections
-            .get(key)
-            .audioPlayer?.stop(true);
+          this._audioConnections.get(key).audioPlayer?.stop(true);
           this._audioConnections.delete(key);
         }
     }

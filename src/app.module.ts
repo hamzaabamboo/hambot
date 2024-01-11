@@ -28,7 +28,6 @@ import { RssModule } from './modules/rss/rss.module';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { WanikaniModule } from './modules/wanikani/wanikani.module';
 
-
 @Module({
   imports: [
     DiscordModule,
@@ -51,21 +50,23 @@ import { WanikaniModule } from './modules/wanikani/wanikani.module';
     D4DJModule,
     AibouModule,
     JishoModule,
-    ThrottlerModule.forRoot([  {
-      name: 'short',
-      ttl: 1000,
-      limit: 3,
-    },
-    {
-      name: 'medium',
-      ttl: 10000,
-      limit: 20
-    },
-    {
-      name: 'long',
-      ttl: 60000,
-      limit: 100
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,
+        limit: 3,
+      },
+      {
+        name: 'medium',
+        ttl: 10000,
+        limit: 20,
+      },
+      {
+        name: 'long',
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
     TypeOrmModule.forRootAsync({
       imports: [AppConfigModule],
       useFactory: (configService: AppConfigService) => ({

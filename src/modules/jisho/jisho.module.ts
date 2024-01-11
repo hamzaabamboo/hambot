@@ -7,6 +7,6 @@ import { JishoService } from './jisho.service';
 @Module({
   controllers: [JishoController],
   providers: [JishoService],
-  imports: [HttpModule, LoggerModule]
+  imports: [HttpModule, LoggerModule],
 })
 export class JishoModule {}

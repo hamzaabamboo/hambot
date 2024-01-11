@@ -8,7 +8,7 @@ import { TrelloModule } from '../trello/trello.module';
 import { CalendarSchedule } from './calendar.service';
 import { FileSchedule } from './file.schedule';
 import { RecurringService } from './recurring.service';
-import { TaskSchedule } from './tasks.service';
+import { TasksService } from './tasks.service';
 
 @Module({
   imports: [LoggerModule, TrelloModule, PushModule, IcalModule, OutlineModule],
@@ -16,9 +16,9 @@ import { TaskSchedule } from './tasks.service';
     FileSchedule,
     RecurringService,
     SchedulerRegistry,
-    TaskSchedule,
+    TasksService,
     CalendarSchedule,
   ],
-  exports: [RecurringService],
+  exports: [RecurringService, TasksService],
 })
 export class SchedulerModule {}
