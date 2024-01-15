@@ -183,8 +183,11 @@ export class TasksService {
         const currentNode = lists.slice(-1)[0];
         if (!currentNode) return;
         currentNode.tasks = parseList(node).map((t) => {
+          const dateTags = /\[(\d+?\/\d+?(?:\/\d+)?)\s?-?\s?(\d+?\/\d+?(?:\/\d+)?)?\]/g.exec(t);
+          const [res, start, end] = dateTags ?? []; 
           return {
             title: t,
+            date: dateTags ? moment(end || start, ["MM/DD", "MM/DD/YYYY"]).hours(1).toDate() : undefined
           };
         });
       }
@@ -203,13 +206,32 @@ export class TasksService {
     const tasks = await this.getTasks();
 
     const cards = tasks
-      .flatMap((c) => c.tasks)
+      .flatMap((c) => c.tasks).filter(t => t.date).flatMap(t => {
+        return [
+          {
+            title: `2 days before ${t.title}`,
+            date: moment(t.date).subtract({d:1}).toDate()
+          },
+          {
+            title: `1 day before ${t.title}`,
+            date: moment(t.date).subtract({d:1}).toDate()
+          },
+          {
+            title: `1 hour before ${t.title}`,
+            date: moment(t.date).subtract({h: 1}).toDate()
+          },
+          {
+            title: `10 minutes before ${t.title}`,
+            date: moment(t.date).subtract({m: 10}).toDate()
+          },
+          t, 
+        ]
+      })
       .filter(
-        (c) =>
-          c.date &&
+        (c) => 
           moment(c.date).diff(moment(), 'milliseconds') > 0 &&
           moment(c.date).diff(moment(), 'milliseconds') < 60 * 60 * 24 * 1000,
-      );
+      );     
     return cards.map((card) => {
       return {
         card: card.title,
