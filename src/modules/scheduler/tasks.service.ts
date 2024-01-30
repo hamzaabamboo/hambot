@@ -7,7 +7,7 @@ import { TrelloService } from '../trello/trello.service';
 import { Paragraph, Text, List, PhrasingContent } from 'mdast';
 import { OutlineService } from '../outline/outline.service';
 import { dynamicImport } from 'src/utils';
-import { TaskList } from './task.type';
+import { TaskList, Task as TodoTask } from './task.type';
 import { List as TrelloList } from 'trello';
 
 interface Task {
@@ -33,11 +33,11 @@ export class TasksService {
   }
 
   @Cron('0 0 0 * * *')
-  update() {
+  async update() {
     if (this._jobs.length > 0) {
       this._jobs.forEach((j) => {
         try {
-          this.scheduler.deleteCronJob(j);
+          this.scheduler.deleteTimeout(j);
         } catch (e) {
           this.logger.error('Something went wrong: ' + e);
         }
@@ -45,42 +45,29 @@ export class TasksService {
       this.logger.debug('Removed ' + this._jobs.length + ' jobs.');
       this._jobs = [];
     }
-    this.registerEvents();
+    const deadlines = await this.registerEvents();
+    return deadlines;
   }
 
   async registerEvents() {
-    this.getTaskDeadlines().then((cards) => {
-      cards.forEach(({ card, msLeft, due, name }) => {
-        if (msLeft - 3600000 > 0) {
-          const pre = setTimeout(() => {
-            this.push.push(
-              {
-                channel: '*',
-                senderId: '',
-                message: `${name} is to due ${moment(due).fromNow()}`,
-              },
-              'tasks',
-            );
-          }, msLeft - 3600000);
-          this.scheduler.addTimeout(`${card}-pre`, pre);
-          this._jobs.push(`${card}-pre`);
-        }
-
-        const job = setTimeout(() => {
-          this.push.push(
-            {
-              channel: '*',
-              senderId: '',
-              message: `${name} is due now !`,
-            },
-            'tasks',
-          );
-        }, msLeft);
-        this.scheduler.addTimeout(`${card}-job`, job);
-        this._jobs.push(`${card}-job`);
-      });
-      this.logger.debug('Added ' + cards.length + ' tasks');
+    const cards = await this.getTaskDeadlines();
+    cards.forEach(({ card, msLeft, name }) => {
+      const job = setTimeout(() => {
+        this.push.push(
+          {
+            channel: '*',
+            senderId: '',
+            message: `${name} is due now !`,
+          },
+          'tasks',
+        );
+      }, msLeft);
+      this.scheduler.addTimeout(`${card}-job`, job);
+      this._jobs.push(`${card}-job`);
     });
+    this.logger.debug('Added ' + cards.length + ' tasks');
+
+    return cards.length;
   }
 
   private async getTrelloTasks(
@@ -182,14 +169,37 @@ export class TasksService {
       } else if (node.type === 'list') {
         const currentNode = lists.slice(-1)[0];
         if (!currentNode) return;
-        currentNode.tasks = parseList(node).map((t) => {
-          const dateTags = /\[(\d+?\/\d+?(?:\/\d+)?)\s?-?\s?(\d+?\/\d+?(?:\/\d+)?)?\]/g.exec(t);
-          const [res, start, end] = dateTags ?? []; 
-          return {
-            title: t,
-            date: dateTags ? moment(end || start, ["MM/DD", "MM/DD/YYYY"]).hours(1).toDate() : undefined
-          };
-        });
+        currentNode.tasks = parseList(node)
+          .map((t) => {
+            const dateTags =
+              /\[(\d+?\/\d+?(?:\/\d+)?(?:\s?\d{1,2}[:.]\d{1,2})?)\s?-?\s?(\d+?\/\d+?(?:\/\d+)?(?:\s?\d{1,2}[:.]\d{1,2})?)?\]/g.exec(
+                t,
+              );
+            const [res, start, end] = dateTags ?? [];
+            if (!start && !end) return undefined;
+            const startTime = start
+              ? moment(start, [
+                  'MM/DD',
+                  'MM/DD/YYYY',
+                  'MM/DD HH:mm',
+                  'MM/DD/YYYY HH:mm',
+                ]).toDate()
+              : undefined;
+            const endTime = end
+              ? moment(end, [
+                  'MM/DD',
+                  'MM/DD/YYYY',
+                  'MM/DD HH:mm',
+                  'MM/DD/YYYY HH:mm',
+                ]).toDate()
+              : undefined;
+            return {
+              title: t,
+              start: startTime,
+              end: endTime,
+            } satisfies TodoTask;
+          })
+          .filter((t) => !!t);
       }
     });
     return lists;
@@ -206,37 +216,66 @@ export class TasksService {
     const tasks = await this.getTasks();
 
     const cards = tasks
-      .flatMap((c) => c.tasks).filter(t => t.date).flatMap(t => {
-        return [
+      .flatMap((c) => c.tasks)
+      .filter((t) => t.start || t.end)
+      .flatMap((t) => {
+        const startTime = [
           {
-            title: `2 days before ${t.title}`,
-            date: moment(t.date).subtract({d:1}).toDate()
+            title: `2 days before ${t.title} starts`,
+            start: moment(t.start).subtract({ d: 2 }).toDate(),
           },
           {
-            title: `1 day before ${t.title}`,
-            date: moment(t.date).subtract({d:1}).toDate()
+            title: `1 day before ${t.title} starts`,
+            start: moment(t.start).subtract({ d: 1 }).toDate(),
           },
           {
-            title: `1 hour before ${t.title}`,
-            date: moment(t.date).subtract({h: 1}).toDate()
+            title: `1 hour before ${t.title} starts`,
+            start: moment(t.start).subtract({ h: 1 }).toDate(),
           },
           {
-            title: `10 minutes before ${t.title}`,
-            date: moment(t.date).subtract({m: 10}).toDate()
+            title: `10 minutes before ${t.title} starts`,
+            start: moment(t.start).subtract({ m: 10 }).toDate(),
           },
-          t, 
-        ]
+          t,
+        ];
+
+        const endTime = t.end
+          ? [
+              {
+                title: `2 days before ${t.title} ends`,
+                start: moment(t.end).subtract({ d: 2 }).toDate(),
+              },
+              {
+                title: `1 day before ${t.title} ends`,
+                start: moment(t.end).subtract({ d: 1 }).toDate(),
+              },
+              {
+                title: `1 hour before ${t.title} ends`,
+                start: moment(t.end).subtract({ h: 1 }).toDate(),
+              },
+              {
+                title: `10 minutes before ${t.title} ends`,
+                start: moment(t.end).subtract({ m: 10 }).toDate(),
+              },
+              {
+                ...t,
+                title: `${t.title} ends`,
+              },
+            ]
+          : [];
+
+        return [...startTime, ...endTime];
       })
       .filter(
-        (c) => 
-          moment(c.date).diff(moment(), 'milliseconds') > 0 &&
-          moment(c.date).diff(moment(), 'milliseconds') < 60 * 60 * 24 * 1000,
-      );     
+        (c) =>
+          moment(c.start).diff(moment(), 'milliseconds') > 0 &&
+          moment(c.start).diff(moment(), 'milliseconds') < 60 * 60 * 24 * 1000,
+      );
     return cards.map((card) => {
       return {
         card: card.title,
-        msLeft: moment(card.date).diff(moment(), 'milliseconds'),
-        due: card.date,
+        msLeft: moment(card.start).diff(moment(), 'milliseconds'),
+        due: card.start,
         name: card.title,
       };
     });

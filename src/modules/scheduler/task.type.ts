@@ -1,6 +1,7 @@
 export interface Task {
   title: string;
-  date?: Date;
+  start?: Date;
+  end?: Date;
 }
 export interface TaskList {
   title: string;

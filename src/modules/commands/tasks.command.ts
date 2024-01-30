@@ -26,6 +26,12 @@ export class TasksCommand extends BaseCommand {
           message:
             'Available Lists \n' + lists.map((l) => '- ' + l.title).join('\n'),
         };
+      case 'refresh':
+        const tasksNumber = await this.tasks.update();
+        return {
+          files: [],
+          message: `Tasks refreshed ${tasksNumber} tasks updated`,
+        };
       default:
         const tasks = await this.tasks.getTasks({
           getTaskInfo: true,
@@ -39,13 +45,8 @@ ${l.tasks
   .map(
     (c) =>
       `${c.title}${
-        c.date
-          ? ' due ' +
-            `${moment(c.date).fromNow()} (${moment(c.date).format(
-              'DD/MM/YYYY HH:mm',
-            )})`
-          : ''
-      }`,
+        c.start ? ' starts in ' + `${moment(c.start).fromNow()}` : ''
+      }${c.end ? ' ends in ' + `${moment(c.end).fromNow()}` : ''}`,
   )
   .join('\n')}`,
           )

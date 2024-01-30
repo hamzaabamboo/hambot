@@ -54,9 +54,9 @@ export class OutlineService {
         .find((c): c is Table => c.type === 'table')
         .children.slice(1)
         .map((c) => [
-          (c.children[0].children[0] as Text).value,
-          (c.children[1].children[0] as Link).url ??
-            (c.children[1].children[0] as Text).value,
+          (c.children[0].children[0] as Text)?.value,
+          (c.children[1].children[0] as Link)?.url ??
+            (c.children[1].children[0] as Text)?.value,
         ]),
     ) as OutlineSettings;
 
@@ -65,8 +65,9 @@ export class OutlineService {
   }
 
   async getSettingDocument(settingKey: SettingDocumentKey) {
+    if (!this.settings?.[settingKey]) return undefined;
     return await this.getDocumentById(
-      this.settings[settingKey].replace('/doc/', ''),
+      this.settings?.[settingKey].replace('/doc/', ''),
     );
   }
 

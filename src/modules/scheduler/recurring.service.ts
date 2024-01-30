@@ -99,6 +99,7 @@ export class RecurringService {
 
   private async getOutlineEvents(): Promise<JobInfo[]> {
     const document = await this.outline.getSettingDocument('recurring');
+    if (!document) return [];
     const root = await OutlineService.parseMarkdown(document.data.text);
     const { toString }: { toString: (input: unknown) => string } =
       await dynamicImport('mdast-util-to-string');
