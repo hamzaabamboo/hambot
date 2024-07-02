@@ -38,16 +38,22 @@ export class RecurringService {
     this.getRecurringEvents().then((cards) => {
       cards.forEach(({ card, cronTab, message, tags }) => {
         try {
-          const job = new CronJob(cronTab, () => {
-            this.push.push(
-              {
-                channel: '*',
-                senderId: '',
-                message,
-              },
-              tags,
-            );
-          });
+          const job = new CronJob(
+            cronTab,
+            () => {
+              this.push.push(
+                {
+                  channel: '*',
+                  senderId: '',
+                  message,
+                },
+                tags,
+              );
+            },
+            null,
+            true,
+            'Asia/Tokyo',
+          );
           this.scheduler.addCronJob(card, job);
           job.start();
           this._jobs.push(card);

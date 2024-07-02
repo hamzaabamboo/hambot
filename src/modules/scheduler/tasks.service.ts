@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, SchedulerRegistry } from '@nestjs/schedule';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { AppLogger } from '../logger/logger';
 import { PushService } from '../push/push.service';
 import { TrelloService } from '../trello/trello.service';
@@ -9,6 +9,7 @@ import { OutlineService } from '../outline/outline.service';
 import { dynamicImport } from 'src/utils';
 import { TaskList, Task as TodoTask } from './task.type';
 import { List as TrelloList } from 'trello';
+import { TIMEZONE } from 'src/utils/constants';
 
 interface Task {
   card: string;
@@ -16,6 +17,8 @@ interface Task {
   due?: Date;
   name: string;
 }
+
+const createDate = (date?: string | Date) => moment(date).tz(TIMEZONE);
 
 @Injectable()
 export class TasksService {
@@ -183,7 +186,9 @@ export class TasksService {
                   'MM/DD/YYYY',
                   'MM/DD HH:mm',
                   'MM/DD/YYYY HH:mm',
-                ]).toDate()
+                ])
+                  .tz(TIMEZONE)
+                  .toDate()
               : undefined;
             const endTime = end
               ? moment(end, [
@@ -191,7 +196,9 @@ export class TasksService {
                   'MM/DD/YYYY',
                   'MM/DD HH:mm',
                   'MM/DD/YYYY HH:mm',
-                ]).toDate()
+                ])
+                  .tz(TIMEZONE)
+                  .toDate()
               : undefined;
             return {
               title: t,
@@ -222,19 +229,19 @@ export class TasksService {
         const startTime = [
           {
             title: `2 days before ${t.title} starts`,
-            start: moment(t.start).subtract({ d: 2 }).toDate(),
+            start: createDate(t.start).subtract({ d: 2 }).toDate(),
           },
           {
             title: `1 day before ${t.title} starts`,
-            start: moment(t.start).subtract({ d: 1 }).toDate(),
+            start: createDate(t.start).subtract({ d: 1 }).toDate(),
           },
           {
             title: `1 hour before ${t.title} starts`,
-            start: moment(t.start).subtract({ h: 1 }).toDate(),
+            start: createDate(t.start).subtract({ h: 1 }).toDate(),
           },
           {
             title: `10 minutes before ${t.title} starts`,
-            start: moment(t.start).subtract({ m: 10 }).toDate(),
+            start: createDate(t.start).subtract({ m: 10 }).toDate(),
           },
           t,
         ];
@@ -243,19 +250,19 @@ export class TasksService {
           ? [
               {
                 title: `2 days before ${t.title} ends`,
-                start: moment(t.end).subtract({ d: 2 }).toDate(),
+                start: createDate(t.end).subtract({ d: 2 }).toDate(),
               },
               {
                 title: `1 day before ${t.title} ends`,
-                start: moment(t.end).subtract({ d: 1 }).toDate(),
+                start: createDate(t.end).subtract({ d: 1 }).toDate(),
               },
               {
                 title: `1 hour before ${t.title} ends`,
-                start: moment(t.end).subtract({ h: 1 }).toDate(),
+                start: createDate(t.end).subtract({ h: 1 }).toDate(),
               },
               {
                 title: `10 minutes before ${t.title} ends`,
-                start: moment(t.end).subtract({ m: 10 }).toDate(),
+                start: createDate(t.end).subtract({ m: 10 }).toDate(),
               },
               {
                 ...t,
@@ -268,13 +275,14 @@ export class TasksService {
       })
       .filter(
         (c) =>
-          moment(c.start).diff(moment(), 'milliseconds') > 0 &&
-          moment(c.start).diff(moment(), 'milliseconds') < 60 * 60 * 24 * 1000,
+          createDate(c.start).diff(createDate(), 'milliseconds') > 0 &&
+          createDate(c.start).diff(createDate(), 'milliseconds') <
+            60 * 60 * 24 * 1000,
       );
     return cards.map((card) => {
       return {
         card: card.title,
-        msLeft: moment(card.start).diff(moment(), 'milliseconds'),
+        msLeft: createDate(card.start).diff(createDate(), 'milliseconds'),
         due: card.start,
         name: card.title,
       };
