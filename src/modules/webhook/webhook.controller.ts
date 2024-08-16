@@ -27,7 +27,12 @@ export class WebhookController {
     }
     const { data, channel } = body;
 
-    if (!data) return;
+    if (!data || !channel) {
+      res
+        .status(400)
+        .send({ success: false, message: 'Invalid data or channel' });
+      return;
+    }
 
     await this.push.push(
       {
