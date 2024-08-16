@@ -27,6 +27,7 @@ import { QrcodeModule } from './modules/qrcode/qrcode.module';
 import { RssModule } from './modules/rss/rss.module';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { WanikaniModule } from './modules/wanikani/wanikani.module';
+import { WebhookModule } from './modules/webhook/webhook.module';
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { WanikaniModule } from './modules/wanikani/wanikani.module';
       inject: [AppConfigService],
     }),
     OutlineModule,
+    WebhookModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],

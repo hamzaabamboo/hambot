@@ -83,6 +83,10 @@ export class AppConfigService {
     return this.getEnv('OUTLINE_API_TOKEN', '<OUTLINE_API_KEY>');
   }
 
+  get HAMBOT_KEY() {
+    return this.getEnv('HAMBOT_KEY', '<HAMBOT_KEY>');
+  }
+
   get OUTLINE_SETTINGS_DOCUMENT_ID() {
     return this.getEnv(
       'OUTLINE_SETTINGS_DOCUMENT_ID',
