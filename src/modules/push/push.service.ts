@@ -70,7 +70,9 @@ export class PushService {
     const destinations = await this.getDestinations();
     destinations
       .filter((d) =>
-        tag ? d.tag?.toLowerCase().includes(tag.toLowerCase()) : true,
+        tag
+          ? d.tag?.toLowerCase().includes(tag.toLowerCase()) || tag === 'public'
+          : false,
       )
       .forEach((d) => {
         const f = async () => {
