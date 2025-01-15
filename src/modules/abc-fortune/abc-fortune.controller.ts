@@ -23,7 +23,10 @@ export class ABCFortuneController {
       return reply.status(401).send();
     }
     const file = await this.abcFortune.getFortune();
-    reply.header('content-disposition', `attachment; filename=${file.name}`);
-    reply.send(file.stream());
+    reply.header(
+      'content-disposition',
+      `attachment; filename=${this.abcFortune.getFilename()}`,
+    );
+    reply.send(file);
   }
 }

@@ -46,7 +46,6 @@ export class ABCFortuneService {
       .createHash('md5')
       .update(this.getFilename() + this.appConfig.SALT)
       .digest('hex');
-    console.log(hash);
     return hash;
   }
   async getFortune() {
@@ -61,7 +60,10 @@ export class ABCFortuneService {
     } else {
       this.logger.verbose('Fortune not found, fetching ...');
       const screenshot = await this.scrapeFortune();
-      this.s3Service.uploadFile(screenshot, `abc-fortune/${screenshot.name}`);
+      this.s3Service.uploadFile(
+        screenshot,
+        `abc-fortune/${this.getFilename()}`,
+      );
       this.logger.verbose('Saving File...');
       return screenshot;
     }
@@ -102,7 +104,7 @@ export class ABCFortuneService {
     const content = await response.content();
 
     page.close();
-    return new File([content], this.getFilename());
+    return content;
   }
 
   getFilename(date: Date = new Date()) {

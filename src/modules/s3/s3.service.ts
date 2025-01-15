@@ -24,12 +24,12 @@ export class S3Service {
     this.bucket = appConfig.AWS_S3_UPLOAD_BUCKET_NAME;
   }
 
-  async uploadFile(file: File, key: string) {
+  async uploadFile(file: Uint8Array, key: string) {
     await this.s3Client.send(
       new PutObjectCommand({
         Bucket: this.bucket,
         Key: key,
-        Body: new Uint8Array(await file.arrayBuffer()),
+        Body: file,
       }),
     );
   }
@@ -41,15 +41,11 @@ export class S3Service {
         Key: key,
       }),
     );
-    return new File(
-      [await res.Body.transformToByteArray()],
-      key.split('/').at(-1),
-    );
+    return await res.Body.transformToByteArray();
   }
 
   async checkFileExist(key: string) {
     try {
-      console.log(this.bucket, key);
       const res = await this.s3Client.send(
         new HeadObjectCommand({
           Bucket: this.bucket,
@@ -58,7 +54,6 @@ export class S3Service {
       );
       return true;
     } catch (error) {
-      console.log(error);
       return false;
     }
   }
