@@ -1,9 +1,9 @@
-FROM node:18-alpine As development
+FROM node:18.20-alpine As development
 
 WORKDIR /app
 
 RUN apk add --update --no-cache \
-   build-base \
+    build-base \
     g++ \
     jpeg-dev \
     cairo-dev \
