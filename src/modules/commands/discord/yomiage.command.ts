@@ -50,8 +50,8 @@ export class YomiageCommand extends BaseCompoundHandler {
 
     this.audio
       .playAudio(message, await this.getAudio(letter), 1, 600000)
-      .then(
-        (r) => r.playStream?.on('end', () => void this.flushQueue(message, r)),
+      .then((r) =>
+        r.playStream?.on('end', () => void this.flushQueue(message, r)),
       );
   }
 

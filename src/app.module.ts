@@ -28,6 +28,7 @@ import { RssModule } from './modules/rss/rss.module';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { WanikaniModule } from './modules/wanikani/wanikani.module';
 import { WebhookModule } from './modules/webhook/webhook.module';
+import { ABCFortuneModule } from './modules/abc-fortune/abc-fortune.module';
 
 @Module({
   imports: [
@@ -80,6 +81,7 @@ import { WebhookModule } from './modules/webhook/webhook.module';
     }),
     OutlineModule,
     WebhookModule,
+    ABCFortuneModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],

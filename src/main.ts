@@ -52,8 +52,7 @@ async function bootstrap() {
 
   try {
     if (config.NEXT) {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      fastify.register(require('@fastify/nextjs')).after(() => {
+      fastify.register(import('@fastify/nextjs')).after(() => {
         (fastify as any).next('/');
         (fastify as any).next('/clipper');
       });

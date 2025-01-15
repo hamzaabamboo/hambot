@@ -4,8 +4,10 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AppConfigService {
   constructor(private readonly config: ConfigService) {}
-  private getEnv<T>(key: string, defaultValue: T): T {
-    return this.config.get<T>(key) ?? defaultValue;
+  private getEnv<T>(key: string, defaultValue?: T) {
+    return (this.config.get<T>(key) ??
+      defaultValue ??
+      `<${key}>`) as T extends unknown ? string : T;
   }
   get PUBLIC_URL() {
     return this.getEnv('PUBLIC_URL', '<PUBLIC_URL>');
@@ -92,5 +94,36 @@ export class AppConfigService {
       'OUTLINE_SETTINGS_DOCUMENT_ID',
       '<OUTLINE_SETTINGS_DOCUMENT_ID>',
     );
+  }
+
+  get BROWSERLESS_URL() {
+    return this.getEnv('BROWSERLESS_URL');
+  }
+  get ABC_USERNAME() {
+    return this.getEnv('ABC_USERNAME');
+  }
+  get ABC_PASSWORD() {
+    return this.getEnv('ABC_PASSWORD');
+  }
+
+  get AWS_REGION() {
+    return this.getEnv('AWS_REGION');
+  }
+
+  get AWS_S3_UPLOAD_BUCKET_URL() {
+    return this.getEnv('AWS_S3_UPLOAD_BUCKET_URL');
+  }
+  get AWS_ACCESS_KEY_ID() {
+    return this.getEnv('AWS_ACCESS_KEY_ID');
+  }
+  get AWS_SECRET_ACCESS_KEY() {
+    return this.getEnv('AWS_SECRET_ACCESS_KEY');
+  }
+  get AWS_S3_UPLOAD_BUCKET_NAME() {
+    return this.getEnv('AWS_S3_UPLOAD_BUCKET_NAME');
+  }
+
+  get SALT() {
+    return this.getEnv('SALT');
   }
 }
