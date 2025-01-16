@@ -7,6 +7,7 @@ import { AppConfigService } from 'src/config/app-config.service';
 import { AppLogger } from '../logger/logger';
 import { PushService } from '../push/push.service';
 import { S3Service } from '../s3/s3.service';
+import { TIMEZONE } from 'src/utils/constants';
 
 @Injectable()
 export class ABCFortuneService {
@@ -22,14 +23,14 @@ export class ABCFortuneService {
   }
 
   // Remind at 10am
-  @Cron('0 0 0 * * *')
+  @Cron('0 0 0 * * *', { timeZone: TIMEZONE })
   async dailyReminder() {
     this.logger.verbose('Sending Daily Notification');
     this.push.push(
       {
         channel: '*',
         senderId: '',
-        message: `Daily Apollo Bay Omikuji! https://hambot.ham-san.net/abc-fortune?token=${this.getTodayHash()}`,
+        message: `Daily Apollo Bay Omikuji!`,
         image: [
           {
             name: 'Fortune',
@@ -70,7 +71,7 @@ export class ABCFortuneService {
   }
 
   async scrapeFortune() {
-    const browser = await puppeteer.launch({
+    const browser = await puppeteer.connect({
       browserWSEndpoint: this.appConfig.BROWSERLESS_URL,
     });
 

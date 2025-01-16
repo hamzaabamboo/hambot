@@ -20,6 +20,7 @@ import { NyaaCommand } from './nyaa.command';
 import { PushCommand } from './push.command';
 import { RandomCommand } from './random.command';
 import { RecurringCommand } from './recurring.command';
+import { ABCFortuneCommand } from './abc-fortune.command';
 
 @Injectable()
 export class CommandsService {
@@ -46,6 +47,7 @@ export class CommandsService {
     nyaa: NyaaCommand,
     recurring: RecurringCommand,
     friend: FriendCommand,
+    abcFortune: ABCFortuneCommand,
   ) {
     this.commands = [
       hello,
@@ -65,6 +67,7 @@ export class CommandsService {
       nyaa,
       recurring,
       friend,
+      abcFortune,
       //Always bottom
       base,
     ];

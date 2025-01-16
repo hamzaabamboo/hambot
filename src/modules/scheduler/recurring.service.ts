@@ -7,6 +7,7 @@ import { AppLogger } from '../logger/logger';
 import { OutlineService } from '../outline/outline.service';
 import { PushService } from '../push/push.service';
 import { TrelloService } from '../trello/trello.service';
+import { TIMEZONE } from 'src/utils/constants';
 
 interface JobInfo {
   card: string;
@@ -28,7 +29,7 @@ export class RecurringService {
     this.logger.setContext('RecurringSchedule');
     this.refresh();
   }
-  @Cron('0 0 0 * * *')
+  @Cron('0 0 0 * * *', { timeZone: TIMEZONE })
   async refresh() {
     await this.clearEvents();
     await this.registerEvents();
@@ -52,7 +53,7 @@ export class RecurringService {
             },
             null,
             true,
-            'Asia/Tokyo',
+            TIMEZONE,
           );
           this.scheduler.addCronJob(card, job);
           job.start();

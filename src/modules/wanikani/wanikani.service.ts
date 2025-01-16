@@ -9,6 +9,7 @@ import {
   WanikaniObject,
   WanikaniSubjectType,
 } from './wanikani.types';
+import { TIMEZONE } from 'src/utils/constants';
 
 @Injectable()
 export class WanikaniService {
@@ -23,7 +24,7 @@ export class WanikaniService {
   }
 
   // Remind at 10am
-  @Cron('0 0 3 * * *')
+  @Cron('0 0 10 * * *', { timeZone: TIMEZONE })
   async dailyReminder() {
     this.logger.verbose('Sending Notification');
     const data = await this.wanikani.getAssignments({

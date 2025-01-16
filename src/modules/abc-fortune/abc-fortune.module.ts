@@ -11,5 +11,6 @@ import { ABCFortuneService } from './abc-fortune.service';
   imports: [ConfigModule, PushModule, AppConfigModule, S3Module, LoggerModule],
   providers: [ABCFortuneService],
   controllers: [ABCFortuneController],
+  exports: [ABCFortuneService],
 })
 export class ABCFortuneModule {}

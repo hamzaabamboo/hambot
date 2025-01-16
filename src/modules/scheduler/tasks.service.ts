@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, SchedulerRegistry } from '@nestjs/schedule';
+import { List, Paragraph, PhrasingContent, Text } from 'mdast';
 import moment from 'moment-timezone';
+import { dynamicImport } from 'src/utils';
+import { TIMEZONE } from 'src/utils/constants';
+import { List as TrelloList } from 'trello';
 import { AppLogger } from '../logger/logger';
+import { OutlineService } from '../outline/outline.service';
 import { PushService } from '../push/push.service';
 import { TrelloService } from '../trello/trello.service';
-import { Paragraph, Text, List, PhrasingContent } from 'mdast';
-import { OutlineService } from '../outline/outline.service';
-import { dynamicImport } from 'src/utils';
 import { TaskList, Task as TodoTask } from './task.type';
-import { List as TrelloList } from 'trello';
-import { TIMEZONE } from 'src/utils/constants';
 
 interface Task {
   card: string;
@@ -35,7 +35,7 @@ export class TasksService {
     this.update();
   }
 
-  @Cron('0 0 0 * * *')
+  @Cron('0 0 0 * * *', { timeZone: TIMEZONE })
   async update() {
     if (this._jobs.length > 0) {
       this._jobs.forEach((j) => {

@@ -6,6 +6,7 @@ import { PushService } from '../push/push.service';
 import { IcalService } from '../ical/ical.service';
 import moment from 'moment';
 import { CalendarEvent } from '../ical/events.model';
+import { TIMEZONE } from 'src/utils/constants';
 
 @Injectable()
 export class CalendarSchedule {
@@ -21,7 +22,7 @@ export class CalendarSchedule {
     this.logger.setContext('CalendarSchedule');
     this.refresh();
   }
-  @Cron('0 0 0 * * *')
+  @Cron('0 0 0 * * *', { timeZone: TIMEZONE })
   async refresh() {
     this.logger.verbose('Refreshing Calendar Events');
     await this.clearEvents();

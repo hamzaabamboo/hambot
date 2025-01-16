@@ -28,6 +28,8 @@ import { NyaaCommand } from './nyaa.command';
 import { PushCommand } from './push.command';
 import { RandomCommand } from './random.command';
 import { RecurringCommand } from './recurring.command';
+import { ABCFortuneCommand } from './abc-fortune.command';
+import { ABCFortuneModule } from '../abc-fortune/abc-fortune.module';
 
 @Module({
   providers: [
@@ -51,6 +53,7 @@ import { RecurringCommand } from './recurring.command';
     NyaaCommand,
     RecurringCommand,
     FriendCommand,
+    ABCFortuneCommand,
   ],
   imports: [
     forwardRef(() => DiscordModule),
@@ -61,6 +64,7 @@ import { RecurringCommand } from './recurring.command';
     HttpModule,
     LoggerModule,
     RssModule,
+    ABCFortuneModule,
     forwardRef(() => SchedulerModule),
   ],
   exports: [CommandsService],
