@@ -33,7 +33,7 @@ export class ABCFortuneService {
         message: `Daily Apollo Bay Omikuji!`,
         image: [
           {
-            name: 'Fortune',
+            name: this.getFilename(),
             url: `https://hambot.ham-san.net/abc-fortune?token=${this.getTodayHash()}`,
           },
         ],
