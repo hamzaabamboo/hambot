@@ -61,7 +61,7 @@ async function bootstrap() {
       });
     }
   } catch (e) {
-    console.log(e);
+    console.log('NEXTJS ERROR', e);
   }
 
   const documentConfig = new DocumentBuilder()

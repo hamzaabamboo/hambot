@@ -123,6 +123,10 @@ export class AppConfigService {
     return this.getEnv('AWS_S3_UPLOAD_BUCKET_NAME');
   }
 
+  get GEMINI_API_KEY() {
+    return this.getEnv('GEMINI_API_KEY');
+  }
+
   get SALT() {
     return this.getEnv('SALT');
   }
