@@ -12,12 +12,14 @@ RUN apk add --update --no-cache \
     libtool \
     ffmpeg && apk add --update  --repository http://dl-3.alpinelinux.org/alpine/edge/testing libmount ttf-freefont fontconfig
 
-RUN npm install -g corepack // we needed this
+COPY package.json pnpm-lock.yaml ./
+
+RUN npm install -g corepack
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-COPY package.json pnpm-lock.yaml ./
+
 RUN echo "Y" | pnpm install --shamefully-hoist --config.auto-install-peers=true --strict-peer-dependencies
 
 COPY ./ .
