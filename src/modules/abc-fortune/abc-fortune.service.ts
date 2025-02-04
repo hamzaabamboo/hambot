@@ -22,10 +22,11 @@ export class ABCFortuneService {
     logger.setContext('ABCFortune');
   }
 
-  // Remind at 10am
+  // Remind at 12pm
   @Cron('0 0 0 * * *', { timeZone: TIMEZONE })
   async dailyReminder() {
     this.logger.verbose('Sending Daily Notification');
+    await this.scrapeFortune();
     this.push.push(
       {
         channel: '*',
@@ -49,6 +50,7 @@ export class ABCFortuneService {
       .digest('hex');
     return hash;
   }
+
   async getFortune() {
     if (
       await this.s3Service.checkFileExist(`abc-fortune/${this.getFilename()}`)
