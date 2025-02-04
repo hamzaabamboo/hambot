@@ -3,6 +3,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import multiPart from '@fastify/multipart';
 
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -30,6 +31,8 @@ async function bootstrap() {
   const port = config.PORT;
   const logger = await app.resolve(AppLogger);
   const fastify = app.getHttpAdapter().getInstance();
+
+  await app.register(multiPart);
 
   app.enableShutdownHooks();
 
