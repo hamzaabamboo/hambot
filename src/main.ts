@@ -3,6 +3,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import multiPart from '@fastify/multipart';
 
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -31,6 +32,8 @@ async function bootstrap() {
   const logger = await app.resolve(AppLogger);
   const fastify = app.getHttpAdapter().getInstance();
 
+  await app.register(multiPart);
+
   app.enableShutdownHooks();
 
   // // 1. Generate the tree as text
@@ -58,7 +61,7 @@ async function bootstrap() {
       });
     }
   } catch (e) {
-    console.log(e);
+    console.log('NEXTJS ERROR', e);
   }
 
   const documentConfig = new DocumentBuilder()

@@ -157,7 +157,7 @@ export class FileCommand extends BaseCompoundHandler {
             await new Promise((resolve, reject) => {
               f.stream
                 .pipe(createWriteStream(url))
-                .on('finish', resolve)
+                .on('finish', () => resolve(undefined))
                 .on('error', reject);
             });
             return {
@@ -165,7 +165,6 @@ export class FileCommand extends BaseCompoundHandler {
               url: this.config.PUBLIC_URL + 'files/' + f.name,
             };
           } else {
-            return f;
           }
         }),
     );

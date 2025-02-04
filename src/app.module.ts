@@ -29,6 +29,7 @@ import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { WanikaniModule } from './modules/wanikani/wanikani.module';
 import { WebhookModule } from './modules/webhook/webhook.module';
 import { ABCFortuneModule } from './modules/abc-fortune/abc-fortune.module';
+import { GeminiModule } from './modules/gemini/gemini.module';
 
 @Module({
   imports: [
@@ -50,7 +51,7 @@ import { ABCFortuneModule } from './modules/abc-fortune/abc-fortune.module';
     WanikaniModule,
     OutlineModule,
     D4DJModule,
-    AibouModule,
+    // AibouModule,
     JishoModule,
     ThrottlerModule.forRoot([
       {
@@ -69,19 +70,20 @@ import { ABCFortuneModule } from './modules/abc-fortune/abc-fortune.module';
         limit: 100,
       },
     ]),
-    TypeOrmModule.forRootAsync({
-      imports: [AppConfigModule],
-      useFactory: (configService: AppConfigService) => ({
-        type: 'postgres',
-        url: configService.DATABASE_CONNECTION_URL,
-        entities: [AibouTopic, AibouTopicItem, AibouSettings],
-        synchronize: true,
-      }),
-      inject: [AppConfigService],
-    }),
+    // TypeOrmModule.forRootAsync({
+    //   imports: [AppConfigModule],
+    //   useFactory: (configService: AppConfigService) => ({
+    //     type: 'postgres',
+    //     url: configService.DATABASE_CONNECTION_URL,
+    //     entities: [AibouTopic, AibouTopicItem, AibouSettings],
+    //     synchronize: true,
+    //   }),
+    //   inject: [AppConfigService],
+    // }),
     OutlineModule,
     WebhookModule,
     ABCFortuneModule,
+    GeminiModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],
