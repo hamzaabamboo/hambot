@@ -1,4 +1,4 @@
-FROM node:20-alpine As development
+FROM node:20-alpine AS development
 
 WORKDIR /app
 
@@ -10,6 +10,7 @@ RUN apk add --update --no-cache \
     giflib-dev \
     pango-dev \
     libtool \
+    py3-setuptools \
     ffmpeg && apk add --update  --repository http://dl-3.alpinelinux.org/alpine/edge/testing libmount ttf-freefont fontconfig
 
 COPY package.json pnpm-lock.yaml ./
