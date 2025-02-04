@@ -15,7 +15,7 @@ RUN apk add --update --no-cache \
 
 COPY package.json pnpm-lock.yaml ./
 
-RUN npm install -g corepack
+RUN npm install -g corepack @nestjs/cli
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
