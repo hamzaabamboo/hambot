@@ -28,22 +28,29 @@ export class GeminiController {
   @UseInterceptors(
     FileFieldsInterceptor([
       {
-        name: 'files',
+        name: 'files[]',
+        maxCount: 20,
       },
     ]),
   )
-  @Header('content-type', 'text/csv')
+  @Header('content-type', 'application/json')
   async extractReceipt(
     @Req() req: FastifyRequest,
-    @UploadedFiles() files: { files: MemoryStorageFile[] },
+    @UploadedFiles() files: { ['files[]']: MemoryStorageFile[] },
   ) {
-    if (req.headers['x-hambot-key'] !== this.config.HAMBOT_KEY) {
+    if (
+      req.headers['x-hambot-key'] !== this.config.HAMBOT_KEY &&
+      req.headers['x-gemini-secret'] !== this.config.GEMINI_SECRET
+    ) {
       throw new UnauthorizedException('Not Authorized');
     }
 
-    const file = files.files[0];
     try {
-      const res = await this.gemini.readReceipt(file.buffer, file.mimetype);
+      const res = await Promise.all(
+        files['files[]'].map(async (f) => {
+          return await this.gemini.readReceipt(f.buffer, f.mimetype);
+        }),
+      );
       return res;
     } catch (error: any) {
       if (error instanceof GoogleGenerativeAIError) {

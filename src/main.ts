@@ -24,8 +24,18 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: ['https://hamzaabamboo.github.io', 'https://aibou.ham-san.net'],
-    allowedHeaders: ['x-aibou-secret', 'x-jisho-secret', 'content-type'],
+    origin: [
+      'https://hamzaabamboo.github.io',
+      'https://aibou.ham-san.net',
+      'https://hamproductions.github.io',
+    ],
+    allowedHeaders: [
+      'x-aibou-secret',
+      'x-jisho-secret',
+      'x-gemini-secret',
+      'x-hambot-key',
+      'content-type',
+    ],
   });
   const config = app.get(AppConfigService);
   const port = config.PORT;

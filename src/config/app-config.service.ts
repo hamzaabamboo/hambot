@@ -73,6 +73,10 @@ export class AppConfigService {
     return this.getEnv('AIBOU_SECRET', '<AIBOU_SECRET>');
   }
 
+  get GEMINI_SECRET() {
+    return this.getEnv('GEMINI_SECRET', '<GEMINI_SECRET>');
+  }
+
   get DATABASE_CONNECTION_URL() {
     return this.getEnv('DATABASE_CONNECTION_URL', '<DATABASE_CONNECTION_URL>');
   }

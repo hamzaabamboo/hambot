@@ -50,10 +50,14 @@ export class WanikaniClientService {
 
   async init() {
     this.logger.verbose('Getting user info');
-    const {
-      data: { username },
-    } = await this.getUser();
-    this.logger.verbose(`Logged in as ${username}`);
+    try {
+      const {
+        data: { username },
+      } = await this.getUser();
+      this.logger.verbose(`Logged in as ${username}`);
+    } catch {
+      this.logger.error(`Wanikani Login Failed`);
+    }
   }
 
   async getUser(): Promise<WanikaniUserResponse> {
