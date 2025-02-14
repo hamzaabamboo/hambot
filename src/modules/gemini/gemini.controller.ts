@@ -46,11 +46,10 @@ export class GeminiController {
     }
 
     try {
-      const res = await Promise.all(
-        files['files[]'].map(async (f) => {
-          return await this.gemini.readReceipt(f.buffer, f.mimetype);
-        }),
-      );
+      const res = [];
+      for (let f of files['files[]']) {
+        res.push(await this.gemini.readReceipt(f.buffer, f.mimetype));
+      }
       return res;
     } catch (error: any) {
       if (error instanceof GoogleGenerativeAIError) {
