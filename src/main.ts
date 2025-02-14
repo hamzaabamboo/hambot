@@ -20,6 +20,7 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter({
       pluginTimeout: 60000,
+      bodyLimit: 52_428_800,
       // logger: true,
     }),
   );
