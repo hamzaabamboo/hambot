@@ -3,7 +3,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import multiPart from '@fastify/multipart';
+
 
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -43,7 +43,7 @@ async function bootstrap() {
   const logger = await app.resolve(AppLogger);
   const fastify = app.getHttpAdapter().getInstance();
 
-  await app.register(multiPart);
+  await fastify.register(require('@fastify/multipart'));
 
   app.enableShutdownHooks();
 
@@ -66,7 +66,7 @@ async function bootstrap() {
 
   try {
     if (config.NEXT) {
-      fastify.register(import('@fastify/nextjs')).after(() => {
+      fastify.register(require('@fastify/nextjs')).after(() => {
         (fastify as any).next('/');
         (fastify as any).next('/clipper');
       });
