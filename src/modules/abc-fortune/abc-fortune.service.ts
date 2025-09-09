@@ -56,7 +56,7 @@ export class ABCFortuneService {
       await this.s3Service.checkFileExist(`abc-fortune/${this.getFilename()}`)
     ) {
       this.logger.verbose('Fortune found, using cache ...');
-      const screenshot = this.s3Service.getFile(
+      const screenshot = await this.s3Service.getFile(
         `abc-fortune/${this.getFilename()}`,
       );
       return screenshot;

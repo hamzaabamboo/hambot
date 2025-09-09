@@ -21,6 +21,7 @@ import { PushCommand } from './push.command';
 import { RandomCommand } from './random.command';
 import { RecurringCommand } from './recurring.command';
 import { ABCFortuneCommand } from './abc-fortune.command';
+import { BluebirdCommand } from './bluebird.command';
 
 @Injectable()
 export class CommandsService {
@@ -48,6 +49,7 @@ export class CommandsService {
     recurring: RecurringCommand,
     friend: FriendCommand,
     abcFortune: ABCFortuneCommand,
+    bluebird: BluebirdCommand,
   ) {
     this.commands = [
       hello,
@@ -68,6 +70,7 @@ export class CommandsService {
       recurring,
       friend,
       abcFortune,
+      bluebird,
       //Always bottom
       base,
     ];

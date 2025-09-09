@@ -134,4 +134,8 @@ export class AppConfigService {
   get SALT() {
     return this.getEnv('SALT');
   }
+
+  get BLUEBIRD_SECRET() {
+    return this.getEnv('BLUEBIRD_SECRET');
+  }
 }

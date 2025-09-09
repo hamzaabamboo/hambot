@@ -4,7 +4,7 @@ services:
   #   image: voicevox/voicevox_engine:cpu-ubuntu20.04-latest
   #   restart: always
   db:
-    image: postgres
+    image: postgres:16
     restart: always
     ports:
       - 5432:5432

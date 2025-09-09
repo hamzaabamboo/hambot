@@ -30,6 +30,7 @@ import { RandomCommand } from './random.command';
 import { RecurringCommand } from './recurring.command';
 import { ABCFortuneCommand } from './abc-fortune.command';
 import { ABCFortuneModule } from '../abc-fortune/abc-fortune.module';
+import { BluebirdCommand } from './bluebird.command';
 
 @Module({
   providers: [
@@ -54,6 +55,7 @@ import { ABCFortuneModule } from '../abc-fortune/abc-fortune.module';
     RecurringCommand,
     FriendCommand,
     ABCFortuneCommand,
+    BluebirdCommand,
   ],
   imports: [
     forwardRef(() => DiscordModule),
