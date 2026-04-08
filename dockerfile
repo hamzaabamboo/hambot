@@ -1,4 +1,4 @@
-FROM node:20-alpine AS development
+FROM oven/bun:1-alpine AS build
 
 WORKDIR /app
 
@@ -11,29 +11,39 @@ RUN apk add --update --no-cache \
     pango-dev \
     libtool \
     py3-setuptools \
-    ffmpeg && apk add --update  --repository http://dl-3.alpinelinux.org/alpine/edge/testing libmount ttf-freefont fontconfig
+    nodejs npm && \
+    apk add --update --repository http://dl-3.alpinelinux.org/alpine/edge/testing libmount
 
-COPY package.json pnpm-lock.yaml ./
-
-RUN npm install -g corepack @nestjs/cli
-
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-
-RUN echo "Y" | pnpm install --shamefully-hoist --config.auto-install-peers=true --strict-peer-dependencies
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
 COPY ./ .
+RUN bun run build && bun run build:next
+RUN rm -rf node_modules && bun install --frozen-lockfile --production && \
+    rm -rf node_modules/@next/swc-*-gnu node_modules/@swc/core-*-gnu \
+           node_modules/@next/swc-*-x64* node_modules/@swc/core-*-x64* \
+           node_modules/puppeteer/.local-chromium
 
-RUN pnpm build
-RUN pnpm build:next
+FROM oven/bun:1-alpine AS production
 
-RUN pnpm prune --prod
+WORKDIR /app
 
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
+RUN apk add --update --no-cache \
+    cairo \
+    jpeg \
+    giflib \
+    pango \
+    ffmpeg && \
+    apk add --update --repository http://dl-3.alpinelinux.org/alpine/edge/testing libmount ttf-freefont fontconfig
 
-ARG PORT=3000
-EXPOSE ${PORT}
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/public ./public
+COPY --from=build /app/next.config.js ./next.config.js
 
-CMD ["pnpm", "start:prod"]
+ENV NODE_ENV=production
+EXPOSE 3000
+
+CMD ["bun", "dist/main.js"]

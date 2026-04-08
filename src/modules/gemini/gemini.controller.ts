@@ -47,7 +47,7 @@ export class GeminiController {
 
     try {
       const res = [];
-      for (let f of files['files[]']) {
+      for (const f of files['files[]']) {
         res.push(await this.gemini.readReceipt(f.buffer, f.mimetype));
       }
       return res;

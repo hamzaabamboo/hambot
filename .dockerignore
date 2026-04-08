@@ -1,3 +1,9 @@
-./dist
-./node_modules
-./files
+dist
+node_modules
+.next
+.git
+.github
+files
+data
+storage
+*.md

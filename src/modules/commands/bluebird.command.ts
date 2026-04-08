@@ -23,35 +23,37 @@ export class BluebirdCommand extends BaseCommand {
     const url = 'https://with-meets.ham-san.net/api/bluebird/chat/';
     const secret = this.configService.BLUEBIRD_SECRET;
     const payload = {
-      messages: [{
-        parts: [{ type: 'text', text }],
-        role: "user"
-      }],
+      messages: [
+        {
+          parts: [{ type: 'text', text }],
+          role: 'user',
+        },
+      ],
     };
     const headers = {
       'x-bluebird-secret': secret,
     };
 
-   try {
-     const response = await lastValueFrom(
-      this.httpService.post(url, payload, { headers }),
-    );
+    try {
+      const response = await lastValueFrom(
+        this.httpService.post(url, payload, { headers }),
+      );
 
-    return {
-      ...message,
-      message: response.data as string,
-    };
-   } catch (e) {
-    if (isAxiosError(e)) {
       return {
         ...message,
-        message: `${e.message}` as string,
-      }; 
+        message: response.data as string,
+      };
+    } catch (e) {
+      if (isAxiosError(e)) {
+        return {
+          ...message,
+          message: `${e.message}` as string,
+        };
+      }
+      return {
+        ...message,
+        message: `Something went wrong ${e}` as string,
+      };
     }
-     return {
-      ...message,
-      message: `Something went wrong ${e}` as string,
-    }; 
-   }
   }
 }
